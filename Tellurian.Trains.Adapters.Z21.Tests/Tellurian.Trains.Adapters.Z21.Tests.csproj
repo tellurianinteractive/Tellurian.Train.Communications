@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>Tellurian.Trains.Adapters.Z21.Tests</AssemblyName>
+		<RootNamespace>Tellurian.Trains.Adapters.Z21.Tests</RootNamespace>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="4.0.2" />
+		<PackageReference Include="MSTest.TestFramework" Version="4.0.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Tellurian.Trains.Adapters.Z21\Tellurian.Trains.Adapters.Z21.csproj" />
+	</ItemGroup>
+
+</Project>
