@@ -2,7 +2,7 @@
 
 public interface ILocoControl
 {
-    bool Drive(LocoAddress address, LocoDrive drive);
-    bool EmergencyStop(LocoAddress address);
-    bool SetFunction(LocoAddress address, LocoFunction locoFunction);
+    Task<bool> DriveAsync(LocoAddress address, LocoDrive drive, CancellationToken cancellationToken = default);
+    Task<bool> EmergencyStopAsync(LocoAddress address, CancellationToken cancellationToken = default);
+    Task<bool> SetFunctionAsync(LocoAddress address, LocoFunction locoFunction, CancellationToken cancellationToken = default);
 }

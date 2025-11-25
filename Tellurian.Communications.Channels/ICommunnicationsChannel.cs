@@ -4,8 +4,8 @@ namespace Tellurian.Communications.Channels;
 
 public interface ICommunicationsChannel : IObservable<CommunicationResult>
 {
-    CommunicationResult Send(byte[] data);
-    void StartReceive();
+    Task<CommunicationResult> SendAsync(byte[] data, CancellationToken cancellationToken = default);
+    Task StartReceiveAsync(CancellationToken cancellationToken = default);
 }
 
 public abstract class CommunicationResult

@@ -3,6 +3,7 @@
     <File Path="claude.md" />
     <File Path="Directory.Build.props" />
     <File Path="README.md" />
+    <File Path="ReleaseNotes.md" />
     <File Path="Specifications/coding-conventions.md" />
     <File Path="Specifications/identifier-names.md" />
   </Folder>

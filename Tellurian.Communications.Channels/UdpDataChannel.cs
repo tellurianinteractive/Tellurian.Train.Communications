@@ -3,26 +3,19 @@ using System.Net.Sockets;
 
 namespace Tellurian.Communications.Channels;
 
-public sealed class UdpDataChannel : ICommunicationsChannel, IDisposable
+public sealed class UdpDataChannel(int localPort, IPEndPoint remoteEndPoint) : ICommunicationsChannel, IAsyncDisposable, IDisposable
 {
-    private readonly UdpClient _Client;
-    private readonly IPEndPoint _RemoteEndPoint;
+    private readonly UdpClient _Client = new UdpClient(localPort);
+    private readonly IPEndPoint _RemoteEndPoint = remoteEndPoint;
     private readonly Observers<CommunicationResult> _Observers = new Observers<CommunicationResult>();
-    private readonly Task _ReceiveTask;
+    private Task? _ReceiveTask;
 
-    public UdpDataChannel(int localPort, IPEndPoint remoteEndPoint)
-    {
-        _Client = new UdpClient(localPort);
-        _RemoteEndPoint = remoteEndPoint;
-        _ReceiveTask = new Task(() => Receive());
-    }
-
-    public CommunicationResult Send(byte[] data)
+    public async Task<CommunicationResult> SendAsync(byte[] data, CancellationToken cancellationToken = default)
     {
         if (data is null || data.Length == 0) return CommunicationResult.NoOperation();
         try
         {
-            var sentBytes = _Client.Send(data, data.Length, _RemoteEndPoint);
+            await _Client.SendAsync(data, _RemoteEndPoint, cancellationToken).ConfigureAwait(false);
             return CommunicationResult.Success(data, _RemoteEndPoint.ToString(), "UDP");
         }
         catch (Exception ex)
@@ -36,21 +29,24 @@ public sealed class UdpDataChannel : ICommunicationsChannel, IDisposable
         return _Observers.Subscribe(observer);
     }
 
-    public void StartReceive()
+    public Task StartReceiveAsync(CancellationToken cancellationToken = default)
     {
-        _ReceiveTask.Start();
+        _ReceiveTask = ReceiveAsync(cancellationToken);
+        return Task.CompletedTask;
     }
 
-    private void Receive()
+    private async Task ReceiveAsync(CancellationToken cancellationToken)
     {
-        var remoteEndpoint = _RemoteEndPoint;
         try
         {
-            while (true)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                var data = _Client.Receive(ref remoteEndpoint);
-                _Observers.Notify(CommunicationResult.Success(data, remoteEndpoint.ToString(), "UDP"));
+                var result = await _Client.ReceiveAsync(cancellationToken).ConfigureAwait(false);
+                _Observers.Notify(CommunicationResult.Success(result.Buffer, result.RemoteEndPoint.ToString(), "UDP"));
             }
+        }
+        catch (OperationCanceledException)
+        {
         }
         catch (ObjectDisposedException)
         {
@@ -64,31 +60,59 @@ public sealed class UdpDataChannel : ICommunicationsChannel, IDisposable
         }
     }
 
-    private void Close()
+    private async Task CloseAsync()
     {
         _Client.Close();
-        _ReceiveTask.Wait();
-        _ReceiveTask.Dispose();
+        if (_ReceiveTask is not null)
+        {
+            try
+            {
+                await _ReceiveTask.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // Expected when caller cancels the token
+            }
+        }
         _Observers.Completed();
     }
 
-    #region IDisposable Support
-    private bool disposedValue = false; // To detect redundant calls
+    private void CloseSync()
+    {
+        _Client.Close();
+        _Observers.Completed();
+        // Note: We don't wait for _ReceiveTask to complete in synchronous dispose
+        // to avoid potential deadlocks. Closing the client will cause ReceiveAsync to throw.
+    }
+
+    #region IDisposable and IAsyncDisposable Support
+    private bool _disposedValue = false;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposedValue)
+        {
+            await CloseAsync().ConfigureAwait(false);
+            _disposedValue = true;
+        }
+    }
 
     private void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposedValue)
         {
             if (disposing)
             {
-                Close();
+                CloseSync();
             }
-            disposedValue = true;
+            _disposedValue = true;
         }
     }
+
     public void Dispose()
     {
         Dispose(true);
+        GC.SuppressFinalize(this);
     }
     #endregion
 }

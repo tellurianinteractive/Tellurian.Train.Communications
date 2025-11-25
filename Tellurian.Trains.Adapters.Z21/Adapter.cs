@@ -6,8 +6,6 @@ using Tellurian.Trains.Protocols.XpressNet;
 using Tellurian.Trains.Protocols.XpressNet.Commands;
 using XpressNet = Tellurian.Trains.Protocols.XpressNet.Commands;
 
-#pragma warning disable CA1303 // Do not pass literals as localized parameters
-
 namespace Tellurian.Trains.Adapters.Z21;
 
 public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notification>
@@ -15,7 +13,7 @@ public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notifi
     private readonly ILogger Logger;
     private readonly ICommunicationsChannel Channel;
     private readonly ActionObserver<CommunicationResult> ReceivingObserver;
-    private readonly Observers<Interfaces.Notification> Observers = new Observers<Interfaces.Notification>();
+    private readonly Observers<Interfaces.Notification> Observers = new();
 
     public Adapter(ICommunicationsChannel? channel, ILogger<Adapter> logger)
     {
@@ -37,40 +35,40 @@ public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notifi
 
     #region Commands
 
-    public bool GetLocoInfo(Interfaces.Locos.LocoAddress address)
+    public Task<bool> GetLocoInfoAsync(Interfaces.Locos.LocoAddress address, CancellationToken cancellationToken = default)
     {
-        return Send(new XpressNet.GetLocoInfoCommand(address.Map()));
+        return SendAsync(new XpressNet.GetLocoInfoCommand(address.Map()), cancellationToken);
     }
 
-    public bool GetSerialNumber()
+    public Task<bool> GetSerialNumberAsync(CancellationToken cancellationToken = default)
     {
-        return Send(new GetSerialNumberCommand());
+        return SendAsync(new GetSerialNumberCommand(), cancellationToken);
     }
 
     #endregion
 
     #region Send and receive
 
-    public bool Send(XpressNet.Command command)
+    public Task<bool> SendAsync(XpressNet.Command command, CancellationToken cancellationToken = default)
     {
-        return Send(new XpressNetCommand(command));
+        return SendAsync(new XpressNetCommand(command), cancellationToken);
     }
 
-    public bool Send(Command command)
+    public async Task<bool> SendAsync(Command command, CancellationToken cancellationToken = default)
     {
         if (command is null) throw new ArgumentNullException(nameof(command));
-        Logger.LogInformation(new EventId(2101, nameof(Send)), "Command: {0}", command);
+        Logger.LogInformation(new EventId(2101, nameof(SendAsync)), "Command: {0}", command);
         var data = command.ToFrame().GetBytes();
-        var result = Channel.Send(data);
-        Logger.LogInformation(new EventId(2102, nameof(Send)), "Result: {0}", result);
+        var result = await Channel.SendAsync(data, cancellationToken).ConfigureAwait(false);
+        Logger.LogInformation(new EventId(2102, nameof(SendAsync)), "Result: {0}", result);
         return result.IsSuccess;
     }
 
-    public void StartReceive()
+    public async Task StartReceiveAsync(CancellationToken cancellationToken = default)
     {
         Channel.Subscribe(ReceivingObserver);
-        Channel.StartReceive();
-        Logger.LogInformation(new EventId(2103, nameof(StartReceive)), "Started receiving notifications.");
+        await Channel.StartReceiveAsync(cancellationToken).ConfigureAwait(false);
+        Logger.LogInformation(new EventId(2103, nameof(StartReceiveAsync)), "Started receiving notifications.");
     }
 
     private void ReceiveData(CommunicationResult result)
@@ -84,7 +82,7 @@ public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notifi
                 var notification = n.Map();
                 if (notification.Length == 1 && notification[0] is DecoderResponse)
                 {
-                    Send(new TrackPowerOnCommand());
+                    _ = SendAsync(new TrackPowerOnCommand());
                 }
                 Observers.Notify(notification);
             }

@@ -6,18 +6,18 @@ namespace Tellurian.Trains.Adapters.Z21;
 
 public sealed partial class Adapter : ILocoControl
 {
-    public bool SetFunction(Interfaces.Locos.LocoAddress address, LocoFunction function)
+    public Task<bool> SetFunctionAsync(Interfaces.Locos.LocoAddress address, LocoFunction function, CancellationToken cancellationToken = default)
     {
-        return Send(new LocoFunctionCommand(address.Map(), (byte)function.Number, function.IsOn ? LocoFunctionStates.On : LocoFunctionStates.Off));
+        return SendAsync(new LocoFunctionCommand(address.Map(), (byte)function.Number, function.IsOn ? LocoFunctionStates.On : LocoFunctionStates.Off), cancellationToken);
     }
 
-    public bool EmergencyStop(Interfaces.Locos.LocoAddress address)
+    public Task<bool> EmergencyStopAsync(Interfaces.Locos.LocoAddress address, CancellationToken cancellationToken = default)
     {
-        return Send(new LocoEmergencyStopCommand(address.Map()));
+        return SendAsync(new LocoEmergencyStopCommand(address.Map()), cancellationToken);
     }
 
-    public bool Drive(Interfaces.Locos.LocoAddress address, LocoDrive drive)
+    public Task<bool> DriveAsync(Interfaces.Locos.LocoAddress address, LocoDrive drive, CancellationToken cancellationToken = default)
     {
-        return Send(new LocoDriveCommand(address.Map(), drive.Speed.Map(), drive.Direction.Map()));
+        return SendAsync(new LocoDriveCommand(address.Map(), drive.Speed.Map(), drive.Direction.Map()), cancellationToken);
     }
 }

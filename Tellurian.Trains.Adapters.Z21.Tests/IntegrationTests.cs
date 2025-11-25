@@ -6,12 +6,10 @@ using Tellurian.Trains.Interfaces.Extensions;
 using Tellurian.Trains.Interfaces.Decoder;
 
 
-#pragma warning disable CA1001 // Dispose is handled in TestCleanup()
-
 namespace Tellurian.Trains.Adapters.Z21.Tests;
 
 /// <summary>
-/// Dessa test kräver att Z21 är ansluten till nätverket.
+/// Dessa test krï¿½ver att Z21 ï¿½r ansluten till nï¿½tverket.
 /// </summary>
 [Ignore("Z21 must be connected for these tests.")]
 [TestCategory("Integration tests")]
@@ -23,19 +21,28 @@ public class IntegrationTests
     private readonly NotificationObserver Observer = new NotificationObserver();
     private IDisposable? ObserverSubscription;
 
+    public required TestContext TestContext { get; set; }
+
     [TestInitialize]
-    public void TestInitialize()
+    public async Task TestInitialize()
     {
         Channel = new UdpDataChannel(31105, new IPEndPoint(IPAddress.Parse("192.168.0.111"), 21105));
-        StartAdapter();
-        Thread.Sleep(100);
+        await StartAdapterAsync();
+        await Task.Delay(100, TestContext.CancellationToken);
     }
 
     [TestCleanup]
-    public void TestCleanup()
+    public async Task TestCleanup()
     {
-        StopAdapter();
-        (Channel as IDisposable)?.Dispose();
+        await StopAdapterAsync();
+        if (Channel is IAsyncDisposable asyncDisposable)
+        {
+            await asyncDisposable.DisposeAsync();
+        }
+        else
+        {
+            (Channel as IDisposable)?.Dispose();
+        }
     }
 
     [TestMethod]
@@ -45,26 +52,26 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void SendingWorks()
+    public async Task SendingWorks()
     {
-        Target?.GetSerialNumber();
-        Thread.Sleep(100);
+        await (Target?.GetSerialNumberAsync(TestContext.CancellationToken) ?? Task.FromResult(false));
+        await Task.Delay(100, TestContext.CancellationToken);
         if (Observer.Notifications.Count == 0) Assert.Inconclusive("Is Z21 connected?");
     }
 
     [TestMethod]
-    public void SetDrive()
+    public async Task SetDrive()
     {
         var address = Interfaces.Locos.LocoAddress.From(999);
         var drive = new Interfaces.Locos.LocoDrive { Direction = Interfaces.Locos.LocoDirection.Backward, Speed = Interfaces.Locos.LocoSpeed.Set(Interfaces.Locos.LocoSpeedSteps.Steps126, 2)};
-        Target?.Drive(address, drive);
-        Thread.Sleep(100);
+        await (Target?.DriveAsync(address, drive, TestContext.CancellationToken) ?? Task.FromResult(false));
+        await Task.Delay(100, TestContext.CancellationToken);
     }
     [TestMethod]
-    public void GetHardwareVersion()
+    public async Task GetHardwareVersion()
     {
-        Target?.Send(new GetHardwareInfoCommand());
-        Thread.Sleep(1000);
+        await (Target?.SendAsync(new GetHardwareInfoCommand(), TestContext.CancellationToken) ?? Task.FromResult(false));
+        await Task.Delay(1000, TestContext.CancellationToken);
         Assert.IsNotEmpty(Observer.Notifications);
         var response = Observer.Notifications[0];
         Assert.AreEqual("Hardware Z21 old -2012 1.41", response.ToString());
@@ -72,25 +79,25 @@ public class IntegrationTests
 
     [TestMethod]
     [Ignore]
-    public void ReadLocoCV()
+    public async Task ReadLocoCV()
     {
-        Target?.Send(new ReadCVCommand(29.CV()));
-        Thread.Sleep(3000);
+        await (Target?.SendAsync(new ReadCVCommand(29.CV()), TestContext.CancellationToken) ?? Task.FromResult(false));
+        await Task.Delay(3000, TestContext.CancellationToken);
         Assert.IsNotEmpty(Observer.Notifications);
         var response = Observer.Notifications[0];
         Assert.IsInstanceOfType(response, typeof(DecoderResponse));
     }
 
-    private void StartAdapter()
+    private async Task StartAdapterAsync()
     {
         Target = new Adapter(Channel, NullLogger<Adapter>.Instance);
         ObserverSubscription = Target.Subscribe(Observer);
-        Target.StartReceive();
+        await Target.StartReceiveAsync(TestContext.CancellationToken);
     }
 
-    private void StopAdapter()
+    private async Task StopAdapterAsync()
     {
-        Target?.Send(new LogOffCommand());
+        await (Target?.SendAsync(new LogOffCommand(), TestContext.CancellationToken) ?? Task.FromResult(false));
         ObserverSubscription?.Dispose();
         Target?.Dispose();
     }

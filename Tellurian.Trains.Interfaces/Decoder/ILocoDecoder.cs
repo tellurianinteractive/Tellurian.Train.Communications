@@ -2,6 +2,6 @@
 
 public interface ILocoDecoder
 {
-    public byte ReadCV(ushort number);
-    public void WriteCV(ushort number, byte value);
+    public Task<byte> ReadCVAsync(ushort number, CancellationToken cancellationToken = default);
+    public Task WriteCVAsync(ushort number, byte value, CancellationToken cancellationToken = default);
 }
