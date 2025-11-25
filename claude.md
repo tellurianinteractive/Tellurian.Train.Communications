@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a .NET library for controlling model trains using Z21, LocoNet, and XpressNet protocols. The library provides protocol-agnostic interfaces that allow applications to control train operations, accessories, programming, and system monitoring.
 
+## Documentation Guidelines
+
+**IMPORTANT**: Exclude documents in folders named "Non-essential specifications" or similar. These contain supplementary information that is not required for development work. Focus on the essential specifications and code documentation instead.
+
 ## Build and Test Commands
 
 ### Building
@@ -78,13 +82,13 @@ Each protocol implementation translates high-level commands to protocol-specific
 
 ```
 Application
-    “ (uses ILocoControl, ILocoDecoder)
+    ï¿½ (uses ILocoControl, ILocoDecoder)
 Adapter (Z21/LocoNet)
-    “ (translates to)
+    ï¿½ (translates to)
 Protocol Layer (XpressNet/LocoNet Commands)
-    “ (sends via)
+    ï¿½ (sends via)
 Transport Layer (UdpDataChannel)
-    “
+    ï¿½
 Physical Hardware (Z21, Digitrax, etc.)
 
 (Notifications flow in reverse direction)
