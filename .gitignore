@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Specifications/Non-essential specifications
+/Specifications/Pocesseed documents
