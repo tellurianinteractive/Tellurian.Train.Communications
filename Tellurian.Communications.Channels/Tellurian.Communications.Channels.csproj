@@ -4,6 +4,8 @@
 		<RootNamespace>Tellurian.Communications.Channels</RootNamespace>
 		<AssemblyName>Tellurian.Communications.Channels</AssemblyName>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 </Project>

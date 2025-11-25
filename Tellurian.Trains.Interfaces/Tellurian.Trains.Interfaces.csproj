@@ -4,6 +4,8 @@
 		<AssemblyName>Tellurian.Trains.Interfaces</AssemblyName>
 		<RootNamespace>Tellurian.Trains.Interfaces</RootNamespace>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 </Project>

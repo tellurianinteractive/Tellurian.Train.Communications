@@ -4,6 +4,8 @@
 		<AssemblyName>Tellurian.Trains.Protocols.XpressNet</AssemblyName>
 		<RootNamespace>Tellurian.Trains.Protocols.XpressNet</RootNamespace>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<ItemGroup>

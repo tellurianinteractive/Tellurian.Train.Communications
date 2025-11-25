@@ -4,6 +4,8 @@
 		<AssemblyName>Tellurian.Trains.Protocols.LocoNet</AssemblyName>
 		<RootNamespace>Tellurian.Trains.Protocols.LocoNet</RootNamespace>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<ItemGroup>
