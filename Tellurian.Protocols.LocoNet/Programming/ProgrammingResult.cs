@@ -10,13 +10,11 @@ public sealed class ProgrammingResult
 {
     private ProgrammingResult(
         ProgrammingStatus status,
-        int cvNumber,
-        byte cvValue,
+        CV cv,
         byte[] rawSlotData)
     {
         Status = status;
-        CvNumber = cvNumber;
-        CvValue = cvValue;
+        CV = cv;
         RawSlotData = rawSlotData;
     }
 
@@ -28,13 +26,7 @@ public sealed class ProgrammingResult
     /// <summary>
     /// CV number that was programmed (1-1024).
     /// </summary>
-    public int CvNumber { get; }
-
-    /// <summary>
-    /// CV value read or written (0-255).
-    /// Only valid if Status == Success and operation was a read.
-    /// </summary>
-    public byte CvValue { get; }
+    public CV CV { get; }
 
     /// <summary>
     /// True if programming succeeded (no errors).
@@ -49,7 +41,7 @@ public sealed class ProgrammingResult
     /// <summary>
     /// Human-readable status message.
     /// </summary>
-    public string StatusMessage => ProgrammingHelper.GetStatusMessage(Status);
+    public string StatusMessage => Status.GetMessage();
 
     /// <summary>
     /// Raw 14-byte slot data from response.
@@ -91,9 +83,9 @@ public sealed class ProgrammingResult
         byte data7 = slotData[10];
 
         // Decode CV number and value
-        var (cvNumber, cvValue) = ProgrammingHelper.DecodeCvAndData(cvh, cvl, data7);
+        var cv = ProgrammingHelper.DecodeCvAndData(cvh, cvl, data7);
 
-        return new ProgrammingResult(status, cvNumber, cvValue, slotData);
+        return new ProgrammingResult(status, cv, slotData);
     }
 
     /// <summary>
@@ -103,8 +95,7 @@ public sealed class ProgrammingResult
     /// <returns>Programming result if slot 124, otherwise null</returns>
     public static ProgrammingResult? FromSlotData(SlotData slotData)
     {
-        if (slotData is null)
-            throw new ArgumentNullException(nameof(slotData));
+        ArgumentNullException.ThrowIfNull(slotData);
 
         if (slotData.SlotNumber != 0x7C)
             return null;
@@ -123,14 +114,14 @@ public sealed class ProgrammingResult
         if (IsSuccess)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "CV{0} = {1} (Success)",
-                CvNumber, CvValue);
+                "{0} (Success)",
+                CV);
         }
         else
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "CV{0}: {1}",
-                CvNumber, StatusMessage);
+                "{0}: {1}",
+                CV, StatusMessage);
         }
     }
 }

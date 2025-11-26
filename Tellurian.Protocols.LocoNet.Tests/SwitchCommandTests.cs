@@ -5,14 +5,6 @@ namespace Tellurian.Trains.Protocols.LocoNet.Tests;
 [TestClass]
 public class SetTurnoutCommandTests
 {
-    // ===== Operation Code Tests =====
-
-    [TestMethod]
-    public void SetTurnoutCommand_HasCorrectOperationCode()
-    {
-        Assert.AreEqual(0xB0, SetTurnoutCommand.OperationCode);
-    }
-
     [TestMethod]
     public void SetTurnoutCommand_GeneratesCorrectOpcode_InBytes()
     {
@@ -131,7 +123,7 @@ public class SetTurnoutCommandTests
         var bytes = command.GetBytesWithChecksum();
 
         // DIR bit (bit 5 of SW2) should be set for Closed/Green
-        Assert.IsTrue((bytes[2] & 0x20) != 0, "DIR bit should be set");
+        Assert.AreNotEqual(0, bytes[2] & 0x20, "DIR bit should be set");
     }
 
     [TestMethod]
@@ -141,7 +133,7 @@ public class SetTurnoutCommandTests
         var bytes = command.GetBytesWithChecksum();
 
         // DIR bit (bit 5 of SW2) should be clear for Thrown/Red
-        Assert.IsTrue((bytes[2] & 0x20) == 0, "DIR bit should be clear");
+        Assert.AreEqual(0, bytes[2] & 0x20, "DIR bit should be clear");
     }
 
     [TestMethod]
@@ -151,7 +143,7 @@ public class SetTurnoutCommandTests
         var bytes = command.GetBytesWithChecksum();
 
         // ON bit (bit 4 of SW2) should be set
-        Assert.IsTrue((bytes[2] & 0x10) != 0, "ON bit should be set");
+        Assert.AreNotEqual(0, bytes[2] & 0x10, "ON bit should be set");
     }
 
     [TestMethod]
@@ -161,21 +153,13 @@ public class SetTurnoutCommandTests
         var bytes = command.GetBytesWithChecksum();
 
         // ON bit (bit 4 of SW2) should be clear
-        Assert.IsTrue((bytes[2] & 0x10) == 0, "ON bit should be clear");
+        Assert.AreEqual(0, bytes[2] & 0x10, "ON bit should be clear");
     }
 }
 
 [TestClass]
 public class SwitchAcknowledgeCommandTests
 {
-    // ===== Operation Code Tests =====
-
-    [TestMethod]
-    public void SwitchAcknowledgeCommand_HasCorrectOperationCode()
-    {
-        Assert.AreEqual(0xBD, SwitchAcknowledgeCommand.OperationCode);
-    }
-
     [TestMethod]
     public void SwitchAcknowledgeCommand_GeneratesCorrectOpcode_InBytes()
     {
@@ -188,8 +172,6 @@ public class SwitchAcknowledgeCommandTests
 
         Assert.AreEqual(0xBD, bytes[0]);
     }
-
-    // ===== Factory Method Tests =====
 
     [TestMethod]
     public void Throw_CreatesCommand_WithThrownDirection()
@@ -208,26 +190,11 @@ public class SwitchAcknowledgeCommandTests
         Assert.AreEqual(AccessoryFunction.ClosedOrGreen, command.Direction);
         Assert.AreEqual(OutputState.On, command.Output);
     }
-
-    // ===== Difference from SetTurnoutCommand =====
-
-    [TestMethod]
-    public void SwitchAcknowledgeCommand_HasDifferentOpcode_ThanSetTurnoutCommand()
-    {
-        Assert.AreNotEqual(SetTurnoutCommand.OperationCode, SwitchAcknowledgeCommand.OperationCode);
-    }
 }
 
 [TestClass]
 public class RequestSwitchStateCommandTests
 {
-    // ===== Operation Code Tests =====
-
-    [TestMethod]
-    public void RequestSwitchStateCommand_HasCorrectOperationCode()
-    {
-        Assert.AreEqual(0xBC, RequestSwitchStateCommand.OperationCode);
-    }
 
     [TestMethod]
     public void RequestSwitchStateCommand_GeneratesCorrectOpcode_InBytes()
@@ -237,8 +204,6 @@ public class RequestSwitchStateCommandTests
 
         Assert.AreEqual(0xBC, bytes[0]);
     }
-
-    // ===== Address Encoding Tests =====
 
     [TestMethod]
     public void RequestSwitchStateCommand_EncodesAddressCorrectly()
@@ -250,8 +215,6 @@ public class RequestSwitchStateCommandTests
         ushort decodedAddress = (ushort)(bytes[1] | ((bytes[2] & 0x0F) << 7));
         Assert.AreEqual(500, decodedAddress);
     }
-
-    // ===== All Commands Have Different Opcodes =====
 
     [TestMethod]
     public void AllSwitchCommands_HaveDistinctOpcodes()

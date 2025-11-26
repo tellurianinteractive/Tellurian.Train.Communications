@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using Tellurian.Trains.Interfaces.Extensions;
 using Tellurian.Trains.Protocols.LocoNet.Notifications;
 
 [assembly: InternalsVisibleTo("Tellurian.Trains.Protocols.LocoNet.Tests")]
@@ -88,16 +87,4 @@ public class Message
     {
         return GetType().Name;
     }
-}
-
-public static class MessageExtensions
-{
-    extension(Message message)
-    {
-        public Interfaces.Notification[] Map =>
-                message is null ?
-                [] :
-                MapDefaults.CreateUnmapped(message.ToString()); // We do not support LocoNet notifications yet.
-    }
-
 }

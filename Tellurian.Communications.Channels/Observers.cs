@@ -2,7 +2,7 @@
 
 public sealed class Observers<T> where T : class
 {
-    private readonly List<IObserver<T>> _Observers = new List<IObserver<T>>();
+    private readonly List<IObserver<T>> _Observers = [];
 
     public int Count => _Observers.Count;
 

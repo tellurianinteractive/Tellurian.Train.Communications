@@ -76,9 +76,9 @@ public class SlotDataConsistExtensionsTests
         byte leadSlot = 5;
         byte memberSlot = 10;
 
-        var commands = leadSlot.BuildConsist(memberSlot);
+        var commands = leadSlot.BuildConsist([memberSlot]);
 
-        Assert.AreEqual(1, commands.Length);
+        Assert.HasCount(1, commands);
         Assert.AreEqual(memberSlot, commands[0].SlaveSlot);
         Assert.AreEqual(leadSlot, commands[0].MasterSlot);
     }
@@ -91,7 +91,7 @@ public class SlotDataConsistExtensionsTests
 
         var commands = leadSlot.BuildConsist(memberSlots);
 
-        Assert.AreEqual(3, commands.Length);
+        Assert.HasCount(3, commands);
 
         // All commands should link to the same lead slot
         for (int i = 0; i < commands.Length; i++)
@@ -119,7 +119,7 @@ public class SlotDataConsistExtensionsTests
     public void BuildConsist_CreatesLinkSlotsCommands_WithCorrectOpcode()
     {
         byte leadSlot = 1;
-        var commands = leadSlot.BuildConsist(2);
+        var commands = leadSlot.BuildConsist(new byte[2]);
 
         // Verify the command generates correct bytes
         var bytes = commands[0].GetBytesWithChecksum();
@@ -136,7 +136,7 @@ public class SlotDataConsistExtensionsTests
 
         var commands = leadSlot.BreakConsist(memberSlots);
 
-        Assert.AreEqual(1, commands.Length);
+        Assert.HasCount(1, commands);
         Assert.AreEqual(10, commands[0].SlaveSlot);
         Assert.AreEqual(leadSlot, commands[0].MasterSlot);
     }
@@ -149,7 +149,7 @@ public class SlotDataConsistExtensionsTests
 
         var commands = leadSlot.BreakConsist(memberSlots);
 
-        Assert.AreEqual(3, commands.Length);
+        Assert.HasCount(3, commands);
 
         // All commands should unlink from the same lead slot
         for (int i = 0; i < commands.Length; i++)

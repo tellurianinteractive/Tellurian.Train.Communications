@@ -41,7 +41,7 @@ public static class SlotDataConsistExtensions
         /// </summary>
         /// <param name="memberSlots">Member locomotive slots (will follow the lead)</param>
         /// <returns>Array of link commands to execute in sequence</returns>
-        public LinkSlotsCommand[] BuildConsist(params byte[] memberSlots)
+        public LinkSlotsCommand[] BuildConsist(byte[] memberSlots)
         {
             if (memberSlots == null || memberSlots.Length == 0)
                 throw new ArgumentException("At least one member slot is required", nameof(memberSlots));

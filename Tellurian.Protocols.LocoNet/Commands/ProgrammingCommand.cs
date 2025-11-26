@@ -16,14 +16,13 @@ public sealed class ProgrammingCommand : Command
         ProgrammingMode mode,
         ProgrammingOperation operation,
         int cvNumber,
-        byte dataValue,
+        byte cvValue,
         ushort locomotiveAddress,
         byte trackStatus)
     {
         Mode = mode;
         Operation = operation;
-        CvNumber = cvNumber;
-        DataValue = dataValue;
+        CV = new() { Number=cvNumber, Value = cvValue};
         LocomotiveAddress = locomotiveAddress;
         TrackStatus = trackStatus;
     }
@@ -41,12 +40,7 @@ public sealed class ProgrammingCommand : Command
     /// <summary>
     /// CV number to program (1-1024).
     /// </summary>
-    public int CvNumber { get; }
-
-    /// <summary>
-    /// Data value to write (0-255). Ignored for read operations.
-    /// </summary>
-    public byte DataValue { get; }
+    public CV CV { get; }
 
     /// <summary>
     /// Locomotive address for operations mode (POM). Zero for service mode.
@@ -164,8 +158,8 @@ public sealed class ProgrammingCommand : Command
         data[2] = ProgrammingSlot; // Slot 124
 
         // Build PCMD byte
-        byte pcmd = ProgrammingHelper.BuildPcmd(Mode, Operation);
-        data[3] = pcmd;
+        byte programmingCommandByte = ProgrammingHelper.BuildProgrammingCommandByte(Mode, Operation);
+        data[3] = programmingCommandByte;
 
         data[4] = 0x00; // Reserved
 
@@ -185,7 +179,7 @@ public sealed class ProgrammingCommand : Command
         data[7] = TrackStatus; // TRK status
 
         // Encode CV and data
-        var (cvh, cvl, data7) = ProgrammingHelper.EncodeCvAndData(CvNumber, DataValue);
+        var (cvh, cvl, data7) = ProgrammingHelper.EncodeCvAndData(CV);
         data[8] = cvh; // CVH
         data[9] = cvl; // CVL
         data[10] = data7; // DATA7
@@ -202,6 +196,6 @@ public sealed class ProgrammingCommand : Command
         string modeStr = Mode.ToString();
         string addressStr = LocomotiveAddress > 0 ? $" (Loco {LocomotiveAddress})" : " (Service)";
 
-        return $"{operationStr} CV{CvNumber} {modeStr}{addressStr}";
+        return $"{operationStr} {CV} {modeStr}{addressStr}";
     }
 }
