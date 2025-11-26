@@ -23,45 +23,41 @@ public class LongAcknowledge : Notification
 
     private static bool? GetOutcome(LongAcknowledge me)
     {
-        switch (me.ForOperationCode)
+        var (outcome, message) = (me.ForOperationCode, me.ResponseCode) switch
         {
             // Switch commands (OPC_SW_REQ 0xB0, OPC_SW_ACK 0xBD)
-            case 0xB0: // OPC_SW_REQ
-            case SwitchAcknowledgeCommand.OperationCode: // OPC_SW_ACK 0xBD
-                if (me.ResponseCode == 0x7F) { me.Message = Resources.Strings.Accepted; return true; }
-                if (me.ResponseCode == 0x00) { me.Message = Resources.Strings.FifoIsFull; return false; }
-                break;
+            (0xB0, 0x7F) or (SwitchAcknowledgeCommand.OperationCode, 0x7F)
+                => (true, Resources.Strings.Accepted),
+            (0xB0, 0x00) or (SwitchAcknowledgeCommand.OperationCode, 0x00)
+                => (false, Resources.Strings.FifoIsFull),
 
             // Move slots command
-            case MoveSlotCommand.OperationCode:
-                if (me.ResponseCode == 0x00) { me.Message = Resources.Strings.IllegalMove; return false; }
-                break;
+            (MoveSlotCommand.OperationCode, 0x00)
+                => (false, Resources.Strings.IllegalMove),
 
             // Loco address request
-            case GetLocoAddressCommand.OperationCode:
-                if (me.ResponseCode == 0x00) { me.Message = "No free slots available"; return false; }
-                break;
+            (GetLocoAddressCommand.OperationCode, 0x00)
+                => (false, "No free slots available"),
 
-            // Link/Unlink slots
-            case 0xB9: // OPC_LINK_SLOTS
-                if (me.ResponseCode == 0x00) { me.Message = "Invalid link operation"; return false; }
-                break;
-            case 0xB8: // OPC_UNLINK_SLOTS
-                if (me.ResponseCode == 0x00) { me.Message = "Invalid unlink operation"; return false; }
-                break;
+            // Link slots
+            (0xB9, 0x00)
+                => (false, "Invalid link operation"),
+
+            // Unlink slots
+            (0xB8, 0x00)
+                => (false, "Invalid unlink operation"),
 
             // Programming operations (slot 124)
-            case 0x7F: // Programming responses
-                if (me.ResponseCode == 0x7F) { me.Message = "Function not implemented"; return false; }
-                if (me.ResponseCode == 0x00) { me.Message = "Programmer busy"; return false; }
-                if (me.ResponseCode == 0x01) { me.Message = "Accepted, will send response"; return true; }
-                if (me.ResponseCode == 0x40) { me.Message = "Accepted, blind operation"; return true; }
-                break;
+            (0x7F, 0x7F) => (false, "Function not implemented"),
+            (0x7F, 0x00) => (false, "Programmer busy"),
+            (0x7F, 0x01) => (true, "Accepted, will send response"),
+            (0x7F, 0x40) => (true, "Accepted, blind operation"),
 
-            default:
-                me.Message = Resources.Strings.Undecided;
-                break;
-        }
-        return null;
+            // Default case
+            _ => ((bool?)null, Resources.Strings.Undecided)
+        };
+
+        me.Message = message;
+        return outcome;
     }
 }

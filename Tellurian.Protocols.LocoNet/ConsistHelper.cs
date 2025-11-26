@@ -156,21 +156,14 @@ public static class ConsistHelper
         // Clear consist bits (bit 6 and bit 3)
         byte result = (byte)(stat1 & ~0x48);
 
-        // Set new consist bits
-        switch (consistStatus)
+        // Set new consist bits based on status
+        return consistStatus switch
         {
-            case ConsistStatus.SubMember:
-                result |= 0x08;  // SL_CONDN
-                break;
-            case ConsistStatus.ConsistTop:
-                result |= 0x40;  // SL_CONUP
-                break;
-            case ConsistStatus.MidConsist:
-                result |= 0x48;  // Both SL_CONUP and SL_CONDN
-                break;
-            // NotInConsist: bits already cleared
-        }
-
-        return result;
+            ConsistStatus.SubMember => (byte)(result | 0x08),   // SL_CONDN
+            ConsistStatus.ConsistTop => (byte)(result | 0x40),  // SL_CONUP
+            ConsistStatus.MidConsist => (byte)(result | 0x48),  // Both SL_CONUP and SL_CONDN
+            ConsistStatus.NotInConsist => result,                // Bits already cleared
+            _ => result
+        };
     }
 }

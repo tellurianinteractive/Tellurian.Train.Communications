@@ -130,6 +130,39 @@ Ask Microsoft for details on C# naming conventions.
 - Prefer **`Func<>`** and **`Action<>`** over custom delegate types
 - Use LINQ for collection manipulation
 
+### Control Flow
+- **Prefer switch-expressions over switch-statements** when each case returns a value
+- Switch-expressions are more concise and enforce exhaustive matching
+- Use switch-statements only when cases require multiple statements or side effects
+
+**Good** - Switch-expression:
+```csharp
+return status switch
+{
+    Status.Active => "Running",
+    Status.Inactive => "Stopped",
+    _ => "Unknown"
+};
+```
+
+**Avoid** - Switch-statement for simple value mapping:
+```csharp
+string result;
+switch (status)
+{
+    case Status.Active:
+        result = "Running";
+        break;
+    case Status.Inactive:
+        result = "Stopped";
+        break;
+    default:
+        result = "Unknown";
+        break;
+}
+return result;
+```
+
 ### Assebly Settings
 - Use `InternalsVisibleTo` for test projects to access internal members
 - Parallelize tests where possible using [assembly.Parallelize]
