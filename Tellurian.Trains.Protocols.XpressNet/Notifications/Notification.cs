@@ -1,4 +1,4 @@
-﻿using Tellurian.Trains.Interfaces.Decoder;
+using Tellurian.Trains.Interfaces.Decoder;
 using Tellurian.Trains.Interfaces.Extensions;
 using Tellurian.Trains.Interfaces.Locos;
 using Tellurian.Trains.Protocols.XpressNet.Decoder;
@@ -43,12 +43,13 @@ public static class NotificationExtensions
     }
 
     private static Interfaces.Notification[] MapDecoderResponse(Notification notification) =>
-        new Interfaces.Notification[] {
+        [
             notification switch
             {
-                CVOkResponse ok => DecoderResponse.Success(ok.CvAddress, ok.Value),
-                WriteCVTimeoutResponse _ => DecoderResponse.Timeout(),
-                WriteCVShortCircuitResponse _ => DecoderResponse.Shortcircuit(),
-                _ => throw new NotSupportedException() }
-        };
+                CVOkResponse ok => DecoderResponse.Success(ok.CV),
+                WriteCVTimeoutResponse => DecoderResponse.Timeout(),
+                WriteCVShortCircuitResponse => DecoderResponse.Shortcircuit(),
+                _ => throw new NotSupportedException()
+            }
+        ];
 }

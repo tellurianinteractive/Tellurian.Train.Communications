@@ -1,4 +1,5 @@
 using System.Globalization;
+using Tellurian.Trains.Interfaces.Decoder;
 
 namespace Tellurian.Trains.Protocols.LocoNet.Programming;
 

@@ -1,17 +1,18 @@
+using Tellurian.Trains.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.XpressNet.Decoder;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Tests;
 
 [TestClass]
-public class PomCommandTests
+public class ProgramOnMainCommandTests
 {
-    #region POM Byte Write
+    #region ProgramOnMain Byte Write
 
     [TestMethod]
-    public void PomWriteByte_ReturnsCorrectBytes_ForShortAddressAndCV1()
+    public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForShortAddressAndCV1()
     {
         // Loco address 3, CV 1, value 0x55
-        var target = new PomWriteByteCommand(new LocoAddress(3), 1, 0x55);
+        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(3), new CV(1, 0x55));
         var data = target.GetData();
 
         Assert.AreEqual(0xE6, data[0]);     // Header with length 6
@@ -24,10 +25,10 @@ public class PomCommandTests
     }
 
     [TestMethod]
-    public void PomWriteByte_ReturnsCorrectBytes_ForLongAddressAndCV256()
+    public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForLongAddressAndCV256()
     {
         // Loco address 9999, CV 256, value 0xAA
-        var target = new PomWriteByteCommand(new LocoAddress(9999), 256, 0xAA);
+        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(9999), new CV(256, 0xAA));
         var data = target.GetData();
 
         Assert.AreEqual(0xE6, data[0]);     // Header with length 6
@@ -41,10 +42,10 @@ public class PomCommandTests
     }
 
     [TestMethod]
-    public void PomWriteByte_ReturnsCorrectBytes_ForCV257()
+    public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForCV257()
     {
         // CV 257 requires upper bits - wire CV = 256 = 0x100
-        var target = new PomWriteByteCommand(new LocoAddress(3), 257, 0x42);
+        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(3), new CV(257, 0x42));
         var data = target.GetData();
 
         Assert.AreEqual(0xED, data[4]);     // Mode byte (0xEC + 1 for CV 257-512)
@@ -53,10 +54,10 @@ public class PomCommandTests
     }
 
     [TestMethod]
-    public void PomWriteByte_ReturnsCorrectBytes_ForCV513()
+    public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForCV513()
     {
         // CV 513 = wire 512 = 0x200, upper 2 bits = 2
-        var target = new PomWriteByteCommand(new LocoAddress(3), 513, 0x77);
+        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(3), new CV(513, 0x77));
         var data = target.GetData();
 
         Assert.AreEqual(0xEE, data[4]);     // Mode byte (0xEC + 2)
@@ -65,10 +66,10 @@ public class PomCommandTests
     }
 
     [TestMethod]
-    public void PomWriteByte_ReturnsCorrectBytes_ForCV769()
+    public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForCV769()
     {
         // CV 769 = wire 768 = 0x300, upper 2 bits = 3
-        var target = new PomWriteByteCommand(new LocoAddress(3), 769, 0x99);
+        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(3), new CV(769, 0x99));
         var data = target.GetData();
 
         Assert.AreEqual(0xEF, data[4]);     // Mode byte (0xEC + 3)
@@ -77,10 +78,10 @@ public class PomCommandTests
     }
 
     [TestMethod]
-    public void PomWriteByte_ReturnsCorrectBytes_ForCV1024()
+    public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForCV1024()
     {
         // CV 1024 = wire 1023 = 0x3FF, upper 2 bits = 3
-        var target = new PomWriteByteCommand(new LocoAddress(3), 1024, 0xBB);
+        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(3), new CV(1024, 0xBB));
         var data = target.GetData();
 
         Assert.AreEqual(0xEF, data[4]);     // Mode byte (0xEC + 3)
@@ -89,22 +90,22 @@ public class PomCommandTests
     }
 
     [TestMethod]
-    public void PomWriteByte_Throws_WhenCVIsZero()
+    public void ProgramOnMainWriteByte_Throws_WhenCVIsZero()
     {
         try
         {
-            _ = new PomWriteByteCommand(new LocoAddress(3), 0, 0x00);
+            _ = new CV(0, 0x00);
             Assert.Fail("Expected ArgumentOutOfRangeException");
         }
         catch (ArgumentOutOfRangeException) { }
     }
 
     [TestMethod]
-    public void PomWriteByte_Throws_WhenCVIsTooHigh()
+    public void ProgramOnMainWriteByte_Throws_WhenCVIsTooHigh()
     {
         try
         {
-            _ = new PomWriteByteCommand(new LocoAddress(3), 1025, 0x00);
+            _ = new CV(1025, 0x00);
             Assert.Fail("Expected ArgumentOutOfRangeException");
         }
         catch (ArgumentOutOfRangeException) { }
@@ -112,13 +113,13 @@ public class PomCommandTests
 
     #endregion
 
-    #region POM Bit Write
+    #region ProgramOnMain Bit Write
 
     [TestMethod]
-    public void PomWriteBit_ReturnsCorrectBytes_ForBit0SetTo1()
+    public void ProgramOnMainWriteBit_ReturnsCorrectBytes_ForBit0SetTo1()
     {
         // Loco address 3, CV 29, bit 0, value 1
-        var target = new PomWriteBitCommand(new LocoAddress(3), 29, 0, true);
+        var target = new ProgramOnMainWriteBitCommand(new LocoAddress(3), 29, 0, true);
         var data = target.GetData();
 
         Assert.AreEqual(0xE6, data[0]);     // Header with length 6
@@ -131,10 +132,10 @@ public class PomCommandTests
     }
 
     [TestMethod]
-    public void PomWriteBit_ReturnsCorrectBytes_ForBit7SetTo0()
+    public void ProgramOnMainWriteBit_ReturnsCorrectBytes_ForBit7SetTo0()
     {
         // Loco address 3, CV 29, bit 7, value 0
-        var target = new PomWriteBitCommand(new LocoAddress(3), 29, 7, false);
+        var target = new ProgramOnMainWriteBitCommand(new LocoAddress(3), 29, 7, false);
         var data = target.GetData();
 
         Assert.AreEqual(0xE8, data[4]);     // Mode byte
@@ -143,10 +144,10 @@ public class PomCommandTests
     }
 
     [TestMethod]
-    public void PomWriteBit_ReturnsCorrectBytes_ForBit3SetTo1()
+    public void ProgramOnMainWriteBit_ReturnsCorrectBytes_ForBit3SetTo1()
     {
         // Loco address 100, CV 1, bit 3, value 1
-        var target = new PomWriteBitCommand(new LocoAddress(100), 1, 3, true);
+        var target = new ProgramOnMainWriteBitCommand(new LocoAddress(100), 1, 3, true);
         var data = target.GetData();
 
         Assert.AreEqual(0x00, data[2]);     // Address High (short address < 128)
@@ -157,10 +158,10 @@ public class PomCommandTests
     }
 
     [TestMethod]
-    public void PomWriteBit_ReturnsCorrectBytes_ForLongAddressAndHighCV()
+    public void ProgramOnMainWriteBit_ReturnsCorrectBytes_ForLongAddressAndHighCV()
     {
         // Loco address 1000, CV 513, bit 5, value 0
-        var target = new PomWriteBitCommand(new LocoAddress(1000), 513, 5, false);
+        var target = new ProgramOnMainWriteBitCommand(new LocoAddress(1000), 513, 5, false);
         var data = target.GetData();
 
         // Address 1000 = 0x03E8, with long address flag -> 0xC3, 0xE8
@@ -172,33 +173,33 @@ public class PomCommandTests
     }
 
     [TestMethod]
-    public void PomWriteBit_Throws_WhenBitPositionTooHigh()
+    public void ProgramOnMainWriteBit_Throws_WhenBitPositionTooHigh()
     {
         try
         {
-            _ = new PomWriteBitCommand(new LocoAddress(3), 29, 8, true);
+            _ = new ProgramOnMainWriteBitCommand(new LocoAddress(3), 29, 8, true);
             Assert.Fail("Expected ArgumentOutOfRangeException");
         }
         catch (ArgumentOutOfRangeException) { }
     }
 
     [TestMethod]
-    public void PomWriteBit_Throws_WhenCVIsZero()
+    public void ProgramOnMainWriteBit_Throws_WhenCVIsZero()
     {
         try
         {
-            _ = new PomWriteBitCommand(new LocoAddress(3), 0, 0, true);
+            _ = new ProgramOnMainWriteBitCommand(new LocoAddress(3), 0, 0, true);
             Assert.Fail("Expected ArgumentOutOfRangeException");
         }
         catch (ArgumentOutOfRangeException) { }
     }
 
     [TestMethod]
-    public void PomWriteBit_Throws_WhenCVIsTooHigh()
+    public void ProgramOnMainWriteBit_Throws_WhenCVIsTooHigh()
     {
         try
         {
-            _ = new PomWriteBitCommand(new LocoAddress(3), 1025, 0, true);
+            _ = new ProgramOnMainWriteBitCommand(new LocoAddress(3), 1025, 0, true);
             Assert.Fail("Expected ArgumentOutOfRangeException");
         }
         catch (ArgumentOutOfRangeException) { }

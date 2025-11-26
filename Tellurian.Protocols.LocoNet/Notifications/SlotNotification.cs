@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+using System.Globalization;
+using Tellurian.Trains.Interfaces.Decoder;
 using Tellurian.Trains.Interfaces.Extensions;
 using Tellurian.Trains.Protocols.LocoNet.Programming;
 

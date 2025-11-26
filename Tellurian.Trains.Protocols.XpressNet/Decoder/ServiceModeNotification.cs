@@ -1,3 +1,4 @@
+using Tellurian.Trains.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.XpressNet.Notifications;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Decoder;
@@ -53,6 +54,11 @@ public sealed class ServiceModeRegisterPagedNotification : ServiceModeNotificati
     /// Gets the value read from the decoder.
     /// </summary>
     public byte Value => Data[2];
+
+    /// <summary>
+    /// Gets the CV number and value as a CV struct.
+    /// </summary>
+    public CV CV => new(CvNumber, Value);
 }
 
 /// <summary>
@@ -90,4 +96,9 @@ public sealed class ServiceModeDirectCVNotification : ServiceModeNotification
     /// Gets the value read from the decoder.
     /// </summary>
     public byte Value => Data[2];
+
+    /// <summary>
+    /// Gets the CV number and value as a CV struct.
+    /// </summary>
+    public CV CV => new(CvNumber, Value);
 }

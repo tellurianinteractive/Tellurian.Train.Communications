@@ -326,7 +326,9 @@ if (slot is SlotNotification slotMsg && slotMsg.IsProgrammingSlot)
     var result = slotMsg.ProgrammingResult;
     if (result?.IsSuccess == true)
     {
-        Console.WriteLine($"CV{result.CvNumber} = {result.CvValue}");
+        Console.WriteLine($"{result.CV}");  // "CV29=value"
+        // Or access individual properties:
+        // result.CV.Number, result.CV.Value
     }
     else
     {
@@ -533,11 +535,17 @@ var decoded = AccessoryAddress.DecodeSwitchBytes(
 
 ### CV (Configuration Variable)
 
+The `CV` struct is defined in `Tellurian.Trains.Interfaces.Decoder` and can be used across all protocol implementations.
+
 ```csharp
+using Tellurian.Trains.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.LocoNet.Programming;
 
-// Create CV
-var cv = new CV { Number = 29, Value = 6 };
+// Create CV using constructor
+var cv = new CV(29, 6);  // CV29 = 6
+
+// Create CV using extension method
+var cv2 = 29.CV(6);  // CV29 = 6
 
 // Properties
 int number = cv.Number;   // 1-1024
@@ -547,15 +555,15 @@ byte value = cv.Value;    // 0-255
 Console.WriteLine(cv.ToString());  // "CV29=6"
 
 // Equality
-var cv1 = new CV { Number = 29, Value = 6 };
-var cv2 = new CV { Number = 29, Value = 6 };
+var cv1 = new CV(29, 6);
+var cv2 = new CV(29, 6);
 bool equal = cv1 == cv2;  // true
 
-// Encode for protocol transmission
-var (cvh, cvl, data7) = cv.EncodeCvAndData();
+// Encode for LocoNet protocol transmission (extension method)
+var (cvh, cvl, data7) = cv.EncodeToBytes();
 
-// Decode from protocol bytes
-CV decoded = ProgrammingHelper.DecodeCvAndData(cvh, cvl, data7);
+// Decode from LocoNet protocol bytes (extension method)
+CV decoded = CV.DecodeFromBytes(cvh, cvl, data7);
 ```
 
 ### Enums
@@ -613,26 +621,24 @@ byte[] withChecksum = Message.AppendChecksum(dataWithoutChecksum);
 ### Programming Helpers
 
 ```csharp
+using Tellurian.Trains.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.LocoNet.Programming;
 
-// Build PCMD byte
-byte pcmd = ProgrammingHelper.BuildPcmd(
-    mode: ProgrammingMode.DirectModeByteService,
+// Build PCMD byte (extension method on ProgrammingMode)
+byte pcmd = ProgrammingMode.DirectModeByteService.BuildProgrammingCommandByte(
     operation: ProgrammingOperation.Write
 );
 
-// Encode CV and data
-var (cvh, cvl, data7) = ProgrammingHelper.EncodeCvAndData(
-    cvNumber: 29,
-    dataValue: 6
-);
+// Encode CV and data for LocoNet transmission (extension method on CV)
+var cv = new CV(29, 6);
+var (cvh, cvl, data7) = cv.EncodeToBytes();
 
-// Decode CV and data
-var (cvNumber, dataValue) = ProgrammingHelper.DecodeCvAndData(cvh, cvl, data7);
+// Decode CV and data from LocoNet bytes (extension method on CV)
+CV decoded = CV.DecodeFromBytes(cvh, cvl, data7);
 
-// Check status
-bool success = ProgrammingHelper.IsSuccess(status);
-string message = ProgrammingHelper.GetStatusMessage(status);
+// Check status (extension methods on ProgrammingStatus)
+bool success = status.IsSuccess();
+string message = status.GetMessage();
 ```
 
 ### Consist Helpers

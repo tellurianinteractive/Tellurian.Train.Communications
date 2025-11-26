@@ -28,6 +28,10 @@ Decoder programming interface providing:
 - **`LocoDirection`**: Forward/backward/unchanged
 - **`LocoFunction`**: Function number (F0-F28) with on/off state
 
+### Decoder Types
+- **`CV`**: Configuration variable with number (1-1024) and value (0-255). Protocol-agnostic struct for CV operations.
+- **`DecoderResponse`**: Result of a decoder programming operation (success/failure with CV data).
+
 ### Notifications
 Abstract notification types for broadcasting state changes:
 - System state changes (power, emergency stop, short circuit)

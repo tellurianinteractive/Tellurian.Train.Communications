@@ -2,7 +2,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System.Net;
 using Tellurian.Communications.Channels;
 using Tellurian.Trains.Protocols.XpressNet.Decoder;
-using Tellurian.Trains.Interfaces.Extensions;
 using Tellurian.Trains.Interfaces.Decoder;
 
 
@@ -81,7 +80,7 @@ public class IntegrationTests
     [Ignore]
     public async Task ReadLocoCV()
     {
-        await (Target?.SendAsync(new ReadCVCommand(29.CV()), TestContext.CancellationToken) ?? Task.FromResult(false));
+        await (Target?.SendAsync(new ReadCVCommand(29), TestContext.CancellationToken) ?? Task.FromResult(false));
         await Task.Delay(3000, TestContext.CancellationToken);
         Assert.IsNotEmpty(Observer.Notifications);
         var response = Observer.Notifications[0];

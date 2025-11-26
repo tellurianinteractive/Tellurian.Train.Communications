@@ -336,9 +336,12 @@ SendCommand(resultsCmd);
 // Handle response
 if (notification is ServiceModeDirectCVNotification cvResponse)
 {
-    byte cvValue = cvResponse.Value;
+    // Use the CV property for convenience
+    Console.WriteLine($"{cvResponse.CV}");  // "CV29=value"
+
+    // Or access individual properties
     ushort cvNumber = cvResponse.CvNumber;
-    Console.WriteLine($"CV{cvNumber} = {cvValue}");
+    byte cvValue = cvResponse.Value;
 }
 ```
 
@@ -421,17 +424,14 @@ switch (notification)
 ### POM Byte Write
 
 ```csharp
+using Tellurian.Trains.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.XpressNet.Decoder;
 
 var address = new LocoAddress(1234);
 
-// Write CV29 = 6 on main track
-var pomWrite = new PomWriteByteCommand(address, 29, 6);
+// Write CV29 = 6 on main track using CV struct
+var pomWrite = new ProgramOnMainWriteByteCommand(address, new CV(29, 6));
 SendCommand(pomWrite);
-
-// Using CvAddress type
-var cvAddr = new CvAddress(29);
-var pomWrite2 = new PomWriteByteCommand(address, cvAddr, 6);
 ```
 
 ### POM Bit Write
@@ -440,8 +440,8 @@ var pomWrite2 = new PomWriteByteCommand(address, cvAddr, 6);
 var address = new LocoAddress(1234);
 
 // Write bit 5 of CV29 = 1
-var pomBit = new PomWriteBitCommand(address, 29, bitPosition: 5, bitValue: true);
-SendCommand(pomBit);
+var writeBit = new ProgramOnMainWriteBitCommand(address, 29, bitPosition: 5, bitValue: true);
+SendCommand(writeBit);
 
 // Bit position 0-7 (0 = LSB, 7 = MSB)
 ```
@@ -449,9 +449,9 @@ SendCommand(pomBit);
 ### CV Range for POM
 
 ```csharp
-// POM supports CV 1-1024
-var cvLow = new PomWriteByteCommand(address, cv: 1, value: 3);
-var cvHigh = new PomWriteByteCommand(address, cv: 1024, value: 0);
+// ProgramOnMain supports CV 1-1024
+var cvLow = new ProgramOnMainWriteByteCommand(address, new CV(1, 3));
+var cvHigh = new ProgramOnMainWriteByteCommand(address, new CV(1024, 0));
 ```
 
 ---
@@ -791,12 +791,25 @@ SpeedSteps steps = speed.Steps;    // Step mode enum
 var decoded = LocoSpeed.FromCode(0x04); // S126 mode
 ```
 
-### CvAddress
+### CV (Configuration Variable)
+
+The `CV` struct from `Tellurian.Trains.Interfaces.Decoder` holds both the CV number and value:
 
 ```csharp
-// CV addresses (1-1024)
-var cv = new CvAddress(29);
-int value = cv.Value;
+using Tellurian.Trains.Interfaces.Decoder;
+
+// Create CV using constructor
+var cv = new CV(29, 6);  // CV29 = 6
+
+// Create CV using extension method
+var cv2 = 29.CV(6);  // CV29 = 6
+
+// Properties
+int number = cv.Number;   // 1-1024
+byte value = cv.Value;    // 0-255
+
+// Display
+Console.WriteLine(cv.ToString());  // "CV29=6"
 ```
 
 ### Enums

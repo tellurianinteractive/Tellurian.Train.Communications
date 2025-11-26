@@ -1,4 +1,4 @@
-﻿using Tellurian.Trains.Interfaces.Extensions;
+using Tellurian.Trains.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.XpressNet.Notifications;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Decoder;
@@ -22,6 +22,15 @@ public sealed class WriteCVTimeoutResponse : WriteCVResponse
 public sealed class CVOkResponse : WriteCVResponse
 {
     internal CVOkResponse(byte[] data) : base(0x61, data) { }
-    public CvAddress CvAddress => new CvAddress(Data, 2);
-    public byte Value => Data[4];
+
+    /// <summary>
+    /// Gets the CV number and value.
+    /// </summary>
+    public CV CV => new(DecodeCvNumber(), Data[4]);
+
+    /// <summary>
+    /// Decodes CV number from wire format (MSB at offset 3, LSB at offset 2).
+    /// Wire value 0-1023 maps to CV number 1-1024.
+    /// </summary>
+    private int DecodeCvNumber() => ((Data[3] << 8) + Data[2]) + 1;
 }

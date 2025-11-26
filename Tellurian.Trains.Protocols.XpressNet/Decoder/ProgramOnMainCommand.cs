@@ -1,4 +1,4 @@
-using Tellurian.Trains.Interfaces.Extensions;
+using Tellurian.Trains.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.XpressNet.Commands;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Decoder;
@@ -51,28 +51,15 @@ public abstract class ProgramOnMainCommand : Command
 ///
 /// Note: XpressNet devices should not permit changes to the decoder's active locomotive address.
 /// </remarks>
-public sealed class PomWriteByteCommand : ProgramOnMainCommand
+public sealed class ProgramOnMainWriteByteCommand : ProgramOnMainCommand
 {
     /// <summary>
     /// Creates a POM byte write command.
     /// </summary>
     /// <param name="address">Locomotive address (1-9999)</param>
-    /// <param name="cv">CV number (1-1024)</param>
-    /// <param name="value">Value to write (0-255)</param>
-    public PomWriteByteCommand(LocoAddress address, CvAddress cv, byte value)
-        : base(GetData(address, cv, value)) { }
-
-    /// <summary>
-    /// Creates a POM byte write command.
-    /// </summary>
-    /// <param name="address">Locomotive address (1-9999)</param>
-    /// <param name="cv">CV number (1-1024)</param>
-    /// <param name="value">Value to write (0-255)</param>
-    public PomWriteByteCommand(LocoAddress address, ushort cv, byte value)
-        : base(GetData(address, cv, value)) { }
-
-    private static byte[] GetData(LocoAddress address, CvAddress cv, byte value) =>
-        GetData(address, (ushort)cv.Value, value);
+    /// <param name="cv">CV with number (1-1024) and value (0-255)</param>
+    public ProgramOnMainWriteByteCommand(LocoAddress address, CV cv)
+        : base(GetData(address, (ushort)cv.Number, cv.Value)) { }
 
     private static byte[] GetData(LocoAddress address, ushort cv, byte value)
     {
@@ -106,38 +93,25 @@ public sealed class PomWriteByteCommand : ProgramOnMainCommand
 ///
 /// Note: XpressNet devices should not permit changes to the decoder's active locomotive address.
 /// </remarks>
-public sealed class PomWriteBitCommand : ProgramOnMainCommand
+public sealed class ProgramOnMainWriteBitCommand : ProgramOnMainCommand
 {
     /// <summary>
     /// Creates a POM bit write command.
     /// </summary>
     /// <param name="address">Locomotive address (1-9999)</param>
-    /// <param name="cv">CV number (1-1024)</param>
+    /// <param name="cvNumber">CV number (1-1024)</param>
     /// <param name="bitPosition">Bit position within the CV (0-7, where 0 is LSB)</param>
     /// <param name="bitValue">Bit value to write (true=1, false=0)</param>
-    public PomWriteBitCommand(LocoAddress address, CvAddress cv, byte bitPosition, bool bitValue)
-        : base(GetData(address, cv, bitPosition, bitValue)) { }
+    public ProgramOnMainWriteBitCommand(LocoAddress address, ushort cvNumber, byte bitPosition, bool bitValue)
+        : base(GetData(address, cvNumber, bitPosition, bitValue)) { }
 
-    /// <summary>
-    /// Creates a POM bit write command.
-    /// </summary>
-    /// <param name="address">Locomotive address (1-9999)</param>
-    /// <param name="cv">CV number (1-1024)</param>
-    /// <param name="bitPosition">Bit position within the CV (0-7, where 0 is LSB)</param>
-    /// <param name="bitValue">Bit value to write (true=1, false=0)</param>
-    public PomWriteBitCommand(LocoAddress address, ushort cv, byte bitPosition, bool bitValue)
-        : base(GetData(address, cv, bitPosition, bitValue)) { }
-
-    private static byte[] GetData(LocoAddress address, CvAddress cv, byte bitPosition, bool bitValue) =>
-        GetData(address, (ushort)cv.Value, bitPosition, bitValue);
-
-    private static byte[] GetData(LocoAddress address, ushort cv, byte bitPosition, bool bitValue)
+    private static byte[] GetData(LocoAddress address, ushort cvNumber, byte bitPosition, bool bitValue)
     {
-        ValidateCv(cv);
+        ValidateCv(cvNumber);
         if (bitPosition > 7)
             throw new ArgumentOutOfRangeException(nameof(bitPosition), "Bit position must be between 0 and 7");
 
-        var (cvUpper, cvLower) = EncodeCv(cv);
+        var (cvUpper, cvLower) = EncodeCv(cvNumber);
         var addrBytes = address.GetBytesAccordingToXpressNet();
         var bitByte = (byte)(0xF0 + (bitValue ? 0x08 : 0x00) + bitPosition);
 

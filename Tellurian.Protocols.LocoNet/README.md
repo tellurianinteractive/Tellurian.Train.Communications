@@ -282,7 +282,7 @@ if (ack is LongAcknowledge longAck && longAck.ResponseCode == 0x01)
         var progResult = slot.ProgrammingResult;
         if (progResult?.IsSuccess == true)
         {
-            Console.WriteLine($"CV29 = {progResult.CvValue}");
+            Console.WriteLine($"{progResult.CV}");  // "CV29=value"
         }
         else
         {

@@ -180,7 +180,7 @@ SendCommand(resultsCmd);
 // Handle response
 if (notification is ServiceModeDirectCVNotification cvResponse)
 {
-    Console.WriteLine($"CV{cvResponse.CvNumber} = {cvResponse.Value}");
+    Console.WriteLine($"{cvResponse.CV}");  // "CV29=value"
 }
 
 // Write CV3 = 10 using Direct Mode
@@ -188,18 +188,18 @@ var writeCmd = new ServiceModeWriteDirectCommand(3, 10);
 SendCommand(writeCmd);
 ```
 
-### CV Programming (Operations Mode - POM)
+### CV Programming (Operations Mode - ProgramOnMain)
 
 ```csharp
 var address = new LocoAddress(1234);
 
 // Write CV29 = 6 while locomotive is on main track
-var pomWrite = new PomWriteByteCommand(address, 29, 6);
-SendCommand(pomWrite);
+var writeByte = new ProgramOnMainWriteByteCommand(address, new CV(29, 6));
+SendCommand(writeByte);
 
 // Write single bit (CV29 bit 5 = 1)
-var pomBit = new PomWriteBitCommand(address, 29, 5, true);
-SendCommand(pomBit);
+var writeBit = new ProgramOnMainWriteBitCommand(address, 29, 5, true);
+SendCommand(writeBit);
 ```
 
 ### Double Header Operations
@@ -331,7 +331,7 @@ var speed126 = new LocoSpeed(64, SpeedSteps.S126);
 - **Track Power**: `TrackPowerOnCommand`, `TrackPowerOffCommand`, `EmergencyStopCommand`
 - **Accessories**: `AccessoryFunctionCommand`, `AccessoryInfoRequestCommand`
 - **Service Mode**: `ServiceModeReadDirectCommand`, `ServiceModeWriteDirectCommand`, `ServiceModeResultsCommand`
-- **Operations Mode**: `PomWriteByteCommand`, `PomWriteBitCommand`
+- **Operations Mode**: `ProgramOnMainWriteByteCommand`, `ProgramOnMainWriteBitCommand`
 - **Double Header**: `EstablishDoubleHeaderCommand`, `DissolveDoubleHeaderCommand`
 - **Multi-Unit**: `AddLocoToMultiUnitCommand`, `RemoveLocoFromMultiUnitCommand`
 - **Address Search**: `AddressInquiryStackCommand`, `AddressInquiryMultiUnitCommand`, `DeleteLocoFromStackCommand`
@@ -352,7 +352,7 @@ var speed126 = new LocoSpeed(64, SpeedSteps.S126);
 - `LocoSpeed` - Speed with step mode
 - `LocoDirection` - Forward/Backward/Unchanged
 - `LocoFunctionStates` - F0-F28 states
-- `CvAddress` - CV number (1-1024)
+- `CV` - Configuration variable with number (1-1024) and value (0-255)
 
 ## Error Handling
 

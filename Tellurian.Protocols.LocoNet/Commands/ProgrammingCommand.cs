@@ -1,3 +1,4 @@
+using Tellurian.Trains.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.LocoNet.Programming;
 
 namespace Tellurian.Trains.Protocols.LocoNet.Commands;
@@ -22,7 +23,7 @@ public sealed class ProgrammingCommand : Command
     {
         Mode = mode;
         Operation = operation;
-        CV = new() { Number=cvNumber, Value = cvValue};
+        CV = new CV(cvNumber, cvValue);
         LocomotiveAddress = locomotiveAddress;
         TrackStatus = trackStatus;
     }
