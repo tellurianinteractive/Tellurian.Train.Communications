@@ -4,7 +4,7 @@ namespace Tellurian.Trains.Protocols.XpressNet.Notifications;
 
 public sealed class LocoInfoNotification : Notification
 {
-    internal LocoInfoNotification(byte[] buffer) : base(0xE0, GetData(buffer)) { }
+    public LocoInfoNotification(byte[] buffer) : base(0xE0, GetData(buffer)) { }
 
     public LocoAddress Address { get { return new LocoAddress(Data.Take(2).ToArray()); } }
     public LocoDirection Direction { get { return (Data[3] & 0x80) > 0 ? LocoDirection.Forward : LocoDirection.Backward; } }

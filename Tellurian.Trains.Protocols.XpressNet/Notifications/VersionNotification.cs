@@ -10,7 +10,7 @@ namespace Tellurian.Trains.Protocols.XpressNet.Notifications;
 /// </summary>
 public sealed class VersionNotification : Notification
 {
-    internal VersionNotification(byte[] buffer) : base(GetHeader, buffer, IsExpectedLength) { }
+    public VersionNotification(byte[] buffer) : base(GetHeader, buffer, IsExpectedLength) { }
 
     private static byte GetHeader(byte[] buffer)
     {

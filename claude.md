@@ -48,6 +48,9 @@ dotnet test --list-tests
 ### Package Creation
 The build automatically creates NuGet packages for distributable projects.
 
+When copiled in Release mode, the packages are located in the `bin/Release` directories of each project.
+
+
 ## Architecture
 
 The library follows a **layered architecture** with clear separation of concerns:
@@ -126,6 +129,12 @@ Ask Microsoft for details on C# naming conventions.
 - Use **collection expressions** for initialization: `string[] items = ["a", "b"];`
 - Prefer **`Func<>`** and **`Action<>`** over custom delegate types
 - Use LINQ for collection manipulation
+
+### Assebly Settings
+- Use `InternalsVisibleTo` for test projects to access internal members
+- Parallelize tests where possible using [assembly.Parallelize]
+- Write any assembly-level attributes in `_AssemblySettings.cs`
+
 
 ## Testing Strategy
 

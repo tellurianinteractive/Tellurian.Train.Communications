@@ -47,7 +47,7 @@ public struct LocoSpeed : IEquatable<LocoSpeed>
     public void SetSpeed(byte step) => Step(step > MaxSteps ? Step(MaxSteps) : step);
     public void SetMax() =>  Current = Step(MaxSteps);
     public void SetZero() => Current = ZeroStep;
-    internal byte GetSpeed(float percentage) => _stepsData[percentage < 0 ? 0 : percentage > 1 ? MaxSteps : (byte)(percentage * MaxSteps)];
+    public byte GetSpeed(float percentage) => _stepsData[percentage < 0 ? 0 : percentage > 1 ? MaxSteps : (byte)(percentage * MaxSteps)];
     public bool Equals(LocoSpeed other) => other.Current == Current && other.MaxSteps == MaxSteps;
     public override bool Equals(object? obj) => obj is LocoSpeed other && Equals(other);
     public override int GetHashCode() => (Current.GetHashCode() / 2) + (MaxSteps.GetHashCode() / 2);
