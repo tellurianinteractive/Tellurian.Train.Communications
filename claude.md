@@ -22,6 +22,12 @@ these tools for research purposes when dealing with specific / narrowly defined 
 These contain supplementary information that is not required for development work. 
 Focus on the essential specifications and code documentation instead.
 
+## Paths and Folders
+
+Claude should be aware of the following important paths and folders in the repository:
+- Don't use absolute paths; use relative paths from the repository root.
+
+
 ## Build and Test Commands
 
 ### Building
@@ -175,7 +181,7 @@ Tests are organized by layer:
 - `*.Tests` projects mirror the structure of their corresponding implementation projects
 - Tests validate command byte generation, notification parsing, and protocol correctness
 - Use concrete `UdpDataChannel` in integration tests; mock `ICommunicationsChannel` in unit tests
-
+- DO NOT use [ExpectedException] or Assert.ThrowsException; use Assert.Throws instead 
 ## Project Structure Summary
 
 - **Tellurian.Communications.Channels**: UDP transport layer - see `Tellurian.Communications.Channels/CLAUDE.md`

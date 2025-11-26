@@ -35,25 +35,56 @@ Complete implementation of the XpressNet command protocol used by Lenz and Z21 c
 **Track Power Management:**
 - Track power on/off
 - Emergency stop (all locomotives)
-- Short circuit detection
-- Current and voltage monitoring
+- Short circuit detection and notification
+- Power-up mode configuration (manual/automatic)
 
 **Accessory Control:**
 - Turnout/accessory control (addresses 1-1024)
-- Feedback notifications
-- Direct or queued execution modes
+- Accessory decoder information requests
+- Feedback broadcast notifications
+- Turnout status queries
 
-**Programming:**
-- CV read/write operations (CVs 1-1024)
-- Programming track status monitoring
-- Error detection (short circuit, timeout, no acknowledgment)
+**Programming - Service Mode:**
+- Register Mode read/write (registers 1-8)
+- Direct CV Mode read/write (CVs 1-256)
+- Paged Mode read/write (CVs 1-256)
+- Service mode result polling
+- Programming status notifications (ready, busy, short circuit, timeout)
+
+**Programming - Operations Mode (POM):**
+- Byte mode write (CVs 1-1024)
+- Bit mode write (CVs 1-1024)
+- Full locomotive address range (1-9999)
+
+**Double Header Operations:**
+- Establish Double Header (join two locomotives)
+- Dissolve Double Header
+- Full address range support (1-9999)
+
+**Multi-Unit (Consist) Operations:**
+- Add locomotive to Multi-Unit (with direction control)
+- Remove locomotive from Multi-Unit
+- Multi-Unit address range (1-99)
+
+**Address Search & Stack:**
+- Multi-Unit member inquiry (forward/backward search)
+- Multi-Unit address inquiry
+- Command station stack inquiry
+- Delete locomotive from stack
+
+**Function Status:**
+- Query function status (momentary vs on/off)
+- Set function state for F0-F12
+- Per-function momentary/on-off configuration
 
 **System Monitoring:**
 - Hardware and firmware version detection
-- Real-time current monitoring (main track and programming track)
-- Voltage monitoring (supply and track)
-- Temperature monitoring
-- Comprehensive system state notifications
+- Command station status queries
+- Broadcast subject configuration
+- Transfer error detection
+- Command station busy notification
+
+See `Tellurian.Trains.Protocols.XpressNet/README.md` for detailed documentation and usage examples.
 
 ### LocoNet Protocol Support ✅ Comprehensive Implementation (~75%)
 Comprehensive LocoNet protocol implementation based on Digitrax LocoNet Personal Use Edition 1.0 specification.
