@@ -6,7 +6,7 @@ namespace Tellurian.Trains.Protocols.XpressNet.Tests;
 public class LocoFunctionCommandTests
 {
     [TestMethod]
-    public void LocoFunctionCommandWithShortAddressWorks()
+    public void GetData_ReturnsCorrectBytes_WhenShortAddress()
     {
         var target = new LocoFunctionCommand(new LocoAddress(99), 1, LocoFunctionStates.On);
         var data = target.GetData();
@@ -17,7 +17,7 @@ public class LocoFunctionCommandTests
     }
 
     [TestMethod]
-    public void LocoFunctionCommandWithLongAddressWorks()
+    public void GetData_ReturnsCorrectBytes_WhenLongAddress()
     {
         var target = new LocoFunctionCommand(new LocoAddress(9999), 1, LocoFunctionStates.On);
         var data = target.GetData();
@@ -29,7 +29,7 @@ public class LocoFunctionCommandTests
     }
 
     [TestMethod]
-    public void LocoEmergencyStopCommandWorks()
+    public void LocoEmergencyStopCommand_GetData_ReturnsCorrectBytes()
     {
         var target = new LocoEmergencyStopCommand(new LocoAddress(99));
         var data = target.GetData();

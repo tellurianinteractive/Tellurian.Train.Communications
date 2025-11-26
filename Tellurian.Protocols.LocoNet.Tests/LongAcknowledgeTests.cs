@@ -7,7 +7,7 @@ namespace ins.Tellurian.Protocols.LocoNet.Tests;
 public class LongAcknowledgeTests
 {
     [TestMethod]
-    public void FifoIsFull()
+    public void LongAcknowledge_IsFailure_WhenFifoIsFull()
     {
         byte[] data = new byte[] { 0xB4, 0x3D, 0x00 };
         var target = new LongAcknowledge(Message.AppendChecksum(data));
@@ -17,7 +17,7 @@ public class LongAcknowledgeTests
     }
 
     [TestMethod]
-    public void Accepted()
+    public void LongAcknowledge_IsSuccess_WhenAccepted()
     {
         byte[] data = new byte[] { 0xB4, 0x3D, 0x7F };
         var target = new LongAcknowledge(Message.AppendChecksum(data));
@@ -27,7 +27,7 @@ public class LongAcknowledgeTests
     }
 
     [TestMethod]
-    public void IsUndecided()
+    public void LongAcknowledge_IsUndecided_WhenUnknownCode()
     {
         byte[] data = new byte[] { 0xB4, 0x3B, 0x00 };
         var target = new LongAcknowledge(Message.AppendChecksum(data));

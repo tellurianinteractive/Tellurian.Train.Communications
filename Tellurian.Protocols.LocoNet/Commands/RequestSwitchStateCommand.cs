@@ -9,14 +9,6 @@ public sealed class RequestSwitchStateCommand : Command
 {
     public const byte OperationCode = 0xBC;
 
-    public RequestSwitchStateCommand(ushort address)
-    {
-        if (address > 2047)
-            throw new ArgumentOutOfRangeException(nameof(address), "Switch address must be 0-2047");
-
-        Address = new AccessoryAddress(address);
-    }
-
     public RequestSwitchStateCommand(AccessoryAddress address)
     {
         Address = address;

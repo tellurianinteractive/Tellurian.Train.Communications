@@ -11,14 +11,14 @@ public class NotificationFactoryTests
     }
 
     [TestMethod]
-    public void CreatesNotSupportedNotification()
+    public void Notification_CreatesUnsupportedNotification_WhenHeaderUndefined()
     {
         var actual = new Frame(FrameHeader.Undefined).Notification();
         Assert.IsInstanceOfType(actual, typeof(UnsupportedNotification));
     }
 
     [TestMethod]
-    public void CreatesLocomotiveAddressModeNotification()
+    public void Notification_CreatesLocoAddressModeNotification()
     {
         var frame = new Frame(FrameHeader.LocoAddressMode, new byte[] { 0x00, 0x01, 0x01 });
         var actual = (LocoAddressModeNotification)AssertCreatedCorrectNotification(frame, typeof(LocoAddressModeNotification));
@@ -27,7 +27,7 @@ public class NotificationFactoryTests
     }
 
     [TestMethod]
-    public void CreatesHardwareInfoNotification()
+    public void Notification_CreatesHardwareInfoNotification()
     {
         var frame = new Frame(FrameHeader.HardwareInfo, new byte[] { 0x00, 0x02, 0x00, 0x00, 0x20, 0x01, 0x00, 0x00 });
         var actual = (HardwareInfoNotification)AssertCreatedCorrectNotification(frame, typeof(HardwareInfoNotification));
@@ -36,7 +36,7 @@ public class NotificationFactoryTests
     }
 
     [TestMethod]
-    public void CreatesSerialNumberNotification()
+    public void Notification_CreatesSerialNumberNotification()
     {
         const int serialNumber = 12345678;
         var frame = new Frame(FrameHeader.SerialNumber, BitConverter.GetBytes(serialNumber));
@@ -45,7 +45,7 @@ public class NotificationFactoryTests
     }
 
     [TestMethod]
-    public void CreatesSubscriptionNotification()
+    public void Notification_CreatesBroadcastSubjectsNotification()
     {
         const BroadcastSubjects subjects = BroadcastSubjects.All;
         var frame = new Frame(FrameHeader.SubscribeNotifications, BitConverter.GetBytes((int)subjects));

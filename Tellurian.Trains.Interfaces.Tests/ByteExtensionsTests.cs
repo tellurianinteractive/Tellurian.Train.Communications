@@ -6,13 +6,13 @@ namespace Tellurian.Trains.Interfaces.Tests;
 public class ByteExtensionsTests
 {
     [TestMethod]
-    public void OperatingSystemIsLittleEndian()
+    public void BitConverter_IsLittleEndian_OnOperatingSystem()
     {
         Assert.IsTrue(BitConverter.IsLittleEndian);
     }
 
     [TestMethod]
-    public void ReadsInt32LittleEndian()
+    public void ToInt32LittleEndian_ReadsCorrectValue()
     {
         const int value = 12345678;
         var bytes = BitConverter.GetBytes(value);
@@ -20,17 +20,17 @@ public class ByteExtensionsTests
     }
 
     [TestMethod]
-    public void ReadsInt32BigEndian()
+    public void ToInt32BigEndian_ReadsCorrectValue()
     {
         const int value = 12345678;
-        var span = BitConverter.GetBytes(value).AsSpan(); 
+        var span = BitConverter.GetBytes(value).AsSpan();
         span.Reverse();
         var bytes = span.ToArray();
         Assert.AreEqual(value, bytes.ToInt32BigEndian());
     }
 
     [TestMethod]
-    public void Bcd()
+    public void Bcd_ConvertsCorrectly()
     {
         Assert.AreEqual(20, ((byte)32).Bcd());
         Assert.AreEqual(33, ((byte)51).Bcd());

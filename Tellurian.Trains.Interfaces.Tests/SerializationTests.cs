@@ -7,7 +7,7 @@ namespace Tellurian.Trains.Interfaces.Tests;
 public class SerializationTests
 {
     [TestMethod]
-    public void JsonSerialisationAndDeserializationWorks()
+    public void LocoDrive_SerializesAndDeserializes_WithJson()
     {
         var target = new LocoDrive()
         {

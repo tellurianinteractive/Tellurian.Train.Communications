@@ -6,15 +6,16 @@ namespace Tellurian.Trains.Protocols.XpressNet.Tests;
 public class AccessoryFunctionCommandTests {
 
     [TestMethod]
-    public void AccessoryFunctionCommandWorks() {
+    public void GetData_ReturnsCorrectBytes_ForStandardCommand() {
         var target = new AccessoryFunctionCommand(new AccessoryAddress(225), AccessoryOutput.Port1, AccessoryOutputState.On);
         var data = target.GetData();
         Assert.AreEqual(0x52, data[0]);
         Assert.AreEqual(225 / 4, data[1]);
         Assert.AreEqual(0x82, data[2]);
     }
+
     [TestMethod]
-    public void AccessoryFunctionCommandForZ21Works() {
+    public void GetData_ReturnsCorrectBytes_ForZ21QueuedMode() {
         var target = new AccessoryFunctionCommand(new AccessoryAddress(225), AccessoryOutput.Port1, AccessoryOutputState.On, AccessoryZ21Mode.Queued);
         var data = target.GetData();
         Assert.AreEqual(0x53, data[0]);

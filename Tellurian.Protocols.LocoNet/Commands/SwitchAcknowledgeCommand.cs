@@ -37,10 +37,10 @@ public sealed class SwitchAcknowledgeCommand : Command
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SwitchAcknowledgeCommand Throw(ushort address, bool activate = true)
+    public static SwitchAcknowledgeCommand Throw(AccessoryAddress address, bool activate = true)
     {
         return new SwitchAcknowledgeCommand(
-            new AccessoryAddress(address),
+            address,
             AccessoryFunction.ThrownOrRed,
             activate ? OutputState.On : OutputState.Off);
     }
@@ -50,10 +50,10 @@ public sealed class SwitchAcknowledgeCommand : Command
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SwitchAcknowledgeCommand Close(ushort address, bool activate = true)
+    public static SwitchAcknowledgeCommand Close(AccessoryAddress address, bool activate = true)
     {
         return new SwitchAcknowledgeCommand(
-            new AccessoryAddress(address),
+            address,
             AccessoryFunction.ClosedOrGreen,
             activate ? OutputState.On : OutputState.Off);
     }

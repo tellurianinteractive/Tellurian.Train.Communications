@@ -4,7 +4,7 @@
 public class FrameTests
 {
     [TestMethod]
-    public void CreateWithoutDataGivesZeroLengthData()
+    public void Constructor_SetsEmptyData_WhenNoDataProvided()
     {
         var target = new Frame(FrameHeader.Test);
         Assert.AreEqual(FrameHeader.Test, target.Header);
@@ -12,13 +12,13 @@ public class FrameTests
     }
 
     [TestMethod]
-    public void CreateWithNullDataThrows()
+    public void Constructor_ThrowsArgumentNullException_WhenDataIsNull()
     {
         _ = Assert.Throws<ArgumentNullException>(() => new Frame(FrameHeader.Test, null));
     }
 
     [TestMethod]
-    public void TestFrameHasFourBytesData()
+    public void Length_ReturnsFour_WhenNoData()
     {
         var target = new Frame(FrameHeader.Test);
         Assert.AreEqual(4, target.Length);

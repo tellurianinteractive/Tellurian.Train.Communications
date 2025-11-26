@@ -4,22 +4,22 @@
 public class LocoAddressTests {
 
     [TestMethod]
-    public void ZeroNumberThrows() {
+    public void Constructor_ThrowsArgumentOutOfRangeException_WhenZero() {
         Assert.Throws<ArgumentOutOfRangeException>(() => new LocoAddress(0));
     }
 
     [TestMethod]
-    public void NegativeNumberThrows() {
+    public void Constructor_ThrowsArgumentOutOfRangeException_WhenNegative() {
         Assert.Throws<ArgumentOutOfRangeException>(() => new LocoAddress(-1));
     }
 
     [TestMethod]
-    public void NumberAbove9999Throws() {
+    public void Constructor_ThrowsArgumentOutOfRangeException_WhenAbove9999() {
         Assert.Throws<ArgumentOutOfRangeException>(() => new LocoAddress(10000));
     }
 
     [TestMethod]
-    public void ShortAddressPropertiesAreCorrect() {
+    public void ShortAddress_HasCorrectProperties() {
         var target = new LocoAddress(1);
         Assert.IsTrue(target.IsShort);
         Assert.IsFalse(target.IsLong);
@@ -27,7 +27,7 @@ public class LocoAddressTests {
     }
 
     [TestMethod]
-    public void LongAddressPropertiesAreCorrect() {
+    public void LongAddress_HasCorrectProperties() {
         var target = new LocoAddress(128);
         Assert.IsFalse(target.IsShort);
         Assert.IsTrue(target.IsLong);
@@ -35,7 +35,7 @@ public class LocoAddressTests {
     }
 
     [TestMethod]
-    public void ShortAddressGetBytesIsCorrect() {
+    public void GetBytesAccordingToXpressNet_ReturnsCorrectBytes_WhenShortAddress() {
         var target = new LocoAddress(127);
         var actual = target.GetBytesAccordingToXpressNet();
         Assert.IsNotNull(actual);
@@ -46,7 +46,7 @@ public class LocoAddressTests {
     }
 
     [TestMethod]
-    public void LongAddressGetBytesIsCorrect() {
+    public void GetBytesAccordingToXpressNet_ReturnsCorrectBytes_WhenLongAddress() {
         var target = new LocoAddress(128);
         var actual = target.GetBytesAccordingToXpressNet();
         Assert.IsNotNull(actual);
@@ -56,7 +56,7 @@ public class LocoAddressTests {
     }
 
     [TestMethod]
-    public void FromBytesWorks() {
+    public void Constructor_FromBytes_ReconstructsAddress() {
         var target = new LocoAddress(241);
         var actual = new LocoAddress(target.GetBytesAccordingToXpressNet());
         Assert.AreEqual(241, actual.Number);

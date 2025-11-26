@@ -37,10 +37,10 @@ public sealed class SetTurnoutCommand : Command
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SetTurnoutCommand Throw(ushort address, bool activate = true)
+    public static SetTurnoutCommand Throw(AccessoryAddress address, bool activate = true)
     {
         return new SetTurnoutCommand(
-            new AccessoryAddress(address),
+            address,
             AccessoryFunction.ThrownOrRed,
             activate ? OutputState.On : OutputState.Off);
     }
@@ -50,10 +50,10 @@ public sealed class SetTurnoutCommand : Command
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SetTurnoutCommand Close(ushort address, bool activate = true)
+    public static SetTurnoutCommand Close(AccessoryAddress address, bool activate = true)
     {
         return new SetTurnoutCommand(
-            new AccessoryAddress(address),
+            address,
             AccessoryFunction.ClosedOrGreen,
             activate ? OutputState.On : OutputState.Off);
     }
@@ -63,10 +63,10 @@ public sealed class SetTurnoutCommand : Command
     /// This prevents motor overheating in turnout motors.
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
-    public static SetTurnoutCommand TurnOff(ushort address)
+    public static SetTurnoutCommand TurnOff(AccessoryAddress address)
     {
         return new SetTurnoutCommand(
-            new AccessoryAddress(address),
+            address,
             AccessoryFunction.ClosedOrGreen,
             OutputState.Off);
     }

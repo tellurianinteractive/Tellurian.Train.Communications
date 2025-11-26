@@ -200,22 +200,22 @@ byte[] writeBytes = modifiedSlot.GetBytesWithChecksum();
 using Tellurian.Trains.Protocols.LocoNet.Commands;
 
 // Throw switch 100 (Thrown/Red position)
-var throwCmd = SetTurnoutCommand.Throw(address: 100, activate: true);
+var throwCmd = SetTurnoutCommand.Throw(new AccessoryAddress(100), activate: true);
 byte[] throwBytes = throwCmd.GetBytesWithChecksum();
 // Sends: [0xB0, sw1, sw2, checksum]
 
 // Close switch 100 (Closed/Green position)
-var closeCmd = SetTurnoutCommand.Close(address: 100, activate: true);
+var closeCmd = SetTurnoutCommand.Close(new AccessoryAddress(100), activate: true);
 
 // Turn off output (after ~1 second)
-var turnOff = SetTurnoutCommand.TurnOff(address: 100);
+var turnOff = SetTurnoutCommand.TurnOff(new AccessoryAddress(100));
 ```
 
 ### Switch with Acknowledge
 
 ```csharp
 // Request acknowledgment from DCS100
-var switchAck = SwitchAcknowledgeCommand.Throw(address: 100);
+var switchAck = SwitchAcknowledgeCommand.Throw(new AccessoryAddress(100));
 byte[] ackBytes = switchAck.GetBytesWithChecksum();
 // Sends: [0xBD, sw1, sw2, checksum]
 ```
@@ -235,7 +235,7 @@ if (response is LongAcknowledge ack)
 ### Request Switch State
 
 ```csharp
-var requestState = new RequestSwitchStateCommand(address: 100);
+var requestState = new RequestSwitchStateCommand(new AccessoryAddress(100));
 byte[] stateBytes = requestState.GetBytesWithChecksum();
 // Sends: [0xBC, sw1, sw2, checksum]
 ```
@@ -694,7 +694,7 @@ async Task ControlLoco(ushort address, byte targetSpeed)
 ### Switch Control with Timing
 
 ```csharp
-async Task ThrowSwitch(ushort address)
+async Task ThrowSwitch(AccessoryAddress address)
 {
     // Activate
     SendCommand(SetTurnoutCommand.Throw(address));

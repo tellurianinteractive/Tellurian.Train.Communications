@@ -4,14 +4,15 @@
 public class AccessoryFunctionBuilderTests
 {
     [TestMethod]
-    public void CreatesBinaryWithFlagsOff()
+    public void GetAccessoryFunctionBytes_CreatesBinaryCorrectly_WhenFlagsOff()
     {
         var actual = GetAccessoryFunctionBytes(new AccessoryAddress(1, AccessoryInput.Port0), AccessoryFunction.ClosedOrGreen, OutputState.Off);
         Assert.AreEqual(0x04, actual[0]);
         Assert.AreEqual(0x00, actual[1]);
     }
+
     [TestMethod]
-    public void CreatesBinaryWithFlagsOn()
+    public void GetAccessoryFunctionBytes_CreatesBinaryCorrectly_WhenFlagsOn()
     {
         var actual = GetAccessoryFunctionBytes(new AccessoryAddress(511, AccessoryInput.Port3), AccessoryFunction.ThrownOrRed, OutputState.On);
         Assert.AreEqual(0x7F, actual[0]);

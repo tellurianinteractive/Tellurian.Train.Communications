@@ -4,7 +4,7 @@
 public class MessageTests
 {
     [TestMethod]
-    public void CreateWorks()
+    public void Constructor_SetsTimestamp()
     {
         var target = new TestMessage();
         Assert.IsTrue(DateTimeOffset.Now.AddMilliseconds(-10) < target.Timestamp);

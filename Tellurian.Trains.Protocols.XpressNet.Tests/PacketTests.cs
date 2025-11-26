@@ -8,7 +8,7 @@ namespace Tellurian.Trains.Protocols.XpressNet.Tests;
 public class PacketTests
 {
     [TestMethod]
-    public void GetBytesWorks()
+    public void GetBytes_ReturnsCorrectBytes()
     {
         var target = new Packet(new TestMessage());
         var actual = target.GetBytes();
@@ -19,7 +19,7 @@ public class PacketTests
     }
 
     [TestMethod]
-    public void GetMessagesWorks()
+    public void Notification_CreatesCorrectTypes_ForAllBroadcasts()
     {
         AssertCreatedMessage<TrackPowerOffBroadcast>(new byte[] { 0x61, 0x00, 0x61 });
         AssertCreatedMessage<TrackPowerOnBroadcast>(new byte[] { 0x61, 0x01, 0x60 });

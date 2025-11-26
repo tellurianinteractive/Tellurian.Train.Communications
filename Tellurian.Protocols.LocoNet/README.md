@@ -212,18 +212,18 @@ async Task ControlLocomotive(ushort address)
 
 ```csharp
 // Throw switch 100
-var throwSwitch = SetTurnoutCommand.Throw(100);
+var throwSwitch = SetTurnoutCommand.Throw(new AccessoryAddress(100));
 SendCommand(throwSwitch);
 
 // Wait for turnout motor
 await Task.Delay(1000);
 
 // Turn off output to prevent overheating
-var turnOff = SetTurnoutCommand.TurnOff(100);
+var turnOff = SetTurnoutCommand.TurnOff(new AccessoryAddress(100));
 SendCommand(turnOff);
 
 // Close switch with acknowledge
-var closeSwitch = SwitchAcknowledgeCommand.Close(100);
+var closeSwitch = SwitchAcknowledgeCommand.Close(new AccessoryAddress(100));
 SendCommand(closeSwitch);
 
 // Wait for acknowledgment
@@ -564,9 +564,10 @@ if (slot.Status != SlotStatus.InUse)
 Prevent turnout motor overheating:
 
 ```csharp
-SendCommand(SetTurnoutCommand.Throw(100));
+var switchAddress = new AccessoryAddress(100);
+SendCommand(SetTurnoutCommand.Throw(switchAddress));
 await Task.Delay(1000); // Wait for motor
-SendCommand(SetTurnoutCommand.TurnOff(100));
+SendCommand(SetTurnoutCommand.TurnOff(switchAddress));
 ```
 
 ### 4. Handle Errors

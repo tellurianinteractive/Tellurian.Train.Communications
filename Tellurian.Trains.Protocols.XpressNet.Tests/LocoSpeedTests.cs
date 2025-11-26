@@ -4,7 +4,7 @@
 public class LocoSpeedTests
 {
     [TestMethod]
-    public void PropertiesAreSet()
+    public void FromCode_InitializesPropertiesCorrectly()
     {
         var target = LocoSpeed.FromCode(0, 5);
         Assert.AreEqual(5, target.Current);

@@ -6,7 +6,7 @@ namespace Tellurian.Trains.Interfaces.Tests;
 public class CVAddressTests
 {
     [TestMethod]
-    public void VerifyCvAddress1()
+    public void CvAddress_HasCorrectProperties_WhenValue1()
     {
         const int expected = 1;
         var target = new CvAddress(expected);
@@ -16,7 +16,7 @@ public class CVAddressTests
     }
 
     [TestMethod]
-    public void VerifyCvAddress256()
+    public void CvAddress_HasCorrectProperties_WhenValue256()
     {
         const int expected = 256;
         var target = new CvAddress(expected);
