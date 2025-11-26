@@ -406,10 +406,8 @@ byte[] linkBytes = link.GetBytesWithChecksum();
 // Sends: [0xB9, 0x08, 0x05, checksum]
 
 // Build multi-loco consist
-var commands = ConsistHelper.BuildConsist(
-    leadSlot: 5,
-    memberSlots: new byte[] { 8, 12, 15 }
-);
+byte leadSlot = 5;
+var commands = leadSlot.BuildConsist(8, 12, 15);
 foreach (var cmd in commands)
 {
     SendCommand(cmd);
@@ -430,10 +428,8 @@ byte[] unlinkBytes = unlink.GetBytesWithChecksum();
 // Sends: [0xB8, 0x08, 0x05, checksum]
 
 // Break entire consist
-var unlinkCommands = ConsistHelper.BreakConsist(
-    leadSlot: 5,
-    memberSlots: new byte[] { 8, 12, 15 }
-);
+byte leadSlot = 5;
+var unlinkCommands = leadSlot.BreakConsist(8, 12, 15);
 ```
 
 ### Control Consist Member
@@ -458,14 +454,14 @@ var headlight = ConsistFunctionCommand.Headlight(slot: 8, forward: true, headlig
 
 ```csharp
 // From slot data
-if (ConsistHelper.IsInConsist(slotData))
+if (slotData.IsInConsist())
 {
-    if (ConsistHelper.IsConsistLead(slotData.Consist))
+    if (slotData.Consist.IsConsistLead())
         Console.WriteLine("This is the lead locomotive");
-    else if (ConsistHelper.IsConsistMember(slotData.Consist))
+    else if (slotData.Consist.IsConsistMember())
         Console.WriteLine("This is a consist member");
 
-    string role = ConsistHelper.GetConsistRoleDescription(slotData.Consist);
+    string role = slotData.Consist.GetConsistRoleDescription();
     Console.WriteLine(role);
 }
 ```
@@ -616,19 +612,19 @@ string message = ProgrammingHelper.GetStatusMessage(status);
 
 ```csharp
 // Check consist status
-bool inConsist = ConsistHelper.IsInConsist(consistStatus);
-bool isLead = ConsistHelper.IsConsistLead(consistStatus);
-bool isMember = ConsistHelper.IsConsistMember(consistStatus);
-bool canLink = ConsistHelper.CanBeLinked(slotData);
+bool inConsist = consistStatus.IsInConsist();
+bool isLead = consistStatus.IsConsistLead();
+bool isMember = consistStatus.IsConsistMember();
+bool canLink = slotData.CanBeLinked();
 
 // Build/break consists
-LinkSlotsCommand[] links = ConsistHelper.BuildConsist(lead, members);
-UnlinkSlotsCommand[] unlinks = ConsistHelper.BreakConsist(lead, members);
+LinkSlotsCommand[] links = lead.BuildConsist(members);
+UnlinkSlotsCommand[] unlinks = lead.BreakConsist(members);
 
 // STAT1 manipulation
-ConsistStatus status = ConsistHelper.GetConsistStatus(stat1Byte);
-byte newStat1 = ConsistHelper.SetConsistStatus(stat1Byte, newStatus);
-string description = ConsistHelper.GetConsistRoleDescription(status);
+ConsistStatus status = stat1Byte.GetConsistStatus();
+byte newStat1 = stat1Byte.SetConsistStatus(newStatus);
+string description = status.GetConsistRoleDescription();
 ```
 
 ---

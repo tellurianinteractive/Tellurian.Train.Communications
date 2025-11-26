@@ -99,5 +99,5 @@ The `Tellurian.Protocols.LocoNet.Tests` project validates:
 - **Commands**: Outgoing messages (power control, locomotive control, slot management, etc.)
 - **Notifications**: Incoming messages (slot data, sensor reports, acknowledgments, etc.)
 - **Data Types**: `SlotData`, `LocoAddress`, `AccessoryAddress`, status enums
-- **Helpers**: `ProgrammingHelper`, `ConsistHelper` for complex operations
+- **Helpers**: `ProgrammingHelper`, `ConsistExtensions` for complex operations
 - **Factory**: `MessageFactory` for parsing incoming byte arrays

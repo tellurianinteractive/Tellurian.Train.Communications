@@ -313,7 +313,7 @@ var leadSlot = 5;   // Locomotive address 100
 var memberSlots = new byte[] { 8, 12 }; // Locomotives address 200, 300
 
 // Link them together
-var linkCommands = ConsistHelper.BuildConsist(leadSlot, memberSlots);
+var linkCommands = leadSlot.BuildConsist(memberSlots);
 foreach (var cmd in linkCommands)
 {
     SendCommand(cmd);
@@ -331,7 +331,7 @@ var memberFunc = ConsistFunctionCommand.Headlight(12, true, true);
 SendCommand(memberFunc);
 
 // Break consist when done
-var unlinkCommands = ConsistHelper.BreakConsist(leadSlot, memberSlots);
+var unlinkCommands = leadSlot.BreakConsist(memberSlots);
 foreach (var cmd in unlinkCommands)
 {
     SendCommand(cmd);
@@ -364,9 +364,9 @@ if (msg is SlotNotification slot)
     {
         Console.WriteLine("No slots available!");
     }
-    else if (ConsistHelper.IsInConsist(slot.Data))
+    else if (slot.Data.IsInConsist())
     {
-        Console.WriteLine($"Slot is in consist: {ConsistHelper.GetConsistRoleDescription(slot.Data.Consist)}");
+        Console.WriteLine($"Slot is in consist: {slot.Data.Consist.GetConsistRoleDescription()}");
     }
 }
 
@@ -432,7 +432,7 @@ if (msg is UnsupportedNotification unsupported)
 - `LocoNetMessageFactory` - Parse byte arrays into messages
 - `Message` - Base class with checksum helpers
 - `ProgrammingHelper` - CV encoding/decoding
-- `ConsistHelper` - Consist management utilities
+- `ConsistExtensions` - Consist management extension methods
 
 ## API Reference
 
