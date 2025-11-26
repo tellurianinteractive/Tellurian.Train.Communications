@@ -14,9 +14,9 @@ namespace Tellurian.Trains.Protocols.XpressNet.Notifications;
 /// - Add locomotive to Multi-Unit
 /// - Remove locomotive from Multi-Unit
 /// </remarks>
-public sealed class MUDHErrorNotification : Notification
+public sealed class MultiUnitAndDoubleHeaderErrorNotification : Notification
 {
-    internal MUDHErrorNotification(byte[] buffer) : base(0xE1, GetData(buffer)) { }
+    internal MultiUnitAndDoubleHeaderErrorNotification(byte[] buffer) : base(0xE1, GetData(buffer)) { }
 
     private static new byte[] GetData(byte[] buffer)
     {

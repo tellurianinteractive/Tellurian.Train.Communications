@@ -11,9 +11,8 @@ namespace Tellurian.Trains.Protocols.XpressNet.Decoder;
 /// Operations Mode Programming supports CV 1-1024.
 /// The CV is encoded as a 10-bit value (0-1023) where user CV 1 maps to wire CV 0.
 /// </remarks>
-public abstract class ProgramOnMainCommand : Command
+public abstract class ProgramOnMainCommand(byte[] data) : Command(0xE6, data)
 {
-    protected ProgramOnMainCommand(byte[] data) : base(0xE6, data) { }
 
     /// <summary>
     /// Validates that the CV number is in the valid range for POM (1-1024).
@@ -51,16 +50,13 @@ public abstract class ProgramOnMainCommand : Command
 ///
 /// Note: XpressNet devices should not permit changes to the decoder's active locomotive address.
 /// </remarks>
-public sealed class ProgramOnMainWriteByteCommand : ProgramOnMainCommand
+/// <remarks>
+/// Creates a POM byte write command.
+/// </remarks>
+/// <param name="address">Locomotive address (1-9999)</param>
+/// <param name="cv">CV with number (1-1024) and value (0-255)</param>
+public sealed class ProgramOnMainWriteByteCommand(LocoAddress address, CV cv) : ProgramOnMainCommand(GetData(address, (ushort)cv.Number, cv.Value))
 {
-    /// <summary>
-    /// Creates a POM byte write command.
-    /// </summary>
-    /// <param name="address">Locomotive address (1-9999)</param>
-    /// <param name="cv">CV with number (1-1024) and value (0-255)</param>
-    public ProgramOnMainWriteByteCommand(LocoAddress address, CV cv)
-        : base(GetData(address, (ushort)cv.Number, cv.Value)) { }
-
     private static byte[] GetData(LocoAddress address, ushort cv, byte value)
     {
         ValidateCv(cv);
@@ -93,18 +89,15 @@ public sealed class ProgramOnMainWriteByteCommand : ProgramOnMainCommand
 ///
 /// Note: XpressNet devices should not permit changes to the decoder's active locomotive address.
 /// </remarks>
-public sealed class ProgramOnMainWriteBitCommand : ProgramOnMainCommand
+/// <remarks>
+/// Creates a POM bit write command.
+/// </remarks>
+/// <param name="address">Locomotive address (1-9999)</param>
+/// <param name="cvNumber">CV number (1-1024)</param>
+/// <param name="bitPosition">Bit position within the CV (0-7, where 0 is LSB)</param>
+/// <param name="bitValue">Bit value to write (true=1, false=0)</param>
+public sealed class ProgramOnMainWriteBitCommand(LocoAddress address, ushort cvNumber, byte bitPosition, bool bitValue) : ProgramOnMainCommand(GetData(address, cvNumber, bitPosition, bitValue))
 {
-    /// <summary>
-    /// Creates a POM bit write command.
-    /// </summary>
-    /// <param name="address">Locomotive address (1-9999)</param>
-    /// <param name="cvNumber">CV number (1-1024)</param>
-    /// <param name="bitPosition">Bit position within the CV (0-7, where 0 is LSB)</param>
-    /// <param name="bitValue">Bit value to write (true=1, false=0)</param>
-    public ProgramOnMainWriteBitCommand(LocoAddress address, ushort cvNumber, byte bitPosition, bool bitValue)
-        : base(GetData(address, cvNumber, bitPosition, bitValue)) { }
-
     private static byte[] GetData(LocoAddress address, ushort cvNumber, byte bitPosition, bool bitValue)
     {
         ValidateCv(cvNumber);

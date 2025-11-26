@@ -195,7 +195,7 @@ public class FunctionStatusTests
 
         var states = notification.GetAllFunctionStates();
 
-        Assert.AreEqual(13, states.Length);
+        Assert.HasCount(13, states);
         // S0=0x15 = 0001_0101 -> F0=on/off, F1=momentary, F2=on/off, F3=momentary, F4=on/off
         Assert.IsTrue(states[0]);   // F0
         Assert.IsTrue(states[1]);   // F1 (bit 0)
@@ -231,7 +231,7 @@ public class FunctionStatusTests
         var buffer = new byte[] { 0xE3, 0x50, 0x1F, 0xFF };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(FunctionStatusNotification));
+        Assert.IsInstanceOfType<FunctionStatusNotification>(notification);
     }
 
     #endregion

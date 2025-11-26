@@ -17,7 +17,7 @@ public class IntegrationTests
 {
     private Adapter? Target;
     private ICommunicationsChannel? Channel;
-    private readonly NotificationObserver Observer = new NotificationObserver();
+    private readonly NotificationObserver Observer = new();
     private IDisposable? ObserverSubscription;
 
     public required TestContext TestContext { get; set; }
@@ -84,7 +84,7 @@ public class IntegrationTests
         await Task.Delay(3000, TestContext.CancellationToken);
         Assert.IsNotEmpty(Observer.Notifications);
         var response = Observer.Notifications[0];
-        Assert.IsInstanceOfType(response, typeof(DecoderResponse));
+        Assert.IsInstanceOfType<DecoderResponse>(response);
     }
 
     private async Task StartAdapterAsync()
@@ -104,7 +104,7 @@ public class IntegrationTests
 
 internal class NotificationObserver : IObserver<Interfaces.Notification>
 {
-    public IList<Interfaces.Notification> Notifications = new List<Interfaces.Notification>();
+    public IList<Interfaces.Notification> Notifications = [];
     public void OnCompleted()
     {
     }

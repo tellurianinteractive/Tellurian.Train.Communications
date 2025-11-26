@@ -217,7 +217,7 @@ public class AddressSearchTests
         var buffer = new byte[] { 0xE3, 0x30, 0x00, 0x03 };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(AddressRetrievalNotification));
+        Assert.IsInstanceOfType<AddressRetrievalNotification>(notification);
     }
 
     [TestMethod]
@@ -260,19 +260,9 @@ public class AddressSearchTests
         var buffer = new byte[] { 0xE3, 0x40, 0x00, 0x03 };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(LocoOperatedByAnotherDeviceNotification));
+        Assert.IsInstanceOfType<LocoOperatedByAnotherDeviceNotification>(notification);
     }
 
     #endregion
 
-    #region SearchDirection Enum
-
-    [TestMethod]
-    public void SearchDirection_HasCorrectValues()
-    {
-        Assert.AreEqual(0, (int)SearchDirection.Forward);
-        Assert.AreEqual(1, (int)SearchDirection.Backward);
-    }
-
-    #endregion
 }

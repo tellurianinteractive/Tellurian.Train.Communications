@@ -184,49 +184,49 @@ public class DoubleHeaderMultiUnitTests
     public void MUDHErrorNotification_ParsesCorrectly_NotOperatedByDevice()
     {
         var buffer = new byte[] { 0xE1, 0x81 };
-        var notification = new MUDHErrorNotification(buffer);
+        var notification = new MultiUnitAndDoubleHeaderErrorNotification(buffer);
 
         Assert.AreEqual(0xE1, notification.Header);
         Assert.AreEqual(0x81, notification.IdentificationByte);
         Assert.AreEqual(MUDHErrorCode.NotOperatedByDevice, notification.ErrorCode);
-        Assert.IsTrue(notification.ErrorMessage.Contains("not been operated"));
+        Assert.Contains("not been operated", notification.ErrorMessage);
     }
 
     [TestMethod]
     public void MUDHErrorNotification_ParsesCorrectly_OperatedByAnotherDevice()
     {
         var buffer = new byte[] { 0xE1, 0x82 };
-        var notification = new MUDHErrorNotification(buffer);
+        var notification = new MultiUnitAndDoubleHeaderErrorNotification(buffer);
 
         Assert.AreEqual(MUDHErrorCode.OperatedByAnotherDevice, notification.ErrorCode);
-        Assert.IsTrue(notification.ErrorMessage.Contains("another XpressNet device"));
+        Assert.Contains("another XpressNet device", notification.ErrorMessage);
     }
 
     [TestMethod]
     public void MUDHErrorNotification_ParsesCorrectly_AlreadyInConsist()
     {
         var buffer = new byte[] { 0xE1, 0x83 };
-        var notification = new MUDHErrorNotification(buffer);
+        var notification = new MultiUnitAndDoubleHeaderErrorNotification(buffer);
 
         Assert.AreEqual(MUDHErrorCode.AlreadyInConsist, notification.ErrorCode);
-        Assert.IsTrue(notification.ErrorMessage.Contains("already in another"));
+        Assert.Contains("already in another", notification.ErrorMessage);
     }
 
     [TestMethod]
     public void MUDHErrorNotification_ParsesCorrectly_SpeedNotZero()
     {
         var buffer = new byte[] { 0xE1, 0x84 };
-        var notification = new MUDHErrorNotification(buffer);
+        var notification = new MultiUnitAndDoubleHeaderErrorNotification(buffer);
 
         Assert.AreEqual(MUDHErrorCode.SpeedNotZero, notification.ErrorCode);
-        Assert.IsTrue(notification.ErrorMessage.Contains("speed"));
+        Assert.Contains("speed", notification.ErrorMessage);
     }
 
     [TestMethod]
     public void MUDHErrorNotification_ParsesCorrectly_NotInMultiUnit()
     {
         var buffer = new byte[] { 0xE1, 0x85 };
-        var notification = new MUDHErrorNotification(buffer);
+        var notification = new MultiUnitAndDoubleHeaderErrorNotification(buffer);
 
         Assert.AreEqual(MUDHErrorCode.NotInMultiUnit, notification.ErrorCode);
     }
@@ -235,7 +235,7 @@ public class DoubleHeaderMultiUnitTests
     public void MUDHErrorNotification_ParsesCorrectly_NotMultiUnitBaseAddress()
     {
         var buffer = new byte[] { 0xE1, 0x86 };
-        var notification = new MUDHErrorNotification(buffer);
+        var notification = new MultiUnitAndDoubleHeaderErrorNotification(buffer);
 
         Assert.AreEqual(MUDHErrorCode.NotMultiUnitBaseAddress, notification.ErrorCode);
     }
@@ -244,7 +244,7 @@ public class DoubleHeaderMultiUnitTests
     public void MUDHErrorNotification_ParsesCorrectly_CannotDelete()
     {
         var buffer = new byte[] { 0xE1, 0x87 };
-        var notification = new MUDHErrorNotification(buffer);
+        var notification = new MultiUnitAndDoubleHeaderErrorNotification(buffer);
 
         Assert.AreEqual(MUDHErrorCode.CannotDelete, notification.ErrorCode);
     }
@@ -253,10 +253,10 @@ public class DoubleHeaderMultiUnitTests
     public void MUDHErrorNotification_ParsesCorrectly_StackFull()
     {
         var buffer = new byte[] { 0xE1, 0x88 };
-        var notification = new MUDHErrorNotification(buffer);
+        var notification = new MultiUnitAndDoubleHeaderErrorNotification(buffer);
 
         Assert.AreEqual(MUDHErrorCode.StackFull, notification.ErrorCode);
-        Assert.IsTrue(notification.ErrorMessage.Contains("stack is full"));
+        Assert.Contains("stack is full", notification.ErrorMessage);
     }
 
     [TestMethod]
@@ -265,7 +265,7 @@ public class DoubleHeaderMultiUnitTests
         var buffer = new byte[] { 0xE1, 0x81 };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(MUDHErrorNotification));
+        Assert.IsInstanceOfType<MultiUnitAndDoubleHeaderErrorNotification>(notification);
     }
 
     #endregion

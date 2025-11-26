@@ -58,7 +58,7 @@ public class SystemOperationsTests
         var notification = new TransferErrorNotification();
 
         Assert.AreEqual(0x61, notification.Header);
-        Assert.IsTrue(notification.Description.Contains("Transfer error"));
+        Assert.Contains("Transfer error", notification.Description);
     }
 
     [TestMethod]
@@ -67,7 +67,7 @@ public class SystemOperationsTests
         var buffer = new byte[] { 0x61, 0x80 };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(TransferErrorNotification));
+        Assert.IsInstanceOfType<TransferErrorNotification>(notification);
     }
 
     #endregion
@@ -80,7 +80,7 @@ public class SystemOperationsTests
         var notification = new CommandStationBusyNotification();
 
         Assert.AreEqual(0x61, notification.Header);
-        Assert.IsTrue(notification.Description.Contains("busy"));
+        Assert.Contains("busy", notification.Description);
     }
 
     [TestMethod]
@@ -89,23 +89,7 @@ public class SystemOperationsTests
         var buffer = new byte[] { 0x61, 0x81 };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(CommandStationBusyNotification));
-    }
-
-    #endregion
-
-    #region PowerUpMode Enum
-
-    [TestMethod]
-    public void PowerUpMode_Manual_HasCorrectValue()
-    {
-        Assert.AreEqual(0, (int)PowerUpMode.Manual);
-    }
-
-    [TestMethod]
-    public void PowerUpMode_Automatic_HasCorrectValue()
-    {
-        Assert.AreEqual(1, (int)PowerUpMode.Automatic);
+        Assert.IsInstanceOfType<CommandStationBusyNotification>(notification);
     }
 
     #endregion

@@ -73,7 +73,7 @@ public static class NotificationFactory
                 _ => new NotSupportedNotification(buffer, SourceBusName)
             },
             0xE1 => IsMUDHError(db0)
-                ? new MUDHErrorNotification(buffer)
+                ? new MultiUnitAndDoubleHeaderErrorNotification(buffer)
                 : new NotSupportedNotification(buffer, SourceBusName),
             0xE3 => Create0xE3Notification(buffer, db0),
             0xEF => new LocoInfoNotification(buffer),

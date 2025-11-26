@@ -5,14 +5,12 @@ namespace Tellurian.Trains.Protocols.XpressNet.Decoder;
 /// <summary>
 /// Command to read a CV value in service mode (programming track).
 /// </summary>
-public sealed class ReadCVCommand : Command
+/// <remarks>
+/// Creates a read CV command.
+/// </remarks>
+/// <param name="cvNumber">CV number (1-1024)</param>
+public sealed class ReadCVCommand(int cvNumber) : Command(0x23, GetData(cvNumber))
 {
-    /// <summary>
-    /// Creates a read CV command.
-    /// </summary>
-    /// <param name="cvNumber">CV number (1-1024)</param>
-    public ReadCVCommand(int cvNumber) : base(0x23, GetData(cvNumber)) { }
-
     private static byte[] GetData(int cvNumber)
     {
         ValidateCvNumber(cvNumber);

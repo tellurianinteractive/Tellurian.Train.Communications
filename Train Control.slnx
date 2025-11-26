@@ -5,6 +5,13 @@
     <File Path="README.md" />
     <File Path="ReleaseNotes.md" />
   </Folder>
+  <Folder Name="/Solution Items/agent_docs/">
+    <File Path="building_the_project.md" />
+    <File Path="code_conventions.md" />
+    <File Path="documentation_and_comments.md" />
+    <File Path="running_tests.md" />
+    <File Path="system_architecture.md" />
+  </Folder>
   <Project Path="Tellurian.Communications.Channels.Tests/Tellurian.Communications.Channels.Tests.csproj" />
   <Project Path="Tellurian.Communications.Channels/Tellurian.Communications.Channels.csproj" />
   <Project Path="Tellurian.Protocols.LocoNet.Tests/Tellurian.Protocols.LocoNet.Tests.csproj" />
