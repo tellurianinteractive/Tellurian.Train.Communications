@@ -25,13 +25,39 @@ public class LongAcknowledge : Notification
     {
         switch (me.ForOperationCode)
         {
-            case SetTurnoutCommand.OperationCode:
+            // Switch commands (OPC_SW_REQ 0xB0, OPC_SW_ACK 0xBD)
+            case 0xB0: // OPC_SW_REQ
+            case SwitchAcknowledgeCommand.OperationCode: // OPC_SW_ACK 0xBD
                 if (me.ResponseCode == 0x7F) { me.Message = Resources.Strings.Accepted; return true; }
                 if (me.ResponseCode == 0x00) { me.Message = Resources.Strings.FifoIsFull; return false; }
                 break;
+
+            // Move slots command
             case MoveSlotCommand.OperationCode:
-                me.Message = Resources.Strings.IllegalMove;
-                return false;
+                if (me.ResponseCode == 0x00) { me.Message = Resources.Strings.IllegalMove; return false; }
+                break;
+
+            // Loco address request
+            case GetLocoAddressCommand.OperationCode:
+                if (me.ResponseCode == 0x00) { me.Message = "No free slots available"; return false; }
+                break;
+
+            // Link/Unlink slots
+            case 0xB9: // OPC_LINK_SLOTS
+                if (me.ResponseCode == 0x00) { me.Message = "Invalid link operation"; return false; }
+                break;
+            case 0xB8: // OPC_UNLINK_SLOTS
+                if (me.ResponseCode == 0x00) { me.Message = "Invalid unlink operation"; return false; }
+                break;
+
+            // Programming operations (slot 124)
+            case 0x7F: // Programming responses
+                if (me.ResponseCode == 0x7F) { me.Message = "Function not implemented"; return false; }
+                if (me.ResponseCode == 0x00) { me.Message = "Programmer busy"; return false; }
+                if (me.ResponseCode == 0x01) { me.Message = "Accepted, will send response"; return true; }
+                if (me.ResponseCode == 0x40) { me.Message = "Accepted, blind operation"; return true; }
+                break;
+
             default:
                 me.Message = Resources.Strings.Undecided;
                 break;

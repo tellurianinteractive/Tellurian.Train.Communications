@@ -4,8 +4,6 @@
     <File Path="Directory.Build.props" />
     <File Path="README.md" />
     <File Path="ReleaseNotes.md" />
-    <File Path="Specifications/coding-conventions.md" />
-    <File Path="Specifications/identifier-names.md" />
   </Folder>
   <Project Path="Tellurian.Communications.Channels.Tests/Tellurian.Communications.Channels.Tests.csproj" />
   <Project Path="Tellurian.Communications.Channels/Tellurian.Communications.Channels.csproj" />

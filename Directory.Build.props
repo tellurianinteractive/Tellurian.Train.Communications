@@ -13,6 +13,5 @@
 		<RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Train.Control</RepositoryUrl>
 		<PackageTags>Model Railway Control, XpressNet, LocoNet, Roco Z21</PackageTags>
 		<NeutralLanguage>en-GB</NeutralLanguage>
-
 	</PropertyGroup>
 </Project>

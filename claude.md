@@ -77,10 +77,21 @@ Each protocol implementation translates high-level commands to protocol-specific
 - **Key Types**: `Command`, `Notification`, `Packet` (with checksum handling)
 
 #### LocoNet (`Tellurian.Protocols.LocoNet`)
-- **Partial implementation** of Digitrax LocoNet protocol
-- **Commands**: Track power, slot-based locomotive control, turnout control
-- **Notifications**: Slot updates, acknowledgments, master busy signals
-- **Status**: Command structures implemented, notification mapping incomplete
+- **Comprehensive implementation** (~75%) of Digitrax LocoNet Personal Use Edition 1.0
+- **Complete Features**:
+  - Power control (ON/OFF, emergency stop)
+  - Full locomotive control (speed, direction, functions F0-F8)
+  - Slot management (request, activate, dispatch, keep-alive)
+  - Switch/turnout control with feedback
+  - Sensor and occupancy detection
+  - Programming track operations (CV read/write, all modes)
+  - Operations mode programming (POM)
+  - Multi-locomotive consisting (link/unlink, member control)
+- **Commands**: All essential opcodes (0xA0-0xBF range, slot operations 0xE7/0xEF)
+- **Notifications**: Slot data (14-byte), sensors, switches, acknowledgments, programming results
+- **Data Types**: `SlotData`, `LocoAddress`, `AccessoryAddress`, status enums, programming types
+- **Documentation**: See `README.md` and `API-REFERENCE.md` in LocoNet project folder
+- **Not Implemented**: Fast clock (slot 123), raw DCC packets (0xED), rarely used
 
 ### 4. Adapter Layer (`Tellurian.Trains.Adapters.Z21`)
 - **Z21 Adapter**: Wraps XpressNet and LocoNet protocols for Z21 command stations

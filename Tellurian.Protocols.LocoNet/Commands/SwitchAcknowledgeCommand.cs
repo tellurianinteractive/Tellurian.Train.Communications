@@ -1,16 +1,16 @@
-﻿namespace Tellurian.Trains.Protocols.LocoNet.Commands;
+namespace Tellurian.Trains.Protocols.LocoNet.Commands;
 
 /// <summary>
-/// OPC_SW_REQ (0xB0) - Switch request without acknowledge.
-/// Commands a turnout/switch change without waiting for acknowledgment.
-/// This is the most common switch control command.
-/// No response is sent by default.
+/// OPC_SW_ACK (0xBD) - Switch request with acknowledge.
+/// Commands a turnout/switch change and waits for DCS100 acknowledgment.
+/// Note: Not supported by DT200 throttles.
+/// Response: OPC_LONG_ACK with accept (0x7F) or reject (0x00) code.
 /// </summary>
-public sealed class SetTurnoutCommand : Command
+public sealed class SwitchAcknowledgeCommand : Command
 {
-    public const byte OperationCode = 0xB0;
+    public const byte OperationCode = 0xBD;
 
-    public SetTurnoutCommand(AccessoryAddress address, AccessoryFunction direction, OutputState output)
+    public SwitchAcknowledgeCommand(AccessoryAddress address, AccessoryFunction direction, OutputState output)
     {
         Address = address;
         Direction = direction;
@@ -33,46 +33,34 @@ public sealed class SetTurnoutCommand : Command
     public OutputState Output { get; }
 
     /// <summary>
-    /// Creates a command to throw a switch (set to Thrown/Red position).
+    /// Creates a command to throw a switch with acknowledgment.
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SetTurnoutCommand Throw(ushort address, bool activate = true)
+    public static SwitchAcknowledgeCommand Throw(ushort address, bool activate = true)
     {
-        return new SetTurnoutCommand(
+        return new SwitchAcknowledgeCommand(
             new AccessoryAddress(address),
             AccessoryFunction.ThrownOrRed,
             activate ? OutputState.On : OutputState.Off);
     }
 
     /// <summary>
-    /// Creates a command to close a switch (set to Closed/Green position).
+    /// Creates a command to close a switch with acknowledgment.
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SetTurnoutCommand Close(ushort address, bool activate = true)
+    public static SwitchAcknowledgeCommand Close(ushort address, bool activate = true)
     {
-        return new SetTurnoutCommand(
+        return new SwitchAcknowledgeCommand(
             new AccessoryAddress(address),
             AccessoryFunction.ClosedOrGreen,
             activate ? OutputState.On : OutputState.Off);
     }
 
     /// <summary>
-    /// Creates a command to turn off a switch output (typically sent after activation).
-    /// This prevents motor overheating in turnout motors.
-    /// </summary>
-    /// <param name="address">Switch address (0-2047)</param>
-    public static SetTurnoutCommand TurnOff(ushort address)
-    {
-        return new SetTurnoutCommand(
-            new AccessoryAddress(address),
-            AccessoryFunction.ClosedOrGreen,
-            OutputState.Off);
-    }
-
-    /// <summary>
-    /// Generates the 4-byte message: [0xB0, sw1, sw2, checksum].
+    /// Generates the 4-byte message: [0xBD, sw1, sw2, checksum].
+    /// Same format as OPC_SW_REQ but expects acknowledgment.
     /// </summary>
     public override byte[] GetBytesWithChecksum()
     {
