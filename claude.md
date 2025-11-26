@@ -52,54 +52,34 @@ The build automatically creates NuGet packages for distributable projects.
 
 The library follows a **layered architecture** with clear separation of concerns:
 
-### 1. Transport Layer (`Tellurian.Communications.Channels`)
-- **`ICommunicationsChannel`**: Protocol-agnostic communication interface using observer pattern
-- **`UdpDataChannel`**: Concrete UDP implementation with asynchronous send/receive
-- **`CommunicationResult`**: Result type representing success, failure, or no-operation outcomes
-- **Observer Pattern**: Multiple observers can subscribe to receive communication notifications
+### 1. Transport Layer
+**Project**: `Tellurian.Communications.Channels`
 
-### 2. Interface Layer (`Tellurian.Trains.Interfaces`)
-- **Protocol-agnostic abstractions** that define the public API for clients
-- **`ILocoControl`**: Locomotive control interface (Drive, EmergencyStop, SetFunction)
-- **`ILocoDecoder`**: Decoder programming interface (ReadCV, WriteCV)
-- **Data Types**: `LocoAddress`, `LocoDrive`, `LocoFunction`, `LocoSpeed`, `LocoDirection`
-- **Notifications**: Abstract notification types for broadcasting state changes
-- **Extensions**: Helper methods for data conversions (byte manipulation, CV addresses)
+Protocol-agnostic UDP communication infrastructure.
+
+See `Tellurian.Communications.Channels/CLAUDE.md` for details.
+
+### 2. Interface Layer
+**Project**: `Tellurian.Trains.Interfaces`
+
+Protocol-agnostic abstractions for client applications.
+
+See `Tellurian.Trains.Interfaces/CLAUDE.md` for details.
 
 ### 3. Protocol Layer
-Each protocol implementation translates high-level commands to protocol-specific byte sequences:
+**Projects**: `Tellurian.Trains.Protocols.XpressNet`, `Tellurian.Protocols.LocoNet`
 
-#### XpressNet (`Tellurian.Trains.Protocols.XpressNet`)
-- **Complete implementation** of the XpressNet protocol (Lenz, Z21)
-- **Commands**: Locomotive control, track power, accessory control, CV programming
-- **Notifications**: System state, locomotive info, programming responses, broadcasts
-- **Message/Packet Structure**: Commands inherit from `Message`, packets handle XOR checksums
-- **Key Types**: `Command`, `Notification`, `Packet` (with checksum handling)
+Protocol implementations that translate high-level commands to protocol-specific byte sequences.
 
-#### LocoNet (`Tellurian.Protocols.LocoNet`)
-- **Comprehensive implementation** (~75%) of Digitrax LocoNet Personal Use Edition 1.0
-- **Complete Features**:
-  - Power control (ON/OFF, emergency stop)
-  - Full locomotive control (speed, direction, functions F0-F8)
-  - Slot management (request, activate, dispatch, keep-alive)
-  - Switch/turnout control with feedback
-  - Sensor and occupancy detection
-  - Programming track operations (CV read/write, all modes)
-  - Operations mode programming (POM)
-  - Multi-locomotive consisting (link/unlink, member control)
-- **Commands**: All essential opcodes (0xA0-0xBF range, slot operations 0xE7/0xEF)
-- **Notifications**: Slot data (14-byte), sensors, switches, acknowledgments, programming results
-- **Data Types**: `SlotData`, `LocoAddress`, `AccessoryAddress`, status enums, programming types
-- **Documentation**: See `README.md` and `API-REFERENCE.md` in LocoNet project folder
-- **Not Implemented**: Fast clock (slot 123), raw DCC packets (0xED), rarely used
+- See `Tellurian.Trains.Protocols.XpressNet/CLAUDE.md` for XpressNet details.
+- See `Tellurian.Protocols.LocoNet/CLAUDE.md` for LocoNet details.
 
-### 4. Adapter Layer (`Tellurian.Trains.Adapters.Z21`)
-- **Z21 Adapter**: Wraps XpressNet and LocoNet protocols for Z21 command stations
-- **Frame Handling**: Z21-specific frame structure with headers and protocol encapsulation
-- **Notification Mapping**: Maps Z21 frames to protocol-agnostic interface notifications
-- **Commands**: System queries (serial number, hardware info, system state)
-- **Broadcast Subscriptions**: Configurable event filtering via `BroadcastSubjects`
-- **Observer Pattern**: Distributes notifications to multiple observers
+### 4. Adapter Layer
+**Project**: `Tellurian.Trains.Adapters.Z21`
+
+Adapter for Z21 command stations.
+
+See `Tellurian.Trains.Adapters.Z21/CLAUDE.md` for details.
 
 ### Data Flow
 
@@ -130,19 +110,11 @@ Physical Hardware (Z21, Digitrax, etc.)
 This project follows strict C# coding standards documented in `Specifications/coding-conventions.md` and `Specifications/identifier-names.md`. Key requirements:
 
 ### Naming Conventions
-- **PascalCase**: Classes, interfaces, public members, methods, properties, constants
-- **camelCase**: Private/internal fields (prefixed with `_`), method parameters, local variables
-- **Interface prefix**: All interfaces start with `I` (e.g., `ILocoControl`)
-- **Static fields**: Private/internal static fields use `s_` prefix
-- **Primary constructors**: PascalCase for record types, camelCase for class/struct types
+Ask Microsoft Docs for details on C# naming conventions.
 
 ### Language Features
 - Target framework: **net10.0**
-- **Modern C# features**: Use latest language version, collection expressions, raw string literals
-- **`var`**: Use for temporary variables and LINQ results; avoid when type is not obvious
-- **`required` properties**: Prefer over constructor parameters for mandatory initialization
-- **File-scoped namespaces**: Use `namespace Foo;` instead of block syntax
-- **Using directives**: Place outside namespace declarations
+- **Modern C# features**: Ask Microsoft Docs about C# 10 and later features.
 
 ### Async and Error Handling
 - Use `async`/`await` for I/O-bound operations (UDP communication)
@@ -155,27 +127,6 @@ This project follows strict C# coding standards documented in `Specifications/co
 - Prefer **`Func<>`** and **`Action<>`** over custom delegate types
 - Use LINQ for collection manipulation
 
-## Protocol-Specific Implementation Notes
-
-### XpressNet Protocol
-- **Checksum**: All packets require XOR checksum (handled by `Packet` class)
-- **Message Structure**: Header byte + data bytes + checksum
-- **Speed Steps**: Support for 14, 27, 28, or 126 speed steps
-- **Address Ranges**: Short (1-127) and long (128-9999) addresses
-- **Functions**: F0-F28 supported
-- **CV Range**: 1-1024
-
-### Z21 Frame Structure
-- **Frame**: `[Length (2 bytes, little-endian)] [Header (2 bytes)] [Data (n bytes)]`
-- **Encapsulation**: XpressNet and LocoNet commands wrapped in Z21 frames
-- **NotificationFactory**: Parses incoming frames and creates appropriate notification objects
-
-### LocoNet Protocol
-- **Slot-based**: Locomotives managed via numbered slots
-- **Checksum**: Different checksum algorithm than XpressNet
-- **Operation Codes**: Defined in `OperationCodes` class
-- **Incomplete**: Notification mapping to interface types needs completion
-
 ## Testing Strategy
 
 Tests are organized by layer:
@@ -185,9 +136,11 @@ Tests are organized by layer:
 
 ## Project Structure Summary
 
-- **Tellurian.Communications.Channels**: UDP transport layer
-- **Tellurian.Trains.Interfaces**: Protocol-agnostic interfaces and types
-- **Tellurian.Trains.Protocols.XpressNet**: XpressNet protocol implementation (complete)
-- **Tellurian.Protocols.LocoNet**: LocoNet protocol implementation (partial)
-- **Tellurian.Trains.Adapters.Z21**: Z21 command station adapter
+- **Tellurian.Communications.Channels**: UDP transport layer - see `Tellurian.Communications.Channels/CLAUDE.md`
+- **Tellurian.Trains.Interfaces**: Protocol-agnostic interfaces and types - see `Tellurian.Trains.Interfaces/CLAUDE.md`
+- **Tellurian.Trains.Protocols.XpressNet**: XpressNet protocol implementation - see `Tellurian.Trains.Protocols.XpressNet/CLAUDE.md`
+- **Tellurian.Protocols.LocoNet**: LocoNet protocol implementation - see `Tellurian.Protocols.LocoNet/CLAUDE.md`
+- **Tellurian.Trains.Adapters.Z21**: Z21 command station adapter - see `Tellurian.Trains.Adapters.Z21/CLAUDE.md`
 - **Specifications/**: Detailed coding conventions and naming standards
+
+Each project has its own `CLAUDE.md` file with project-specific implementation details.
