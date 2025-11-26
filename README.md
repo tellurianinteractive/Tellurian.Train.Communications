@@ -55,17 +55,48 @@ Complete implementation of the XpressNet command protocol used by Lenz and Z21 c
 - Temperature monitoring
 - Comprehensive system state notifications
 
-### LocoNet Protocol Support ⚠️ Partially Implemented
-Basic LocoNet command support for Digitrax-compatible systems.
+### LocoNet Protocol Support ✅ Comprehensive Implementation (~75%)
+Comprehensive LocoNet protocol implementation based on Digitrax LocoNet Personal Use Edition 1.0 specification.
 
-**Implemented Features:**
-- Track power control (on/off/idle)
-- Slot-based locomotive control (speed, direction, functions F0-F19)
-- Turnout control
-- Address/slot management
+**Power Control:**
+- Global power on/off
+- Emergency stop (global and per-locomotive)
+- Idle force command
+
+**Locomotive Control:**
+- Full slot-based control (120 slots)
+- Speed and direction control
+- Function control (F0-F8)
+- Slot lifecycle management (request, activate, dispatch, keep-alive)
+- Long and short address support (1-9999)
+
+**Switch/Turnout Control:**
+- Switch control with direction (throw/close)
+- Switch state requests and feedback
+- Output state control (on/off)
+
+**Sensor and Feedback:**
+- Sensor input notifications (128 sensor blocks)
+- Occupancy detection
+- Switch report notifications
+
+**Programming:**
+- Service mode programming (paged, direct byte/bit, register modes)
+- Operations mode programming (POM) with optional feedback
+- CV read/write operations (CVs 1-1024)
+- Programming track (slot 124) support
+
+**Advanced Features:**
+- Multi-locomotive consisting (link/unlink, member control)
+- Consist function control
 - Checksum validation and acknowledgments
 
-**Status Note:** Command structures are implemented, but notification mapping to interface types is incomplete.
+**Not Implemented:**
+- Fast clock synchronization (slot 123)
+- Raw DCC packet operations (OPC_IMM_PACKET)
+- Advanced peer transfer operations
+
+See `Tellurian.Protocols.LocoNet/README.md` for detailed documentation and usage examples.
 
 ### Communication Features
 - **Asynchronous Operations** - Non-blocking send/receive with async patterns
