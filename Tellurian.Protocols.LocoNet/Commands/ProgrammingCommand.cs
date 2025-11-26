@@ -158,7 +158,7 @@ public sealed class ProgrammingCommand : Command
         data[2] = ProgrammingSlot; // Slot 124
 
         // Build PCMD byte
-        byte programmingCommandByte = ProgrammingHelper.BuildProgrammingCommandByte(Mode, Operation);
+        byte programmingCommandByte = Mode.BuildProgrammingCommandByte( Operation);
         data[3] = programmingCommandByte;
 
         data[4] = 0x00; // Reserved
@@ -179,7 +179,7 @@ public sealed class ProgrammingCommand : Command
         data[7] = TrackStatus; // TRK status
 
         // Encode CV and data
-        var (cvh, cvl, data7) = ProgrammingHelper.EncodeCvAndData(CV);
+        var (cvh, cvl, data7) = CV.EncodeToBytes();
         data[8] = cvh; // CVH
         data[9] = cvl; // CVL
         data[10] = data7; // DATA7

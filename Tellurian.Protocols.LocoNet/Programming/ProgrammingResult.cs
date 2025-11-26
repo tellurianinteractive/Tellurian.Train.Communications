@@ -83,7 +83,7 @@ public sealed class ProgrammingResult
         byte data7 = slotData[10];
 
         // Decode CV number and value
-        var cv = ProgrammingHelper.DecodeCvAndData(cvh, cvl, data7);
+        var cv = CV.DecodeFromBytes(cvh, cvl, data7);
 
         return new ProgrammingResult(status, cv, slotData);
     }

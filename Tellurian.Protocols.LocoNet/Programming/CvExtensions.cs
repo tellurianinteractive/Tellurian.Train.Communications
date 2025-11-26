@@ -8,7 +8,7 @@ public static partial class CvExtensions {
         /// Encodes a CV number (1-1024) into CVH and CVL bytes.
         /// </summary>
         /// <returns>Tuple of (cvh, cvl, data7)</returns>
-        public (byte cvh, byte cvl, byte data7) EncodeCvAndData()
+        public (byte cvh, byte cvl, byte data7) EncodeToBytes()
         {
             // CV numbers are 1-indexed, but we transmit 0-indexed
             int cvIndex = cv.Number - 1;
@@ -36,7 +36,7 @@ public static partial class CvExtensions {
         /// <param name="cvl">CVL byte</param>
         /// <param name="data7">DATA7 byte</param>
         /// <returns>Tuple of (cvNumber, dataValue)</returns>
-        public static CV DecodeCvAndData(byte cvh, byte cvl, byte data7)
+        public static CV DecodeFromBytes(byte cvh, byte cvl, byte data7)
         {
             // Reconstruct CV index from CVL (bits 6-0) and CVH bit 0 (bit 7)
             int cvIndex = cvl | ((cvh & 0x01) << 7);
