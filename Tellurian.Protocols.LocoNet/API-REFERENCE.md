@@ -531,6 +531,33 @@ var decoded = AccessoryAddress.DecodeSwitchBytes(
 );
 ```
 
+### CV (Configuration Variable)
+
+```csharp
+using Tellurian.Trains.Protocols.LocoNet.Programming;
+
+// Create CV
+var cv = new CV { Number = 29, Value = 6 };
+
+// Properties
+int number = cv.Number;   // 1-1024
+byte value = cv.Value;    // 0-255
+
+// Display
+Console.WriteLine(cv.ToString());  // "CV29=6"
+
+// Equality
+var cv1 = new CV { Number = 29, Value = 6 };
+var cv2 = new CV { Number = 29, Value = 6 };
+bool equal = cv1 == cv2;  // true
+
+// Encode for protocol transmission
+var (cvh, cvl, data7) = cv.EncodeCvAndData();
+
+// Decode from protocol bytes
+CV decoded = ProgrammingHelper.DecodeCvAndData(cvh, cvl, data7);
+```
+
 ### Enums
 
 ```csharp

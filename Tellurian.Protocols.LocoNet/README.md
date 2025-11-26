@@ -424,6 +424,7 @@ if (msg is UnsupportedNotification unsupported)
 - `SlotData` - Complete slot information structure
 - `LocoAddress` - Locomotive address (1-9999)
 - `AccessoryAddress` - Switch/turnout address (0-2047)
+- `CV` - Configuration Variable with number (1-1024) and value (0-255)
 - `SlotStatus`, `ConsistStatus`, `DecoderType`, `TrackStatus` - Enums
 - `ProgrammingMode`, `ProgrammingOperation`, `ProgrammingStatus` - Programming types
 - `ProgrammingResult` - Programming response parser
