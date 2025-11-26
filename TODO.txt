@@ -1,4 +1,4 @@
-I can see the code contains switch-statements. I prefere to use switch-expressions. Examine if you can refactor the code to prefere switch-expressions where it make sense.
+I can see the code contains switch-statements. I prefere to use switch-expressions. Examine if you can refactor the code to prefere switch-expressions where it make sense. Add a recommendation to use switch-expressions in CLAUDE.md.
 
 The class ConsistHelper has only static methods. This is a good case to create extension methods using C# 14 syntax. I want you to contert this class to using extension methods and rename the class to ConsistExtensions.
 
