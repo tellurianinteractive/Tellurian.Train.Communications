@@ -107,17 +107,17 @@ Physical Hardware (Z21, Digitrax, etc.)
 
 ## Coding Conventions
 
-This project follows strict C# coding standards documented in `Specifications/coding-conventions.md` and `Specifications/identifier-names.md`. Key requirements:
+This project follows strict C# coding standards documented by Microsoft.
 
 ### Naming Conventions
-Ask Microsoft Docs for details on C# naming conventions.
-
+Ask Microsoft for details on C# naming conventions.
+ 
 ### Language Features
 - Target framework: **net10.0**
-- **Modern C# features**: Ask Microsoft Docs about C# 10 and later features.
+- **Modern C# features**: Use C# 10 and later features as documented by Microsoft.
 
 ### Async and Error Handling
-- Use `async`/`await` for I/O-bound operations (UDP communication)
+- Use `async`/`await` for any I/O-bound operations
 - Use `ConfigureAwait(false)` to avoid deadlocks
 - Only catch exceptions that can be properly handled
 - Use specific exception types with meaningful messages
