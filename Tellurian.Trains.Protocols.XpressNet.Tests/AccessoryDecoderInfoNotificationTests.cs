@@ -1,83 +1,10 @@
-using Tellurian.Trains.Protocols.XpressNet.Commands;
 using Tellurian.Trains.Protocols.XpressNet.Notifications;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Tests;
 
 [TestClass]
-public class AccessoryInfoTests
+public class AccessoryDecoderInfoNotificationTests
 {
-    #region AccessoryInfoRequestCommand
-
-    [TestMethod]
-    public void AccessoryInfoRequest_ReturnsCorrectBytes_ForTurnout1()
-    {
-        var target = new AccessoryInfoRequestCommand(new AccessoryAddress(1));
-        var data = target.GetData();
-
-        Assert.AreEqual(0x42, data[0]);
-        Assert.AreEqual(0x00, data[1]);
-        Assert.AreEqual(0x80, data[2]);
-    }
-
-    [TestMethod]
-    public void AccessoryInfoRequest_ReturnsCorrectBytes_ForTurnout3()
-    {
-        var target = new AccessoryInfoRequestCommand(new AccessoryAddress(3));
-        var data = target.GetData();
-
-        Assert.AreEqual(0x42, data[0]);
-        Assert.AreEqual(0x00, data[1]);
-        Assert.AreEqual(0x81, data[2]);
-    }
-
-    [TestMethod]
-    public void AccessoryInfoRequest_ReturnsCorrectBytes_ForTurnout5()
-    {
-        var target = new AccessoryInfoRequestCommand(new AccessoryAddress(5));
-        var data = target.GetData();
-
-        Assert.AreEqual(0x42, data[0]);
-        Assert.AreEqual(0x01, data[1]);
-        Assert.AreEqual(0x80, data[2]);
-    }
-
-    [TestMethod]
-    public void AccessoryInfoRequest_ReturnsCorrectBytes_ForTurnout100()
-    {
-        var target = new AccessoryInfoRequestCommand(new AccessoryAddress(100));
-        var data = target.GetData();
-
-        Assert.AreEqual(0x42, data[0]);
-        Assert.AreEqual(24, data[1]);
-        Assert.AreEqual(0x80, data[2]);
-    }
-
-    [TestMethod]
-    public void AccessoryInfoRequest_ReturnsCorrectBytes_ForTurnout1024()
-    {
-        var target = new AccessoryInfoRequestCommand(new AccessoryAddress(1024));
-        var data = target.GetData();
-
-        Assert.AreEqual(0x42, data[0]);
-        Assert.AreEqual(255, data[1]);
-        Assert.AreEqual(0x80, data[2]);
-    }
-
-    [TestMethod]
-    public void AccessoryInfoRequest_WithGroupAndNibble_ReturnsCorrectBytes()
-    {
-        var target = new AccessoryInfoRequestCommand(10, true);
-        var data = target.GetData();
-
-        Assert.AreEqual(0x42, data[0]);
-        Assert.AreEqual(10, data[1]);
-        Assert.AreEqual(0x81, data[2]);
-    }
-
-    #endregion
-
-    #region AccessoryDecoderInfoNotification
-
     [TestMethod]
     public void AccessoryDecoderInfoNotification_ParsesCorrectly()
     {
@@ -162,37 +89,4 @@ public class AccessoryInfoTests
 
         Assert.IsInstanceOfType(notification, typeof(AccessoryDecoderInfoNotification));
     }
-
-    #endregion
-
-    #region FeedbackBroadcast via Factory
-
-    [TestMethod]
-    public void FeedbackBroadcast_CreatedByFactory_ForHeader0x41()
-    {
-        var buffer = new byte[] { 0x41, 0x05, 0x25 };
-        var notification = NotificationFactory.Create(buffer);
-
-        Assert.IsInstanceOfType(notification, typeof(FeedbackBroadcast));
-    }
-
-    [TestMethod]
-    public void FeedbackBroadcast_CreatedByFactory_ForHeader0x42With5Bytes()
-    {
-        var buffer = new byte[] { 0x42, 0x05, 0x25, 0x06, 0x30 };
-        var notification = NotificationFactory.Create(buffer);
-
-        Assert.IsInstanceOfType(notification, typeof(FeedbackBroadcast));
-    }
-
-    [TestMethod]
-    public void FeedbackBroadcast_CreatedByFactory_ForHeader0x43()
-    {
-        var buffer = new byte[] { 0x43, 0x05, 0x25, 0x06, 0x30, 0x07, 0x35 };
-        var notification = NotificationFactory.Create(buffer);
-
-        Assert.IsInstanceOfType(notification, typeof(FeedbackBroadcast));
-    }
-
-    #endregion
 }
