@@ -1,6 +1,6 @@
 ﻿namespace Tellurian.Trains.Adapters.Z21;
 
-public class ActionObserver<T> : IObserver<T>
+internal class ActionObserver<T> : IObserver<T>
 {
     private readonly Action<T> OnNextAction;
     private readonly Action<Exception> ErrorAction;

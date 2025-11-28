@@ -47,7 +47,7 @@ public sealed class AddressRetrievalNotification : Notification
             if (!HasValidAddress || (AddressHigh == 0 && AddressLow == 0))
                 return LocoAddress.Zero;
 
-            return LocoAddress.From([AddressHigh, AddressLow]);
+            return LocoAddressExtensions.FromXpressNet(AddressHigh, AddressLow);
         }
     }
 

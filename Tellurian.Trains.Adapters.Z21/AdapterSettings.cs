@@ -2,7 +2,7 @@
 
 namespace Tellurian.Trains.Adapters.Z21;
 
-public class AdapterSettings
+internal class AdapterSettings
 {
     public static AdapterSettings Default => new AdapterSettings();
     public IPAddress Address { get; set; } = IPAddress.Parse("192.168.0.111");

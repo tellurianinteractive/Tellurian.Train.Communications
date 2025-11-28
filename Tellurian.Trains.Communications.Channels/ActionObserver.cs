@@ -1,6 +1,6 @@
 ﻿namespace Tellurian.Trains.Communications.Channels;
 
-public sealed class ActionObserver<T> : IObserver<T>
+internal sealed class ActionObserver<T> : IObserver<T>
 {
     private readonly Action<T> _OnNextAction;
     private readonly Action<Exception> _ErrorAction;

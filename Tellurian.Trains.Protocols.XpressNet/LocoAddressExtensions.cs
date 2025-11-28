@@ -23,19 +23,26 @@ public static class LocoAddressExtensions
         }
     }
 
-    extension(LocoAddress)
+    /// <summary>
+    /// Creates a LocoAddress from XpressNet-encoded bytes.
+    /// </summary>
+    /// <param name="high">High byte in XpressNet format (bits 6-7 set for long addresses, bits 0-5 are high address bits).</param>
+    /// <param name="low">Low byte (bits 0-7 of address).</param>
+    /// <returns>Decoded locomotive address.</returns>
+    public static LocoAddress FromXpressNet(byte high, byte low)
     {
-        /// <summary>
-        /// Creates a LocoAddress from XpressNet-encoded bytes.
-        /// </summary>
-        /// <param name="data">Two bytes in XpressNet format: [AH, AL] where AH has bits 6-7 set for long addresses.</param>
-        public static LocoAddress From(byte[] data)
-        {
-            var span = data.AsSpan();
-            span.Reverse();
-            var buffer = span.ToArray();
-            buffer[1] &= 0x3F;
-            return LocoAddress.From(BitConverter.ToInt16(buffer, 0));
-        }
+        return LocoAddress.From(((high & 0x3F) << 8) | low);
+    }
+
+    /// <summary>
+    /// Creates a LocoAddress from XpressNet-encoded byte array.
+    /// </summary>
+    /// <param name="data">Two bytes in XpressNet format: [AH, AL].</param>
+    /// <returns>Decoded locomotive address.</returns>
+    public static LocoAddress FromXpressNet(byte[] data)
+    {
+        ArgumentNullException.ThrowIfNull(data);
+        if (data.Length != 2) throw new ArgumentOutOfRangeException(nameof(data), "Data must contain 2 bytes.");
+        return FromXpressNet(data[0], data[1]);
     }
 }

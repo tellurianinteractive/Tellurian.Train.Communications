@@ -7,7 +7,7 @@ public sealed class LocoInfoNotification : Notification
 {
     public LocoInfoNotification(byte[] buffer) : base(0xE0, GetData(buffer)) { }
 
-    public LocoAddress Address { get { return LocoAddress.From(Data.Take(2).ToArray()); } }
+    public LocoAddress Address { get { return LocoAddressExtensions.FromXpressNet(Data[0], Data[1]); } }
     public LocoDirection Direction { get { return (Data[3] & 0x80) > 0 ? LocoDirection.Forward : LocoDirection.Backward; } }
 
     public bool IsControlledByOtherDevice { get { return (Data[2] & 0x08) > 0; } }

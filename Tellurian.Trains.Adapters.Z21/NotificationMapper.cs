@@ -19,7 +19,7 @@ public static class NotificationMapper
 
     public static Interfaces.Notification[] Map(this Notification notification)
     {
-        if (notification is null) return Array.Empty<Interfaces.Notification>();
+        if (notification is null) return [];
         var key = notification.GetType();
         if (Mappings.ContainsKey(key)) return Mappings[key].Invoke(notification);
         return MapDefaults.CreateUnmapped(notification.ToString());
@@ -29,5 +29,5 @@ public static class NotificationMapper
         ((XpressNetNotification)notification).Notification.Map();
 
     private static Interfaces.Notification[] MapLocoNetNotification(Notification notification) =>
-        ((LocoNetNotification)notification).Message?.Map ?? Array.Empty<Interfaces.Notification>();
+        ((LocoNetNotification)notification).Message?.Map ?? [];
 }

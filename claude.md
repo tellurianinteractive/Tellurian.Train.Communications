@@ -19,3 +19,8 @@ This project targets .NET 10.0. and the .NET 10 SDK. This is only defined global
 - **Specifications/**: Detailed coding conventions and naming standards
 
 Each project has its own `CLAUDE.md` file with project-specific implementation details.
+
+## Absolute paths
+Avoid using absolute paths when you searching in the project.
+If you need absolute paths, use:
+- C:\Utveckling\Github\Tellurian.Trains\Train.Control\

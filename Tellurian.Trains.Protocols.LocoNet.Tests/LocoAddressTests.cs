@@ -6,9 +6,10 @@ namespace Tellurian.Trains.Protocols.LocoNet.Tests;
 public class LocoAddressTests
 {
     [TestMethod]
-    public void Constructor_ThrowsArgumentOutOfRangeException_WhenAddressIsZero()
+    public void Constructor_AllowsZero_AsSentinelValue()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => LocoAddress.From(0));
+        var address = LocoAddress.Zero;
+        Assert.AreEqual(0, address.Number);
     }
 
     [TestMethod]

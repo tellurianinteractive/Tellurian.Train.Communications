@@ -6,8 +6,9 @@ namespace Tellurian.Trains.Protocols.XpressNet.Tests;
 public class LocoAddressTests {
 
     [TestMethod]
-    public void Constructor_ThrowsArgumentOutOfRangeException_WhenZero() {
-        Assert.Throws<ArgumentOutOfRangeException>(() => LocoAddress.From(0));
+    public void Constructor_AllowsZero_AsSentinelValue() {
+        var address = LocoAddress.Zero;
+        Assert.AreEqual(0, address.Number);
     }
 
     [TestMethod]
@@ -60,7 +61,7 @@ public class LocoAddressTests {
     [TestMethod]
     public void Constructor_FromBytes_ReconstructsAddress() {
         var target = LocoAddress.From(241);
-        var actual = LocoAddress.From(target.GetBytesAccordingToXpressNet());
+        var actual = LocoAddressExtensions.FromXpressNet(target.GetBytesAccordingToXpressNet());
         Assert.AreEqual(241, actual.Number);
      }
 }

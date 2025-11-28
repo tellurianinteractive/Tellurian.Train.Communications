@@ -1,6 +1,6 @@
 ﻿namespace Tellurian.Trains.Adapters.Z21;
 
-public class ResponseContext
+internal class ResponseContext
 {
     public ResponseContext(IEnumerable<CommandHandler> commandHandlers)
     {
@@ -18,7 +18,7 @@ public class ResponseContext
 
 }
 
-public sealed class CommandHandler
+internal sealed class CommandHandler
 {
     public  CommandHandler(Type commandType, Type awaitedNotificationResponse )
     {

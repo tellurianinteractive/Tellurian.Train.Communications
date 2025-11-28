@@ -21,7 +21,7 @@ public class AccessoryFunctionBuilderTests
         Assert.AreEqual(0x3F, actual[1], "Byte 2");
     }
 
-    public static byte[] GetAccessoryFunctionBytes(AccessoryAddress address, AccessoryInput input, AccessoryFunction function, OutputState state)
+    internal static byte[] GetAccessoryFunctionBytes(AccessoryAddress address, AccessoryInput input, AccessoryFunction function, OutputState state)
     {
         var result = new byte[2];
         result[0] = (byte)(((address.Number & 0x1F) << 2) + (byte)input);

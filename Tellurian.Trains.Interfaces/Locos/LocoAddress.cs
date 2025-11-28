@@ -33,9 +33,9 @@ public readonly struct LocoAddress : IEquatable<LocoAddress>
         return From(buffer[0], buffer[1]);
     }
     /// <summary>
-    /// Represents a zero loco address.
+    /// Represents a zero loco address (used as sentinel for "no address").
     /// </summary>
-    public static LocoAddress Zero => From(0);
+    public static LocoAddress Zero => new(0);
     /// <summary>
     /// Constructs a <see cref="LocoAddress"/> from a number.
     /// </summary>
@@ -44,6 +44,7 @@ public readonly struct LocoAddress : IEquatable<LocoAddress>
     {
         Number = number;
     }
+
     /// <summary>
     /// High 7 bits of the address for LocoNet encoding.
     /// Returns 0 for short addresses (1-127).
@@ -56,11 +57,12 @@ public readonly struct LocoAddress : IEquatable<LocoAddress>
     public byte Low => (byte)(Number & 0x7F);
 
     /// <summary>
-    /// Tests if a locomotive address is valid or not. A valid address should be in the range 1-9999.
+    /// Tests if a locomotive address is valid or not. A valid address should be in the range 0-9999.
+    /// Zero is allowed as a sentinel value for "no address".
     /// </summary>
     /// <param name="number">The address value to verify.</param>
     /// <returns>True if valid; otherwise false.</returns>
-    public static bool IsValid(short number) => number >= 1 && number <= 9999;
+    public static bool IsValid(short number) => number >= 0 && number <= 9999;
 
     /// <summary>
     /// The address.
@@ -69,7 +71,7 @@ public readonly struct LocoAddress : IEquatable<LocoAddress>
     public short Number
     {
         get;
-        init => field = IsValid(value) ? value : throw new ArgumentOutOfRangeException(nameof(value), "Address must be 1-9999.");
+        init => field = IsValid(value) ? value : throw new ArgumentOutOfRangeException(nameof(value), "Address must be 0-9999.");
     }
 
     /// <summary>

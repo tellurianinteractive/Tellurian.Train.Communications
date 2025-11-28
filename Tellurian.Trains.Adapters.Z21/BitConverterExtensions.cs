@@ -1,6 +1,6 @@
 ﻿namespace Tellurian.Trains.Adapters.Z21;
 
-public sealed class BitConverterExtensions
+internal sealed class BitConverterExtensions
 {
     private BitConverterExtensions() { }
 
