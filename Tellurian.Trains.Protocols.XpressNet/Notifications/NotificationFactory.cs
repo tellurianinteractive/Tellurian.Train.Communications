@@ -8,12 +8,10 @@ public static class NotificationFactory
 
     public static Notification Create(byte[] buffer) {
         if (buffer == null) throw new ArgumentNullException(nameof(buffer));
-        var Xheader = buffer[0]; // & 0xF0;
+        var Xheader = buffer[0];
         byte db0 = (buffer.Length > 1 ? buffer[1] : (byte)0x00);
         return Xheader switch
         {
-            // Headers 0x41-0x47 are FeedbackBroadcast with N pairs (N=header-0x40)
-            // Header 0x42 with only 2 data bytes is AccessoryDecoderInfoNotification (response to request)
             0x41 => new FeedbackBroadcast(buffer),
             0x42 => CreateAccessoryNotification(buffer),
             0x43 => new FeedbackBroadcast(buffer),
@@ -110,11 +108,8 @@ public static class NotificationFactory
     /// </summary>
     private static Notification Create0xE3Notification(byte[] buffer, byte db0) => db0 switch
     {
-        // 0x30-0x34: Address retrieval response (K=0-4)
         >= 0x30 and <= 0x34 => new AddressRetrievalNotification(buffer),
-        // 0x40: Loco operated by another device
         0x40 => new LocoOperatedByAnotherDeviceNotification(buffer),
-        // 0x50: Function status response
         0x50 => new FunctionStatusNotification(buffer),
         _ => new NotSupportedNotification(buffer, SourceBusName)
     };

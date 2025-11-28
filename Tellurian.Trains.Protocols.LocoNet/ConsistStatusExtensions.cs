@@ -5,7 +5,6 @@ namespace Tellurian.Trains.Protocols.LocoNet;
 /// </summary>
 public static class ConsistStatusExtensions
 {
-    // Extensions for ConsistStatus
     extension(ConsistStatus consistStatus)
     {
         /// <summary>
@@ -58,10 +57,8 @@ public static class ConsistStatusExtensions
         /// <returns>Modified STAT1 byte</returns>
         public byte GetConsistStatus(byte leadSlot)
         {
-            // Clear consist bits (bit 6 and bit 3)
             byte result = (byte)(leadSlot & ~0x48);
 
-            // Set new consist bits based on status
             return consistStatus switch
             {
                 ConsistStatus.SubMember => (byte)(result | 0x08),   // SL_CONDN

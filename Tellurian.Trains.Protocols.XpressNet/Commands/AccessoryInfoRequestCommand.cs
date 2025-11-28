@@ -30,8 +30,6 @@ public sealed class AccessoryInfoRequestCommand : Command
 
     private static byte[] GetData(AccessoryAddress address)
     {
-        // Determine which nibble based on the subaddress
-        // Subaddress 0-1 = lower nibble, 2-3 = upper nibble
         var upperNibble = address.Subaddress >= 2;
         return GetData(address.Group, upperNibble);
     }

@@ -71,7 +71,6 @@ public sealed class UdpDataChannel(int localPort, IPEndPoint remoteEndPoint) : I
             }
             catch (OperationCanceledException)
             {
-                // Expected when caller cancels the token
             }
         }
         _Observers.Completed();
@@ -81,8 +80,6 @@ public sealed class UdpDataChannel(int localPort, IPEndPoint remoteEndPoint) : I
     {
         _Client.Close();
         _Observers.Completed();
-        // Note: We don't wait for _ReceiveTask to complete in synchronous dispose
-        // to avoid potential deadlocks. Closing the client will cause ReceiveAsync to throw.
     }
 
     #region IDisposable and IAsyncDisposable Support

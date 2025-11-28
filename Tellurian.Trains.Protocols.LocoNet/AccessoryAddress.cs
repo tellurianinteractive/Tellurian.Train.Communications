@@ -33,17 +33,14 @@ public readonly struct AccessoryAddress : IEquatable<AccessoryAddress>
     /// <returns>Tuple of (sw1, sw2) bytes</returns>
     public (byte sw1, byte sw2) EncodeSwitchBytes(AccessoryFunction direction, OutputState output)
     {
-        // SW1: bits A6-A0 (low 7 bits of address)
         byte sw1 = (byte)(Value & 0x7F);
-
-        // SW2: bits A10-A7 (high 4 bits) + DIR + ON
         byte sw2 = (byte)((Value >> 7) & 0x0F);
 
         if (direction == AccessoryFunction.ClosedOrGreen)
-            sw2 |= 0x20;  // DIR bit (bit 5)
+            sw2 |= 0x20;
 
         if (output == OutputState.On)
-            sw2 |= 0x10;  // ON bit (bit 4)
+            sw2 |= 0x10;
 
         return (sw1, sw2);
     }
@@ -56,13 +53,8 @@ public readonly struct AccessoryAddress : IEquatable<AccessoryAddress>
     /// <returns>Decoded accessory address (direction and output state in separate out parameters)</returns>
     public static AccessoryAddress DecodeSwitchBytes(byte sw1, byte sw2, out AccessoryFunction direction, out OutputState output)
     {
-        // Extract address from bits
         ushort address = (ushort)(sw1 | ((sw2 & 0x0F) << 7));
-
-        // Extract direction (bit 5)
         direction = (sw2 & 0x20) != 0 ? AccessoryFunction.ClosedOrGreen : AccessoryFunction.ThrownOrRed;
-
-        // Extract output state (bit 4)
         output = (sw2 & 0x10) != 0 ? OutputState.On : OutputState.Off;
 
         return new AccessoryAddress(address);

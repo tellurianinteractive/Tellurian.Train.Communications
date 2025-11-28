@@ -11,7 +11,6 @@ public class ServiceModeNotificationTests
     [TestMethod]
     public void RegisterPagedNotification_ParsesCorrectly_ForRegister1()
     {
-        // Format: [Header=0x63, Identification=0x10, Register, Value, XOR]
         var buffer = new byte[] { 0x63, 0x10, 0x01, 0x55, 0xFF };
         var notification = new ServiceModeRegisterPagedNotification(buffer);
 
@@ -24,7 +23,6 @@ public class ServiceModeNotificationTests
     [TestMethod]
     public void RegisterPagedNotification_ParsesCorrectly_ForCV256()
     {
-        // CV 256 is encoded as 0x00
         var buffer = new byte[] { 0x63, 0x10, 0x00, 0xAA, 0xFF };
         var notification = new ServiceModeRegisterPagedNotification(buffer);
 
@@ -60,7 +58,6 @@ public class ServiceModeNotificationTests
     [TestMethod]
     public void DirectCVNotification_ParsesCorrectly_ForCV1()
     {
-        // Format: [Header=0x63, Identification=0x14, CV, Value, XOR]
         var buffer = new byte[] { 0x63, 0x14, 0x01, 0x03, 0xFF };
         var notification = new ServiceModeDirectCVNotification(buffer);
 
@@ -73,7 +70,6 @@ public class ServiceModeNotificationTests
     [TestMethod]
     public void DirectCVNotification_ParsesCorrectly_ForCV256()
     {
-        // CV 256 is encoded as 0x00
         var buffer = new byte[] { 0x63, 0x14, 0x00, 0xFF, 0xFF };
         var notification = new ServiceModeDirectCVNotification(buffer);
 

@@ -140,7 +140,6 @@ public sealed class SlotData
                     byteCount),
                 nameof(data));
 
-        // Extract fields from message
         byte slotNumber = data[2];
         byte stat1 = data[3];
         byte adrLo = data[4];
@@ -153,15 +152,12 @@ public sealed class SlotData
         byte id1 = data[11];
         byte id2 = data[12];
 
-        // Parse STAT1 byte
         SlotStatus status = (SlotStatus)((stat1 >> 4) & 0b11);
         ConsistStatus consist = (ConsistStatus)(((stat1 >> 3) & 0b1000) | ((stat1 >> 3) & 0b0001));
         DecoderType decoderType = (DecoderType)(stat1 & 0b111);
 
-        // Parse address (7-bit low + 7-bit high)
         ushort address = (ushort)(adrLo | (adrHi << 7));
 
-        // Parse direction and functions from DIRF
         bool direction = (dirf & 0x20) != 0;
         bool f0 = (dirf & 0x10) != 0;
         bool f4 = (dirf & 0x08) != 0;
@@ -169,13 +165,11 @@ public sealed class SlotData
         bool f2 = (dirf & 0x02) != 0;
         bool f1 = (dirf & 0x01) != 0;
 
-        // Parse functions from SND
         bool f8 = (snd & 0x08) != 0;
         bool f7 = (snd & 0x04) != 0;
         bool f6 = (snd & 0x02) != 0;
         bool f5 = (snd & 0x01) != 0;
 
-        // Parse device ID (7-bit low + 7-bit high)
         ushort deviceId = (ushort)(id1 | (id2 << 7));
 
         return new SlotData
@@ -219,25 +213,22 @@ public sealed class SlotData
         byte[] data = new byte[13];
 
         data[0] = opcode;
-        data[1] = 0x0E;  // Byte count
+        data[1] = 0x0E;
         data[2] = SlotNumber;
 
-        // Build STAT1 byte
         byte stat1 = (byte)(
             ((byte)Status << 4) |
-            ((byte)Consist & 0b1000) |  // CONUP bit
-            ((byte)Consist & 0b0001) << 3 |  // CONDN bit
+            ((byte)Consist & 0b1000) |
+            ((byte)Consist & 0b0001) << 3 |
             (byte)DecoderType
         );
         data[3] = stat1;
 
-        // Split address
-        data[4] = (byte)(Address & 0x7F);        // ADR low
-        data[9] = (byte)((Address >> 7) & 0x7F); // ADR high
+        data[4] = (byte)(Address & 0x7F);
+        data[9] = (byte)((Address >> 7) & 0x7F);
 
         data[5] = Speed;
 
-        // Build DIRF byte
         byte dirf = (byte)(
             (Direction ? 0x20 : 0) |
             (F0 ? 0x10 : 0) |
@@ -251,7 +242,6 @@ public sealed class SlotData
         data[7] = (byte)TrackStatus;
         data[8] = Status2;
 
-        // Build SND byte
         byte snd = (byte)(
             (F8 ? 0x08 : 0) |
             (F7 ? 0x04 : 0) |
@@ -260,9 +250,8 @@ public sealed class SlotData
         );
         data[10] = snd;
 
-        // Split device ID
-        data[11] = (byte)(DeviceId & 0x7F);        // ID1 low
-        data[12] = (byte)((DeviceId >> 7) & 0x7F); // ID2 high
+        data[11] = (byte)(DeviceId & 0x7F);
+        data[12] = (byte)((DeviceId >> 7) & 0x7F);
 
         return data;
     }

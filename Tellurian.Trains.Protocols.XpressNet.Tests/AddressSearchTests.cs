@@ -14,11 +14,11 @@ public class AddressSearchTests
         var target = new AddressInquiryMultiUnitMemberCommand(10, new LocoAddress(100));
         var data = target.GetData();
 
-        Assert.AreEqual(0xE4, data[0]);     // Header with length 4
-        Assert.AreEqual(0x01, data[1]);     // Identification (forward search)
-        Assert.AreEqual(10, data[2]);       // MTR address
-        Assert.AreEqual(0x00, data[3]);     // Loco Address High (short address)
-        Assert.AreEqual(0x64, data[4]);     // Loco Address Low (100)
+        Assert.AreEqual(0xE4, data[0]);
+        Assert.AreEqual(0x01, data[1]);
+        Assert.AreEqual(10, data[2]);
+        Assert.AreEqual(0x00, data[3]);
+        Assert.AreEqual(0x64, data[4]);
     }
 
     [TestMethod]
@@ -27,7 +27,7 @@ public class AddressSearchTests
         var target = new AddressInquiryMultiUnitMemberCommand(10, new LocoAddress(100), SearchDirection.Backward);
         var data = target.GetData();
 
-        Assert.AreEqual(0x02, data[1]);     // Identification (backward search)
+        Assert.AreEqual(0x02, data[1]);
     }
 
     [TestMethod]
@@ -36,8 +36,8 @@ public class AddressSearchTests
         var target = new AddressInquiryMultiUnitMemberCommand(10);
         var data = target.GetData();
 
-        Assert.AreEqual(0x00, data[3]);     // Address High = 0
-        Assert.AreEqual(0x00, data[4]);     // Address Low = 0
+        Assert.AreEqual(0x00, data[3]);
+        Assert.AreEqual(0x00, data[4]);
     }
 
     [TestMethod]
@@ -68,9 +68,9 @@ public class AddressSearchTests
         var target = new AddressInquiryMultiUnitCommand(10);
         var data = target.GetData();
 
-        Assert.AreEqual(0xE2, data[0]);     // Header with length 2
-        Assert.AreEqual(0x03, data[1]);     // Identification (forward search)
-        Assert.AreEqual(10, data[2]);       // MTR address
+        Assert.AreEqual(0xE2, data[0]);
+        Assert.AreEqual(0x03, data[1]);
+        Assert.AreEqual(10, data[2]);
     }
 
     [TestMethod]
@@ -79,7 +79,7 @@ public class AddressSearchTests
         var target = new AddressInquiryMultiUnitCommand(10, SearchDirection.Backward);
         var data = target.GetData();
 
-        Assert.AreEqual(0x04, data[1]);     // Identification (backward search)
+        Assert.AreEqual(0x04, data[1]);
     }
 
     [TestMethod]
@@ -88,7 +88,7 @@ public class AddressSearchTests
         var target = new AddressInquiryMultiUnitCommand(0);
         var data = target.GetData();
 
-        Assert.AreEqual(0x00, data[2]);     // MTR = 0 to get first
+        Assert.AreEqual(0x00, data[2]);
     }
 
     #endregion
@@ -101,10 +101,10 @@ public class AddressSearchTests
         var target = new AddressInquiryStackCommand(new LocoAddress(1234));
         var data = target.GetData();
 
-        Assert.AreEqual(0xE3, data[0]);     // Header with length 3
-        Assert.AreEqual(0x05, data[1]);     // Identification (forward search)
-        Assert.AreEqual(0xC4, data[2]);     // Address High (long address)
-        Assert.AreEqual(0xD2, data[3]);     // Address Low
+        Assert.AreEqual(0xE3, data[0]);
+        Assert.AreEqual(0x05, data[1]);
+        Assert.AreEqual(0xC4, data[2]);
+        Assert.AreEqual(0xD2, data[3]);
     }
 
     [TestMethod]
@@ -113,7 +113,7 @@ public class AddressSearchTests
         var target = new AddressInquiryStackCommand(new LocoAddress(3), SearchDirection.Backward);
         var data = target.GetData();
 
-        Assert.AreEqual(0x06, data[1]);     // Identification (backward search)
+        Assert.AreEqual(0x06, data[1]);
     }
 
     [TestMethod]
@@ -122,8 +122,8 @@ public class AddressSearchTests
         var target = new AddressInquiryStackCommand();
         var data = target.GetData();
 
-        Assert.AreEqual(0x00, data[2]);     // Address High = 0
-        Assert.AreEqual(0x00, data[3]);     // Address Low = 0
+        Assert.AreEqual(0x00, data[2]);
+        Assert.AreEqual(0x00, data[3]);
     }
 
     #endregion
@@ -136,10 +136,10 @@ public class AddressSearchTests
         var target = new DeleteLocoFromStackCommand(new LocoAddress(3));
         var data = target.GetData();
 
-        Assert.AreEqual(0xE3, data[0]);     // Header with length 3
-        Assert.AreEqual(0x44, data[1]);     // Identification
-        Assert.AreEqual(0x00, data[2]);     // Address High
-        Assert.AreEqual(0x03, data[3]);     // Address Low
+        Assert.AreEqual(0xE3, data[0]);
+        Assert.AreEqual(0x44, data[1]);
+        Assert.AreEqual(0x00, data[2]);
+        Assert.AreEqual(0x03, data[3]);
     }
 
     [TestMethod]
@@ -150,7 +150,6 @@ public class AddressSearchTests
 
         Assert.AreEqual(0xE3, data[0]);
         Assert.AreEqual(0x44, data[1]);
-        // Address 5000 = 0x1388, with long address flag -> 0xD3, 0x88
         Assert.AreEqual(0xD3, data[2]);
         Assert.AreEqual(0x88, data[3]);
     }
@@ -162,7 +161,6 @@ public class AddressSearchTests
     [TestMethod]
     public void AddressRetrievalNotification_ParsesCorrectly_NormalLoco()
     {
-        // Header=0xE3, Identification=0x30 (K=0), Address=1234
         var buffer = new byte[] { 0xE3, 0x30, 0xC4, 0xD2 };
         var notification = new AddressRetrievalNotification(buffer);
 

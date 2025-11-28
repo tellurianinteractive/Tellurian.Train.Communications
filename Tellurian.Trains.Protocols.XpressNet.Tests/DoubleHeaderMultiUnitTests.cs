@@ -14,12 +14,12 @@ public class DoubleHeaderMultiUnitTests
         var target = new EstablishDoubleHeaderCommand(new LocoAddress(3), new LocoAddress(5));
         var data = target.GetData();
 
-        Assert.AreEqual(0xE5, data[0]);     // Header with length 5
-        Assert.AreEqual(0x43, data[1]);     // Identification
-        Assert.AreEqual(0x00, data[2]);     // Address 1 High
-        Assert.AreEqual(0x03, data[3]);     // Address 1 Low
-        Assert.AreEqual(0x00, data[4]);     // Address 2 High
-        Assert.AreEqual(0x05, data[5]);     // Address 2 Low
+        Assert.AreEqual(0xE5, data[0]);
+        Assert.AreEqual(0x43, data[1]);
+        Assert.AreEqual(0x00, data[2]);
+        Assert.AreEqual(0x03, data[3]);
+        Assert.AreEqual(0x00, data[4]);
+        Assert.AreEqual(0x05, data[5]);
     }
 
     [TestMethod]
@@ -30,10 +30,8 @@ public class DoubleHeaderMultiUnitTests
 
         Assert.AreEqual(0xE5, data[0]);
         Assert.AreEqual(0x43, data[1]);
-        // Address 1234 = 0x04D2, with long address flag 0xC0 -> 0xC4, 0xD2
         Assert.AreEqual(0xC4, data[2]);
         Assert.AreEqual(0xD2, data[3]);
-        // Address 5678 = 0x162E, with long address flag -> 0xD6, 0x2E
         Assert.AreEqual(0xD6, data[4]);
         Assert.AreEqual(0x2E, data[5]);
     }
@@ -48,11 +46,11 @@ public class DoubleHeaderMultiUnitTests
         var target = new DissolveDoubleHeaderCommand(new LocoAddress(3));
         var data = target.GetData();
 
-        Assert.AreEqual(0xE5, data[0]);     // Header with length 5
-        Assert.AreEqual(0x43, data[1]);     // Identification
-        Assert.AreEqual(0x00, data[2]);     // Address High
-        Assert.AreEqual(0x03, data[3]);     // Address Low
-        Assert.AreEqual(0x00, data[4]);     // Second address = 0 (dissolve marker)
+        Assert.AreEqual(0xE5, data[0]);
+        Assert.AreEqual(0x43, data[1]);
+        Assert.AreEqual(0x00, data[2]);
+        Assert.AreEqual(0x03, data[3]);
+        Assert.AreEqual(0x00, data[4]);
         Assert.AreEqual(0x00, data[5]);
     }
 
@@ -80,11 +78,11 @@ public class DoubleHeaderMultiUnitTests
         var target = new AddLocoToMultiUnitCommand(new LocoAddress(3), 10, reversed: false);
         var data = target.GetData();
 
-        Assert.AreEqual(0xE4, data[0]);     // Header with length 4
-        Assert.AreEqual(0x40, data[1]);     // Identification (R=0)
-        Assert.AreEqual(0x00, data[2]);     // Loco Address High
-        Assert.AreEqual(0x03, data[3]);     // Loco Address Low
-        Assert.AreEqual(10, data[4]);       // MTR address
+        Assert.AreEqual(0xE4, data[0]);
+        Assert.AreEqual(0x40, data[1]);
+        Assert.AreEqual(0x00, data[2]);
+        Assert.AreEqual(0x03, data[3]);
+        Assert.AreEqual(10, data[4]);
     }
 
     [TestMethod]
@@ -94,7 +92,7 @@ public class DoubleHeaderMultiUnitTests
         var data = target.GetData();
 
         Assert.AreEqual(0xE4, data[0]);
-        Assert.AreEqual(0x41, data[1]);     // Identification (R=1)
+        Assert.AreEqual(0x41, data[1]);
         Assert.AreEqual(0x00, data[2]);
         Assert.AreEqual(0x03, data[3]);
         Assert.AreEqual(10, data[4]);
@@ -145,11 +143,11 @@ public class DoubleHeaderMultiUnitTests
         var target = new RemoveLocoFromMultiUnitCommand(new LocoAddress(3), 10);
         var data = target.GetData();
 
-        Assert.AreEqual(0xE4, data[0]);     // Header with length 4
-        Assert.AreEqual(0x42, data[1]);     // Identification for remove
-        Assert.AreEqual(0x00, data[2]);     // Loco Address High
-        Assert.AreEqual(0x03, data[3]);     // Loco Address Low
-        Assert.AreEqual(10, data[4]);       // MTR address
+        Assert.AreEqual(0xE4, data[0]);
+        Assert.AreEqual(0x42, data[1]);
+        Assert.AreEqual(0x00, data[2]);
+        Assert.AreEqual(0x03, data[3]);
+        Assert.AreEqual(10, data[4]);
     }
 
     [TestMethod]

@@ -23,23 +23,14 @@ public static class LocoNetMessageFactory
 
         return opcode switch
         {
-            // 2-byte messages - Power & System Control
             MasterBusyNotification.OperationCode => new MasterBusyNotification(),
             PowerOffCommand.OperationCode => new PowerOffCommand(),
             PowerOnCommand.OperationCode => new PowerOnCommand(),
             ForceIdleCommand.OperationCode => new ForceIdleCommand(),
-
-            // 4-byte messages - Switch/Turnout/Sensor
             SwitchReportNotification.OperationCode => new SwitchReportNotification(data),
             SensorInputNotification.OperationCode => new SensorInputNotification(data),
-
-            // 4-byte messages - Acknowledgments
             LongAcknowledge.OperationCode => new LongAcknowledge(data),
-
-            // 14-byte messages - Slot operations
             SlotNotification.OperationCode => new SlotNotification(data),
-
-            // Everything else is unsupported (for now)
             _ => new UnsupportedNotification(data)
         };
     }

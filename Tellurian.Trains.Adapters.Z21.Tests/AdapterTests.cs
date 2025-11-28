@@ -67,8 +67,6 @@ public class AdapterTests
         adapter.Subscribe(observer);
         await adapter.StartReceiveAsync(TestContext.CancellationToken);
 
-        // Simulate receiving a serial number notification
-        // Frame format: [Length(2)] [Header(2)] [Data(4)]
         var serialNumber = 12345678;
         var frame = new Frame(FrameHeader.SerialNumber, BitConverter.GetBytes(serialNumber));
         var frameBytes = frame.GetBytes();
@@ -115,22 +113,18 @@ public class AdapterTests
         var subscription = adapter.Subscribe(observer);
         await adapter.StartReceiveAsync(TestContext.CancellationToken);
 
-        // First notification
         var frame1 = new Frame(FrameHeader.SerialNumber, BitConverter.GetBytes(111));
         channel.SimulateReceive(frame1.GetBytes());
         await Task.Delay(50, TestContext.CancellationToken);
 
         Assert.AreEqual(1, observer.NotificationCount);
 
-        // Unsubscribe
         subscription.Dispose();
 
-        // Second notification
         var frame2 = new Frame(FrameHeader.SerialNumber, BitConverter.GetBytes(222));
         channel.SimulateReceive(frame2.GetBytes());
         await Task.Delay(50, TestContext.CancellationToken);
 
-        // Should still be 1
         Assert.AreEqual(1, observer.NotificationCount);
     }
 }
@@ -157,7 +151,6 @@ internal class MockChannel : ICommunicationsChannel
 
     public Task StartReceiveAsync(CancellationToken cancellationToken = default)
     {
-        // Mock doesn't actually start receiving, tests call SimulateReceive manually
         return Task.CompletedTask;
     }
 

@@ -56,18 +56,16 @@ public class Message
     /// </returns>
     public static int GetMessageLength(byte opcode)
     {
-        // Opcode must have MSB (bit 7) set
         if ((opcode & 0x80) == 0) return 0;
 
-        // Bits 6-5 encode the length
         int lengthBits = (opcode >> 5) & 0x03;
 
         return lengthBits switch
         {
-            0b00 => 2,  // 2 bytes: opcode + checksum
-            0b01 => 4,  // 4 bytes: opcode + 2 args + checksum
-            0b10 => 6,  // 6 bytes: opcode + 4 args + checksum
-            0b11 => -1, // Variable: next byte contains total byte count
+            0b00 => 2,
+            0b01 => 4,
+            0b10 => 6,
+            0b11 => -1,
             _ => 0
         };
     }
@@ -79,7 +77,6 @@ public class Message
     /// <returns>True if the opcode expects a follow-on response message</returns>
     public static bool ExpectsResponse(byte opcode)
     {
-        // Bit 3 is the follow-on bit
         return (opcode & 0x08) != 0;
     }
 

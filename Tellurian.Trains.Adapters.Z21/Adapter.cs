@@ -27,7 +27,7 @@ public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notifi
         return Observers.Subscribe(observer);
     }
 
-    private void Close() // Called by Dispose
+    private void Close()
     {
         (Channel as IDisposable)?.Dispose();
         Logger.LogInformation(new EventId(2109, nameof(Close)), "Adapter is closed.");
@@ -108,7 +108,7 @@ public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notifi
     #endregion
 
     #region IDisposable Support
-    private bool disposedValue = false; // To detect redundant calls
+    private bool disposedValue = false;
 
     private void Dispose(bool disposing)
     {
@@ -121,13 +121,10 @@ public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notifi
             disposedValue = true;
         }
     }
-    // This code added to correctly implement the disposable pattern.
+
     public void Dispose()
     {
-        // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
         Dispose(true);
-        // TODO: uncomment the following line if the finalizer is overridden above.
-        // GC.SuppressFinalize(this);
     }
     #endregion
 }

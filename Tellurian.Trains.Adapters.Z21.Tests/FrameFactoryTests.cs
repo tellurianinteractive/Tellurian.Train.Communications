@@ -44,7 +44,6 @@ public class FrameFactoryTests
     [TestMethod]
     public void CreateManyWithBufferTooShortThrows()
     {
-        // Buffer with only 2 bytes (less than minimum 4 for frame header)
         var buffer = new byte[] { 2, 0 };
         var result = CommunicationResult.Success(buffer, "Test", "Test");
 
@@ -54,7 +53,6 @@ public class FrameFactoryTests
     [TestMethod]
     public void CreateManyWithMalformedLengthThrows()
     {
-        // Frame claims to be 100 bytes but buffer only has 8 bytes
         var buffer = new byte[] { 100, 0, 0x10, 0x00, 1, 2, 3, 4 };
         var result = CommunicationResult.Success(buffer, "Test", "Test");
 
@@ -64,10 +62,9 @@ public class FrameFactoryTests
     [TestMethod]
     public void CreateManyWithMultipleFramesDifferentSizes()
     {
-        // Create 3 frames: 4 bytes, 6 bytes, 8 bytes
-        var frame1 = new byte[] { 4, 0, 0x10, 0x00 }; // Minimal frame (4 bytes)
-        var frame2 = new byte[] { 6, 0, 0x10, 0x00, 0xAA, 0xBB }; // 6 bytes (4 + 2 data)
-        var frame3 = new byte[] { 8, 0, 0x10, 0x00, 0xCC, 0xDD, 0xEE, 0xFF }; // 8 bytes (4 + 4 data)
+        var frame1 = new byte[] { 4, 0, 0x10, 0x00 };
+        var frame2 = new byte[] { 6, 0, 0x10, 0x00, 0xAA, 0xBB };
+        var frame3 = new byte[] { 8, 0, 0x10, 0x00, 0xCC, 0xDD, 0xEE, 0xFF };
 
         var buffer = new byte[frame1.Length + frame2.Length + frame3.Length];
         Buffer.BlockCopy(frame1, 0, buffer, 0, frame1.Length);
@@ -86,11 +83,9 @@ public class FrameFactoryTests
     [TestMethod]
     public void CreateManyWithZeroLengthFrameThrows()
     {
-        // Frame with length 0 should cause issues
         var buffer = new byte[] { 0, 0, 0x10, 0x00 };
         var result = CommunicationResult.Success(buffer, "Test", "Test");
 
-        // Zero length causes OverflowException when creating negative-sized data array
         Assert.Throws<OverflowException>(() => Frame.CreateMany(result).ToList());
     }
 }
