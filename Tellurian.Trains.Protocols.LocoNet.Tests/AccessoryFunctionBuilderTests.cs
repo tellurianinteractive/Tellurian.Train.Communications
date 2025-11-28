@@ -1,4 +1,6 @@
-﻿namespace Tellurian.Trains.Protocols.LocoNet.Tests;
+﻿using Tellurian.Trains.Protocols.XpressNet;
+
+namespace Tellurian.Trains.Protocols.LocoNet.Tests;
 
 [TestClass]
 public class AccessoryFunctionBuilderTests

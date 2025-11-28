@@ -1,4 +1,4 @@
-﻿using Tellurian.Communications.Channels;
+﻿using Tellurian.Trains.Communications.Channels;
 
 namespace Tellurian.Trains.Adapters.Z21.Tests;
 

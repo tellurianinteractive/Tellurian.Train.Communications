@@ -1,4 +1,4 @@
-﻿namespace Tellurian.Communications.Channels;
+﻿namespace Tellurian.Trains.Communications.Channels;
 
 public sealed class ActionObserver<T> : IObserver<T>
 {

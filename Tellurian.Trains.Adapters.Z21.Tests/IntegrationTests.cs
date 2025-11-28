@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Net;
-using Tellurian.Communications.Channels;
-using Tellurian.Trains.Protocols.XpressNet.Decoder;
+using Tellurian.Trains.Communications.Channels;
 using Tellurian.Trains.Interfaces.Decoder;
+using Tellurian.Trains.Protocols.XpressNet.Decoder;
 
 
 namespace Tellurian.Trains.Adapters.Z21.Tests;

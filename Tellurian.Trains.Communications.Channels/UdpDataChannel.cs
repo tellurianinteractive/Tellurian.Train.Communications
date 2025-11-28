@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace Tellurian.Communications.Channels;
+namespace Tellurian.Trains.Communications.Channels;
 
 public sealed class UdpDataChannel(int localPort, IPEndPoint remoteEndPoint) : ICommunicationsChannel, IAsyncDisposable, IDisposable
 {

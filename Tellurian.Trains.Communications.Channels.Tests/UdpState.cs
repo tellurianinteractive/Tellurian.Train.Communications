@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace Tellurian.Communications.Channels.Tests;
+namespace Tellurian.Trains.Communications.Channels.Tests;
 
 public sealed class UdpState
 {

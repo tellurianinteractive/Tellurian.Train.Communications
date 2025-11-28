@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Tellurian.Communications.Channels;
+namespace Tellurian.Trains.Communications.Channels;
 
 public interface ICommunicationsChannel : IObservable<CommunicationResult>
 {

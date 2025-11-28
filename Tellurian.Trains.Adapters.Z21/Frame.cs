@@ -1,4 +1,4 @@
-﻿using Tellurian.Communications.Channels;
+﻿using Tellurian.Trains.Communications.Channels;
 
 #pragma warning disable CA1819 // Properties should not return arrays
 

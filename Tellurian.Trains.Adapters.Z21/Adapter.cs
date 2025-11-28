@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Tellurian.Communications.Channels;
+using Tellurian.Trains.Communications.Channels;
 using Tellurian.Trains.Interfaces.Decoder;
 using Tellurian.Trains.Interfaces.Locos;
 using Tellurian.Trains.Protocols.XpressNet;

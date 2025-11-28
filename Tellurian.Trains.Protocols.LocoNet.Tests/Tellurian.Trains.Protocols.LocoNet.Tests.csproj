@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
-		<RootNamespace>Tellurian.Communications.Channels.Tests</RootNamespace>
-		<AssemblyName>Tellurian.Communications.Channels.Tests</AssemblyName>
+		<AssemblyName>Tellurian.Trains.Protocols.LocoNet.Tests</AssemblyName>
+		<RootNamespace>Tellurian.Trains.Protocols.LocoNet.Tests</RootNamespace>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -13,7 +12,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Tellurian.Communications.Channels\Tellurian.Communications.Channels.csproj" />
+		<ProjectReference Include="..\Tellurian.Trains.Protocols.LocoNet\Tellurian.Trains.Protocols.LocoNet.csproj" />
+		<ProjectReference Include="..\Tellurian.Trains.Protocols.XpressNet\Tellurian.Trains.Protocols.XpressNet.csproj" />
 	</ItemGroup>
 
 </Project>
