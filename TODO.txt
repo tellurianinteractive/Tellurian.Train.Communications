@@ -1,11 +1,8 @@
-I can see the code contains switch-statements. I prefere to use switch-expressions. Examine if you can refactor the code to prefere switch-expressions where it make sense. Add a recommendation to use switch-expressions in CLAUDE.md.
 
-The class ConsistHelper has only static methods. This is a good case to create extension methods using C# 14 syntax. I want you to contert this class to using extension methods and rename the class to ConsistExtensions.
-
-You have made many classes, structs, records, methods and properties public. I am not convinced that this is necessary. I want a library with a minimum of functionality exposed, only make public what is expected to be used by an external client application.
-
-You have added a lot of new functionality for the LocoNet protocol. Now, I want you to create tests for the essential or complex cases that is hard to understand just by reading the code. First make a plan of what to test, grouped by feature.
-
-In Switch Control, I want you to refactor the code to replace usage of ushort as accessory address with a struct AccessoryAddress with checks of valid address range.
+You have made many classes, structs, records, methods and properties public. I am not convinced that this is necessary. I want a library with a minimum of functionality exposed, only make public what is expected to be used by an external client application. If you need to access something in tests only, make access internal and make internals visible to tests.
 
 I can see that a lot of methods and contructors throw exceptions when input values are not correct. This way of conding introduces a risk of code failures in runtime. Instead of throwing exceptions, I want you to use a struct Result<T> type, with two properties: Success and Failure. Success returns a value of type T, and Failure has a propery Exception. The Failure can then be used to ether examine the Exception or throw it. It is also practical to have boolean properties IsSuccess and IsFailure. An option is to support AggregateException, which makes it possible to return multiple exceptions if several errors occurs.
+
+
+Add JSON Serialization and Deserialization for Messages (Commands, Notifications and Responses)
+

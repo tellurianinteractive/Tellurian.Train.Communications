@@ -8,4 +8,8 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="System.IO.Ports" Version="9.0.1" />
+	</ItemGroup>
+
 </Project>

@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using Tellurian.Trains.Protocols.LocoNet.Notifications;
 
 [assembly: InternalsVisibleTo("Tellurian.Trains.Protocols.LocoNet.Tests")]
 
