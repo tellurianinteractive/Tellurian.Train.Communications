@@ -1,4 +1,6 @@
-﻿namespace Tellurian.Trains.Protocols.XpressNet.Commands;
+﻿using Tellurian.Trains.Interfaces.Accessories;
+
+namespace Tellurian.Trains.Protocols.XpressNet.Commands;
 
 public sealed class AccessoryFunctionCommand : Command {
     public AccessoryFunctionCommand(AccessoryAddress address, AccessoryOutput output, AccessoryOutputState state) : base(0x50, GetData(address, output, state)) { }

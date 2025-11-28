@@ -1,3 +1,5 @@
+using Tellurian.Trains.Interfaces.Locos;
+
 namespace Tellurian.Trains.Protocols.XpressNet.Commands;
 
 /// <summary>

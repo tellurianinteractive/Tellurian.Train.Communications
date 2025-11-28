@@ -8,7 +8,7 @@ public class GetFunctionStatusCommandTests
     [TestMethod]
     public void GetFunctionStatus_ReturnsCorrectBytes_ForShortAddress()
     {
-        var target = new GetFunctionStatusCommand(new LocoAddress(3));
+        var target = new GetFunctionStatusCommand(LocoAddress.From(3));
         var data = target.GetData();
 
         Assert.AreEqual(0xE3, data[0]);
@@ -20,7 +20,7 @@ public class GetFunctionStatusCommandTests
     [TestMethod]
     public void GetFunctionStatus_ReturnsCorrectBytes_ForLongAddress()
     {
-        var target = new GetFunctionStatusCommand(new LocoAddress(1234));
+        var target = new GetFunctionStatusCommand(LocoAddress.From(1234));
         var data = target.GetData();
 
         Assert.AreEqual(0xE3, data[0]);

@@ -9,7 +9,7 @@ public class ProgramOnMainWriteByteCommandTests
     [TestMethod]
     public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForShortAddressAndCV1()
     {
-        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(3), new CV(1, 0x55));
+        var target = new ProgramOnMainWriteByteCommand(LocoAddress.From(3), new CV(1, 0x55));
         var data = target.GetData();
 
         Assert.AreEqual(0xE6, data[0]);
@@ -24,7 +24,7 @@ public class ProgramOnMainWriteByteCommandTests
     [TestMethod]
     public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForLongAddressAndCV256()
     {
-        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(9999), new CV(256, 0xAA));
+        var target = new ProgramOnMainWriteByteCommand(LocoAddress.From(9999), new CV(256, 0xAA));
         var data = target.GetData();
 
         Assert.AreEqual(0xE6, data[0]);
@@ -39,7 +39,7 @@ public class ProgramOnMainWriteByteCommandTests
     [TestMethod]
     public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForCV257()
     {
-        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(3), new CV(257, 0x42));
+        var target = new ProgramOnMainWriteByteCommand(LocoAddress.From(3), new CV(257, 0x42));
         var data = target.GetData();
 
         Assert.AreEqual(0xED, data[4]);
@@ -50,7 +50,7 @@ public class ProgramOnMainWriteByteCommandTests
     [TestMethod]
     public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForCV513()
     {
-        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(3), new CV(513, 0x77));
+        var target = new ProgramOnMainWriteByteCommand(LocoAddress.From(3), new CV(513, 0x77));
         var data = target.GetData();
 
         Assert.AreEqual(0xEE, data[4]);
@@ -61,7 +61,7 @@ public class ProgramOnMainWriteByteCommandTests
     [TestMethod]
     public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForCV769()
     {
-        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(3), new CV(769, 0x99));
+        var target = new ProgramOnMainWriteByteCommand(LocoAddress.From(3), new CV(769, 0x99));
         var data = target.GetData();
 
         Assert.AreEqual(0xEF, data[4]);
@@ -72,7 +72,7 @@ public class ProgramOnMainWriteByteCommandTests
     [TestMethod]
     public void ProgramOnMainWriteByte_ReturnsCorrectBytes_ForCV1024()
     {
-        var target = new ProgramOnMainWriteByteCommand(new LocoAddress(3), new CV(1024, 0xBB));
+        var target = new ProgramOnMainWriteByteCommand(LocoAddress.From(3), new CV(1024, 0xBB));
         var data = target.GetData();
 
         Assert.AreEqual(0xEF, data[4]);

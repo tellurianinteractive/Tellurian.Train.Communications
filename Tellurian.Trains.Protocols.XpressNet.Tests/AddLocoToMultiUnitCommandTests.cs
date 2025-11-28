@@ -8,7 +8,7 @@ public class AddLocoToMultiUnitCommandTests
     [TestMethod]
     public void AddLocoToMultiUnit_ReturnsCorrectBytes_SameDirection()
     {
-        var target = new AddLocoToMultiUnitCommand(new LocoAddress(3), 10, reversed: false);
+        var target = new AddLocoToMultiUnitCommand(LocoAddress.From(3), 10, reversed: false);
         var data = target.GetData();
 
         Assert.AreEqual(0xE4, data[0]);
@@ -21,7 +21,7 @@ public class AddLocoToMultiUnitCommandTests
     [TestMethod]
     public void AddLocoToMultiUnit_ReturnsCorrectBytes_ReversedDirection()
     {
-        var target = new AddLocoToMultiUnitCommand(new LocoAddress(3), 10, reversed: true);
+        var target = new AddLocoToMultiUnitCommand(LocoAddress.From(3), 10, reversed: true);
         var data = target.GetData();
 
         Assert.AreEqual(0xE4, data[0]);
@@ -34,7 +34,7 @@ public class AddLocoToMultiUnitCommandTests
     [TestMethod]
     public void AddLocoToMultiUnit_ReturnsCorrectBytes_ForLongAddress()
     {
-        var target = new AddLocoToMultiUnitCommand(new LocoAddress(1234), 99);
+        var target = new AddLocoToMultiUnitCommand(LocoAddress.From(1234), 99);
         var data = target.GetData();
 
         Assert.AreEqual(0xE4, data[0]);
@@ -49,7 +49,7 @@ public class AddLocoToMultiUnitCommandTests
     {
         try
         {
-            _ = new AddLocoToMultiUnitCommand(new LocoAddress(3), 0);
+            _ = new AddLocoToMultiUnitCommand(LocoAddress.From(3), 0);
             Assert.Fail("Expected ArgumentOutOfRangeException");
         }
         catch (ArgumentOutOfRangeException) { }
@@ -60,7 +60,7 @@ public class AddLocoToMultiUnitCommandTests
     {
         try
         {
-            _ = new AddLocoToMultiUnitCommand(new LocoAddress(3), 100);
+            _ = new AddLocoToMultiUnitCommand(LocoAddress.From(3), 100);
             Assert.Fail("Expected ArgumentOutOfRangeException");
         }
         catch (ArgumentOutOfRangeException) { }

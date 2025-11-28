@@ -1,4 +1,6 @@
-﻿namespace Tellurian.Trains.Protocols.LocoNet.Commands;
+﻿using Tellurian.Trains.Interfaces.Accessories;
+
+namespace Tellurian.Trains.Protocols.LocoNet.Commands;
 
 /// <summary>
 /// OPC_SW_REQ (0xB0) - Switch request without acknowledge.

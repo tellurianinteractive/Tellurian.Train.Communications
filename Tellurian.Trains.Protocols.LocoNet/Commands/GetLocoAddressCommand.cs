@@ -1,4 +1,6 @@
-﻿namespace Tellurian.Trains.Protocols.LocoNet.Commands;
+﻿using Tellurian.Trains.Interfaces.Locos;
+
+namespace Tellurian.Trains.Protocols.LocoNet.Commands;
 
 /// <summary>
 /// OPC_LOCO_ADR (0xBF) - Request locomotive address.

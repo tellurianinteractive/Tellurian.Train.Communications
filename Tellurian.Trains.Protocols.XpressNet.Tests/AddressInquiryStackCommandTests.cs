@@ -8,7 +8,7 @@ public class AddressInquiryStackCommandTests
     [TestMethod]
     public void AddressInquiryStack_ReturnsCorrectBytes_ForwardSearch()
     {
-        var target = new AddressInquiryStackCommand(new LocoAddress(1234));
+        var target = new AddressInquiryStackCommand(LocoAddress.From(1234));
         var data = target.GetData();
 
         Assert.AreEqual(0xE3, data[0]);
@@ -20,7 +20,7 @@ public class AddressInquiryStackCommandTests
     [TestMethod]
     public void AddressInquiryStack_ReturnsCorrectBytes_BackwardSearch()
     {
-        var target = new AddressInquiryStackCommand(new LocoAddress(3), SearchDirection.Backward);
+        var target = new AddressInquiryStackCommand(LocoAddress.From(3), SearchDirection.Backward);
         var data = target.GetData();
 
         Assert.AreEqual(0x06, data[1]);

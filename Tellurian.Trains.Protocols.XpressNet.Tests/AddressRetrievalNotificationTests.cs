@@ -12,9 +12,8 @@ public class AddressRetrievalNotificationTests
         var notification = new AddressRetrievalNotification(buffer);
 
         Assert.AreEqual(AddressType.NormalLoco, notification.AddressType);
-        Assert.IsTrue(notification.AddressFound);
-        Assert.IsNotNull(notification.LocoAddress);
-        Assert.AreEqual(1234, notification.LocoAddress!.Value.Number);
+        Assert.IsTrue(notification.HasValidAddress);
+        Assert.AreEqual(1234, notification.LocoAddress!.Number);
     }
 
     [TestMethod]
@@ -24,7 +23,7 @@ public class AddressRetrievalNotificationTests
         var notification = new AddressRetrievalNotification(buffer);
 
         Assert.AreEqual(AddressType.InDoubleHeader, notification.AddressType);
-        Assert.AreEqual(3, notification.LocoAddress!.Value.Number);
+        Assert.AreEqual(3, notification.LocoAddress!.Number);
     }
 
     [TestMethod]
@@ -51,9 +50,9 @@ public class AddressRetrievalNotificationTests
         var buffer = new byte[] { 0xE3, 0x34, 0x00, 0x00 };
         var notification = new AddressRetrievalNotification(buffer);
 
-        Assert.AreEqual(AddressType.NotFound, notification.AddressType);
-        Assert.IsFalse(notification.AddressFound);
-        Assert.IsNull(notification.LocoAddress);
+        Assert.AreEqual(AddressType.Zero, notification.AddressType);
+        Assert.IsFalse(notification.HasValidAddress);
+        Assert.AreEqual(LocoAddress.Zero, notification.LocoAddress);
     }
 
     [TestMethod]

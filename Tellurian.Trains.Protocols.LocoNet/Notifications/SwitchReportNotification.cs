@@ -1,4 +1,5 @@
 using System.Globalization;
+using Tellurian.Trains.Interfaces.Accessories;
 
 namespace Tellurian.Trains.Protocols.LocoNet.Notifications;
 
@@ -18,23 +19,23 @@ public sealed class SwitchReportNotification : Notification
 
         ValidateData(OperationCode, data);
 
-        byte sn1 = data[1];
-        byte sn2 = data[2];
+        byte lowBits = data[1];
+        byte highBits = data[2];
 
         // Extract address from sn1 (bits A6-A0) and sn2 (bits A10-A7)
-        Address = new AccessoryAddress((ushort)(sn1 | ((sn2 & 0x0F) << 7)));
+        Address = AccessoryAddress.From((short)(lowBits | ((highBits & 0x0F) << 7)));
 
         // Bit 6 determines interpretation
-        IsInputFeedback = (sn2 & 0x40) != 0;
+        IsInputFeedback = (highBits & 0x40) != 0;
 
         if (IsInputFeedback)
         {
             // Input feedback interpretation
             // Bit 5: I (0=aux input, 1=switch input)
-            IsSwitchInput = (sn2 & 0x20) != 0;
+            IsSwitchInput = (highBits & 0x20) != 0;
 
             // Bit 4: L (0=LOW/0V, 1=HIGH/>6V)
-            IsInputHigh = (sn2 & 0x10) != 0;
+            IsInputHigh = (highBits & 0x10) != 0;
 
             // Output status not applicable
             ClosedOutputOn = false;
@@ -44,10 +45,10 @@ public sealed class SwitchReportNotification : Notification
         {
             // Output status interpretation
             // Bit 5: C (1=Closed output ON)
-            ClosedOutputOn = (sn2 & 0x20) != 0;
+            ClosedOutputOn = (highBits & 0x20) != 0;
 
             // Bit 4: T (1=Thrown output ON)
-            ThrownOutputOn = (sn2 & 0x10) != 0;
+            ThrownOutputOn = (highBits & 0x10) != 0;
 
             // Input feedback not applicable
             IsSwitchInput = false;
@@ -119,7 +120,7 @@ public sealed class SwitchReportNotification : Notification
         {
             return string.Format(CultureInfo.InvariantCulture,
                 "Switch {0}: Input {1} {2}",
-                Address.Value,
+                Address.Number,
                 IsSwitchInput ? "Switch" : "Aux",
                 IsInputHigh ? "HIGH" : "LOW");
         }
@@ -134,7 +135,7 @@ public sealed class SwitchReportNotification : Notification
 
             return string.Format(CultureInfo.InvariantCulture,
                 "Switch {0}: Output {1}",
-                Address.Value,
+                Address.Number,
                 status);
         }
     }

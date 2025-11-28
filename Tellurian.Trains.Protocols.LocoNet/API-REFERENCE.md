@@ -200,22 +200,22 @@ byte[] writeBytes = modifiedSlot.GetBytesWithChecksum();
 using Tellurian.Trains.Protocols.LocoNet.Commands;
 
 // Throw switch 100 (Thrown/Red position)
-var throwCmd = SetTurnoutCommand.Throw(new AccessoryAddress(100), activate: true);
+var throwCmd = SetTurnoutCommand.Throw(AccessoryAddress.From(100), activate: true);
 byte[] throwBytes = throwCmd.GetBytesWithChecksum();
 // Sends: [0xB0, sw1, sw2, checksum]
 
 // Close switch 100 (Closed/Green position)
-var closeCmd = SetTurnoutCommand.Close(new AccessoryAddress(100), activate: true);
+var closeCmd = SetTurnoutCommand.Close(AccessoryAddress.From(100), activate: true);
 
 // Turn off output (after ~1 second)
-var turnOff = SetTurnoutCommand.TurnOff(new AccessoryAddress(100));
+var turnOff = SetTurnoutCommand.TurnOff(AccessoryAddress.From(100));
 ```
 
 ### Switch with Acknowledge
 
 ```csharp
 // Request acknowledgment from DCS100
-var switchAck = SwitchAcknowledgeCommand.Throw(new AccessoryAddress(100));
+var switchAck = SwitchAcknowledgeCommand.Throw(AccessoryAddress.From(100));
 byte[] ackBytes = switchAck.GetBytesWithChecksum();
 // Sends: [0xBD, sw1, sw2, checksum]
 ```
@@ -235,7 +235,7 @@ if (response is LongAcknowledge ack)
 ### Request Switch State
 
 ```csharp
-var requestState = new RequestSwitchStateCommand(new AccessoryAddress(100));
+var requestState = new RequestSwitchStateCommand(AccessoryAddress.From(100));
 byte[] stateBytes = requestState.GetBytesWithChecksum();
 // Sends: [0xBC, sw1, sw2, checksum]
 ```
@@ -516,8 +516,8 @@ bool isLong = locoAddr.IsLong;
 
 ```csharp
 // Create address
-var switchAddr = new AccessoryAddress(100);
-var withInput = new AccessoryAddress(100, AccessoryInput.Port1);
+var switchAddr = AccessoryAddress.From(100);
+var withInput = AccessoryAddress.From(100, AccessoryInput.Port1);
 
 // Encode for commands
 var (sw1, sw2) = switchAddr.EncodeSwitchBytes(

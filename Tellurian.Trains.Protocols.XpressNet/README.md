@@ -152,11 +152,11 @@ SendCommand(funcGroup2);
 
 ```csharp
 // Switch turnout 100 to diverging
-var turnout = new AccessoryFunctionCommand(new AccessoryAddress(100), AccessoryOutput.Output1, true);
+var turnout = new AccessoryFunctionCommand(AccessoryAddress.From(100), AccessoryOutput.Output1, true);
 SendCommand(turnout);
 
 // Query turnout status
-var query = new AccessoryInfoRequestCommand(new AccessoryAddress(100));
+var query = new AccessoryInfoRequestCommand(AccessoryAddress.From(100));
 SendCommand(query);
 
 // Handle response

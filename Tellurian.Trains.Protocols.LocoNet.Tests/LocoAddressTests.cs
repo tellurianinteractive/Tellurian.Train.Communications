@@ -1,4 +1,6 @@
-﻿namespace Tellurian.Trains.Protocols.LocoNet.Tests;
+﻿using Tellurian.Trains.Interfaces.Locos;
+
+namespace Tellurian.Trains.Protocols.LocoNet.Tests;
 
 [TestClass]
 public class LocoAddressTests
@@ -6,19 +8,19 @@ public class LocoAddressTests
     [TestMethod]
     public void Constructor_ThrowsArgumentOutOfRangeException_WhenAddressIsZero()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new LocoAddress(0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => LocoAddress.From(0));
     }
 
     [TestMethod]
     public void Constructor_ThrowsArgumentOutOfRangeException_WhenAddressOver9999()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new LocoAddress(10000));
+        Assert.Throws<ArgumentOutOfRangeException>(() => LocoAddress.From(10000));
     }
 
     [TestMethod]
     public void ShortAddress_HasCorrectProperties_WhenMinimum()
     {
-        var target = new LocoAddress(1);
+        var target = LocoAddress.From(1);
         Assert.AreEqual(1, target.Low);
         Assert.AreEqual(0, target.High);
         Assert.IsFalse(target.IsLong);
@@ -28,7 +30,7 @@ public class LocoAddressTests
     [TestMethod]
     public void ShortAddress_HasCorrectProperties_WhenMaximum()
     {
-        var target = new LocoAddress(127);
+        var target = LocoAddress.From(127);
         Assert.AreEqual(127, target.Low);
         Assert.AreEqual(0, target.High);
         Assert.IsFalse(target.IsLong);
@@ -38,7 +40,7 @@ public class LocoAddressTests
     [TestMethod]
     public void LongAddress_HasCorrectProperties_WhenMinimum()
     {
-        var target = new LocoAddress(128);
+        var target = LocoAddress.From(128);
         Assert.AreEqual(0, target.Low);
         Assert.AreEqual(1, target.High);
         Assert.IsTrue(target.IsLong);
@@ -48,7 +50,7 @@ public class LocoAddressTests
     [TestMethod]
     public void LongAddress_HasCorrectProperties_WhenMaximum()
     {
-        var target = new LocoAddress(9999);
+        var target = LocoAddress.From(9999);
         Assert.AreEqual(15, target.Low);
         Assert.AreEqual(78, target.High);
         Assert.IsTrue(target.IsLong);

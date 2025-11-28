@@ -1,7 +1,6 @@
-﻿using Tellurian.Trains.Protocols.LocoNet;
-using Tellurian.Trains.Protocols.LocoNet.Notifications;
+﻿using Tellurian.Trains.Protocols.LocoNet.Notifications;
 
-namespace ins.Tellurian.Protocols.LocoNet.Tests;
+namespace Tellurian.Trains.Protocols.LocoNet.Tests;
 
 [TestClass]
 public class LongAcknowledgeTests
@@ -9,7 +8,7 @@ public class LongAcknowledgeTests
     [TestMethod]
     public void LongAcknowledge_IsFailure_WhenFifoIsFull()
     {
-        byte[] data = new byte[] { 0xB4, 0x3D, 0x00 };
+        byte[] data = [0xB4, 0x3D, 0x00];
         var target = new LongAcknowledge(Message.AppendChecksum(data));
         Assert.IsFalse(target.IsSuccess);
         Assert.IsTrue(target.IsFailure);
@@ -19,7 +18,7 @@ public class LongAcknowledgeTests
     [TestMethod]
     public void LongAcknowledge_IsSuccess_WhenAccepted()
     {
-        byte[] data = new byte[] { 0xB4, 0x3D, 0x7F };
+        byte[] data = [0xB4, 0x3D, 0x7F];
         var target = new LongAcknowledge(Message.AppendChecksum(data));
         Assert.IsTrue(target.IsSuccess);
         Assert.IsFalse(target.IsFailure);
@@ -29,7 +28,7 @@ public class LongAcknowledgeTests
     [TestMethod]
     public void LongAcknowledge_IsUndecided_WhenUnknownCode()
     {
-        byte[] data = new byte[] { 0xB4, 0x3B, 0x00 };
+        byte[] data = [0xB4, 0x3B, 0x00];
         var target = new LongAcknowledge(Message.AppendChecksum(data));
         Assert.IsFalse(target.IsSuccess);
         Assert.IsFalse(target.IsFailure);

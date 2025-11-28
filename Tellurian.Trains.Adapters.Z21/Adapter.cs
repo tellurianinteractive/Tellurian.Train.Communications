@@ -37,7 +37,7 @@ public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notifi
 
     public Task<bool> GetLocoInfoAsync(Interfaces.Locos.LocoAddress address, CancellationToken cancellationToken = default)
     {
-        return SendAsync(new XpressNet.GetLocoInfoCommand(address.Map()), cancellationToken);
+        return SendAsync(new XpressNet.GetLocoInfoCommand(address), cancellationToken);
     }
 
     public Task<bool> GetSerialNumberAsync(CancellationToken cancellationToken = default)

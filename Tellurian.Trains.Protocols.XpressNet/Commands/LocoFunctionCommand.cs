@@ -1,4 +1,6 @@
-﻿namespace Tellurian.Trains.Protocols.XpressNet.Commands;
+﻿using Tellurian.Trains.Interfaces.Locos;
+
+namespace Tellurian.Trains.Protocols.XpressNet.Commands;
 
 public sealed class LocoFunctionCommand : Command
 {

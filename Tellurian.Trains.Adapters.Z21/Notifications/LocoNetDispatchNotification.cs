@@ -1,4 +1,5 @@
-﻿using Tellurian.Trains.Protocols.XpressNet;
+﻿using Tellurian.Trains.Interfaces.Locos;
+using Tellurian.Trains.Protocols.XpressNet;
 
 namespace Tellurian.Trains.Adapters.Z21;
 
@@ -12,7 +13,7 @@ public sealed class LocoNetDispatchNotification : Notification
 {
     internal LocoNetDispatchNotification(Frame frame) : base(frame)
     {
-        Address = new LocoAddress(BitConverter.ToInt16(frame.Data, 0));
+        Address = LocoAddress.From(BitConverter.ToInt16(frame.Data, 0));
         Slot = frame.Data[2];
     }
     public LocoAddress Address { get; }

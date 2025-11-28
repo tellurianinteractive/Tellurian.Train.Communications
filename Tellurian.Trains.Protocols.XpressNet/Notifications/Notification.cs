@@ -36,9 +36,8 @@ public static class NotificationExtensions
     {
         var n = (LocoInfoNotification)notification;
         var result = new Interfaces.Notification[2];
-        var locoAddress = n.Address.Map();
-        result[0] = new MovementLocoNotification(locoAddress, n.Direction.Map(), n.Speed.Map());
-        result[1] = new FunctionsLocoNotification(locoAddress, n.Functions().Map());
+        result[0] = new MovementLocoNotification(n.Address, n.Direction.Map(), n.Speed.Map());
+        result[1] = new FunctionsLocoNotification(n.Address, n.Functions().Map());
         return result;
     }
 

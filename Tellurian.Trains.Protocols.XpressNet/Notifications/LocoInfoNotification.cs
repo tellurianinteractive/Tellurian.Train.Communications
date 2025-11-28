@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Tellurian.Trains.Interfaces.Locos;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Notifications;
 
@@ -6,7 +7,7 @@ public sealed class LocoInfoNotification : Notification
 {
     public LocoInfoNotification(byte[] buffer) : base(0xE0, GetData(buffer)) { }
 
-    public LocoAddress Address { get { return new LocoAddress(Data.Take(2).ToArray()); } }
+    public LocoAddress Address { get { return LocoAddress.From(Data.Take(2).ToArray()); } }
     public LocoDirection Direction { get { return (Data[3] & 0x80) > 0 ? LocoDirection.Forward : LocoDirection.Backward; } }
 
     public bool IsControlledByOtherDevice { get { return (Data[2] & 0x08) > 0; } }

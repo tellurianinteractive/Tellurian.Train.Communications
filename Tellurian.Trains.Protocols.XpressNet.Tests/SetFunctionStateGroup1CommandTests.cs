@@ -8,7 +8,7 @@ public class SetFunctionStateGroup1CommandTests
     [TestMethod]
     public void SetFunctionStateGroup1_ReturnsCorrectBytes_AllOnOff()
     {
-        var target = new SetFunctionStateGroup1Command(new LocoAddress(3), true, true, true, true, true);
+        var target = new SetFunctionStateGroup1Command(LocoAddress.From(3), true, true, true, true, true);
         var data = target.GetData();
 
         Assert.AreEqual(0xE4, data[0]);
@@ -21,7 +21,7 @@ public class SetFunctionStateGroup1CommandTests
     [TestMethod]
     public void SetFunctionStateGroup1_ReturnsCorrectBytes_AllMomentary()
     {
-        var target = new SetFunctionStateGroup1Command(new LocoAddress(3), false, false, false, false, false);
+        var target = new SetFunctionStateGroup1Command(LocoAddress.From(3), false, false, false, false, false);
         var data = target.GetData();
 
         Assert.AreEqual(0x00, data[4]);
@@ -30,7 +30,7 @@ public class SetFunctionStateGroup1CommandTests
     [TestMethod]
     public void SetFunctionStateGroup1_ReturnsCorrectBytes_F0OnlyMomentary()
     {
-        var target = new SetFunctionStateGroup1Command(new LocoAddress(3), false, true, true, true, true);
+        var target = new SetFunctionStateGroup1Command(LocoAddress.From(3), false, true, true, true, true);
         var data = target.GetData();
 
         Assert.AreEqual(0x0F, data[4]);
@@ -39,7 +39,7 @@ public class SetFunctionStateGroup1CommandTests
     [TestMethod]
     public void SetFunctionStateGroup1_ReturnsCorrectBytes_WithStateByte()
     {
-        var target = new SetFunctionStateGroup1Command(new LocoAddress(3), 0x15);
+        var target = new SetFunctionStateGroup1Command(LocoAddress.From(3), 0x15);
         var data = target.GetData();
 
         Assert.AreEqual(0x15, data[4]);

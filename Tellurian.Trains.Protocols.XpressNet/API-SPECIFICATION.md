@@ -270,14 +270,14 @@ using Tellurian.Trains.Protocols.XpressNet.Commands;
 
 // Switch turnout 100 to diverging (Output 1)
 var turnoutCmd = new AccessoryFunctionCommand(
-    new AccessoryAddress(100),
+    AccessoryAddress.From(100),
     AccessoryOutput.Output1,
     activate: true);
 SendCommand(turnoutCmd);
 
 // Switch turnout 100 to straight (Output 2)
 var straightCmd = new AccessoryFunctionCommand(
-    new AccessoryAddress(100),
+    AccessoryAddress.From(100),
     AccessoryOutput.Output2,
     activate: true);
 SendCommand(straightCmd);
@@ -286,7 +286,7 @@ SendCommand(straightCmd);
 ### Query Accessory Status
 
 ```csharp
-var query = new AccessoryInfoRequestCommand(new AccessoryAddress(100));
+var query = new AccessoryInfoRequestCommand(AccessoryAddress.From(100));
 SendCommand(query);
 
 // Handle response
@@ -773,7 +773,7 @@ var parsed = new LocoAddress([0xC4, 0xD2]);
 
 ```csharp
 // Accessory addresses (1-1024)
-var turnout = new AccessoryAddress(100);
+var turnout = AccessoryAddress.From(100);
 ushort value = turnout.Value;
 ```
 

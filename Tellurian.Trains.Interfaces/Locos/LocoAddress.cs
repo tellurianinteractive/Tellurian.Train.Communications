@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 namespace Tellurian.Trains.Interfaces.Locos;
 
@@ -8,51 +8,92 @@ public readonly struct LocoAddress : IEquatable<LocoAddress>
     /// <summary>
     /// Static method for creating a <see cref="LocoAddress"/> from a number.
     /// </summary>
-    /// <param name="number"></param>
-    /// <returns></returns>
-    public static LocoAddress From(short number) => new (number);
-
-    [DataMember(Name = "number")]
-    private readonly short _Number;
-
+    public static LocoAddress From(int shortOrLongAddress) => new((short)shortOrLongAddress);
     /// <summary>
-    /// Contructs a <see cref="LocoAddress"/> from  number.
+    /// Creates a LocoAddress from LocoNet-encoded bytes.
     /// </summary>
-    /// <param name="number"></param>
-    public LocoAddress(short number)
+    /// <param name="high">High 7 bits of the address (0 for short addresses 1-127).</param>
+    /// <param name="low">Low 7 bits of the address.</param>
+    /// <returns>A LocoAddress reconstructed from the LocoNet encoding.</returns>
+    public static LocoAddress From(byte high, byte low)
     {
-        if (!IsValid(number)) throw new ArgumentOutOfRangeException(nameof(number));
-        _Number = number;
+        return From((high << 7) | low);
     }
     /// <summary>
-    /// Tests if a locomotive address is valid or not. A valid address shoukd be in the range 1 - 9999.
+    /// Creates a new instance of <see cref="LocoAddress"/> from a two-byte buffer.
     /// </summary>
-    /// <param name="number">The adress value to verify.</param>
-    /// <returns>True if valid; otherwise false</returns>
+    /// <param name="buffer">A byte array containing exactly two bytes representing the address to convert.
+    /// The first byte is high address byte and the seconc is low address byte.</param>
+    /// <returns>A <see cref="LocoAddress"/> instance constructed from the specified buffer.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="buffer"/> does not contain exactly two bytes.</exception>
+    public static LocoAddress From(byte[] buffer) 
+    {
+        ArgumentNullException.ThrowIfNull(buffer);
+        if (buffer.Length != 2) throw new ArgumentOutOfRangeException(nameof(buffer), "Buffer must contain  2 bytes.");
+        return From(buffer[0], buffer[1]);
+    }
+    /// <summary>
+    /// Represents a zero loco address.
+    /// </summary>
+    public static LocoAddress Zero => From(0);
+    /// <summary>
+    /// Constructs a <see cref="LocoAddress"/> from a number.
+    /// </summary>
+    /// <param name="number">The loco address (1-9999).</param>
+    private LocoAddress(short number)
+    {
+        Number = number;
+    }
+    /// <summary>
+    /// High 7 bits of the address for LocoNet encoding.
+    /// Returns 0 for short addresses (1-127).
+    /// </summary>
+    public byte High => (byte)( IsShort ? 0 : (Number >> 7));
+
+    /// <summary>
+    /// Low 7 bits of the address for LocoNet encoding.
+    /// </summary>
+    public byte Low => (byte)(Number & 0x7F);
+
+    /// <summary>
+    /// Tests if a locomotive address is valid or not. A valid address should be in the range 1-9999.
+    /// </summary>
+    /// <param name="number">The address value to verify.</param>
+    /// <returns>True if valid; otherwise false.</returns>
     public static bool IsValid(short number) => number >= 1 && number <= 9999;
-    /// <summary>
-    /// The loco adress is 128 or above.
-    /// </summary>
-    public bool IsLong => _Number >= 128;
-    /// <summary>
-    /// The loco adress is max 127.
-    /// </summary>
-    public bool IsShort => _Number < 128;
-    /// <summary>
-    /// The adresses 100 to 127 can sometimes cause trouble because some systems regards 1-99 as short and some 1-127.
-    /// </summary>
-    public bool IsShortTwoDigit => IsShort && _Number < 100;
-    /// <summary>
-    /// The adresses 100 to 127 can sometimes cause trouble because some systems regards 1-99 as short and some 1-127.
-    /// </summary>
-    public bool IsShortThreeDigit => IsShort && _Number >= 100;
+
     /// <summary>
     /// The address.
     /// </summary>
-    public short Number => _Number;
+    [field: DataMember(Name = "number")]
+    public short Number
+    {
+        get;
+        init => field = IsValid(value) ? value : throw new ArgumentOutOfRangeException(nameof(value), "Address must be 1-9999.");
+    }
+
+    /// <summary>
+    /// The loco address is 128 or above.
+    /// </summary>
+    public bool IsLong => Number >= 128;
+
+    /// <summary>
+    /// The loco address is max 127.
+    /// </summary>
+    public bool IsShort => Number < 128;
+
+    /// <summary>
+    /// The addresses 100 to 127 can sometimes cause trouble because some systems regards 1-99 as short and some 1-127.
+    /// </summary>
+    public bool IsShortTwoDigit => IsShort && Number < 100;
+
+    /// <summary>
+    /// The addresses 100 to 127 can sometimes cause trouble because some systems regards 1-99 as short and some 1-127.
+    /// </summary>
+    public bool IsShortThreeDigit => IsShort && Number >= 100;
 
     public bool Equals(LocoAddress other) => other.Number == Number;
-    public override bool Equals(object? obj)=>  obj is LocoAddress other && Equals(other);
+    public override bool Equals(object? obj) => obj is LocoAddress other && Equals(other);
     public override int GetHashCode() => Number.GetHashCode();
     public override string ToString() => $"{Number}";
     public static bool operator ==(LocoAddress left, LocoAddress right) => left.Equals(right);

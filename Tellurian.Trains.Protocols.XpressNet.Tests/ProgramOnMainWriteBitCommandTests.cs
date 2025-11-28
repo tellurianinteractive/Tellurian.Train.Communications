@@ -8,7 +8,7 @@ public class ProgramOnMainWriteBitCommandTests
     [TestMethod]
     public void ProgramOnMainWriteBit_ReturnsCorrectBytes_ForBit0SetTo1()
     {
-        var target = new ProgramOnMainWriteBitCommand(new LocoAddress(3), 29, 0, true);
+        var target = new ProgramOnMainWriteBitCommand(LocoAddress.From(3), 29, 0, true);
         var data = target.GetData();
 
         Assert.AreEqual(0xE6, data[0]);
@@ -23,7 +23,7 @@ public class ProgramOnMainWriteBitCommandTests
     [TestMethod]
     public void ProgramOnMainWriteBit_ReturnsCorrectBytes_ForBit7SetTo0()
     {
-        var target = new ProgramOnMainWriteBitCommand(new LocoAddress(3), 29, 7, false);
+        var target = new ProgramOnMainWriteBitCommand(LocoAddress.From(3), 29, 7, false);
         var data = target.GetData();
 
         Assert.AreEqual(0xE8, data[4]);
@@ -34,7 +34,7 @@ public class ProgramOnMainWriteBitCommandTests
     [TestMethod]
     public void ProgramOnMainWriteBit_ReturnsCorrectBytes_ForBit3SetTo1()
     {
-        var target = new ProgramOnMainWriteBitCommand(new LocoAddress(100), 1, 3, true);
+        var target = new ProgramOnMainWriteBitCommand(LocoAddress.From(100), 1, 3, true);
         var data = target.GetData();
 
         Assert.AreEqual(0x00, data[2]);
@@ -47,7 +47,7 @@ public class ProgramOnMainWriteBitCommandTests
     [TestMethod]
     public void ProgramOnMainWriteBit_ReturnsCorrectBytes_ForLongAddressAndHighCV()
     {
-        var target = new ProgramOnMainWriteBitCommand(new LocoAddress(1000), 513, 5, false);
+        var target = new ProgramOnMainWriteBitCommand(LocoAddress.From(1000), 513, 5, false);
         var data = target.GetData();
 
         Assert.AreEqual(0xC3, data[2]);
@@ -62,7 +62,7 @@ public class ProgramOnMainWriteBitCommandTests
     {
         try
         {
-            _ = new ProgramOnMainWriteBitCommand(new LocoAddress(3), 29, 8, true);
+            _ = new ProgramOnMainWriteBitCommand(LocoAddress.From(3), 29, 8, true);
             Assert.Fail("Expected ArgumentOutOfRangeException");
         }
         catch (ArgumentOutOfRangeException) { }
@@ -73,7 +73,7 @@ public class ProgramOnMainWriteBitCommandTests
     {
         try
         {
-            _ = new ProgramOnMainWriteBitCommand(new LocoAddress(3), 0, 0, true);
+            _ = new ProgramOnMainWriteBitCommand(LocoAddress.From(3), 0, 0, true);
             Assert.Fail("Expected ArgumentOutOfRangeException");
         }
         catch (ArgumentOutOfRangeException) { }
@@ -84,7 +84,7 @@ public class ProgramOnMainWriteBitCommandTests
     {
         try
         {
-            _ = new ProgramOnMainWriteBitCommand(new LocoAddress(3), 1025, 0, true);
+            _ = new ProgramOnMainWriteBitCommand(LocoAddress.From(3), 1025, 0, true);
             Assert.Fail("Expected ArgumentOutOfRangeException");
         }
         catch (ArgumentOutOfRangeException) { }
