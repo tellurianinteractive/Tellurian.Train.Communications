@@ -10,7 +10,6 @@ This is a .NET library for controlling model trains using Z21, LocoNet, and Xpre
 This project targets .NET 10.0. and the .NET 10 SDK. This is only defined globally in Directory.Build.props.
 
 ## Project Structure Summary
-- agent_docs/: Documentation for Claude. File names reflects the content. Please, read these when you need additional knowledge on the topic.
 - - **Tellurian.Communications.Channels**: UDP transport layer - see `Tellurian.Communications.Channels/CLAUDE.md`
 - **Tellurian.Trains.Interfaces**: Protocol-agnostic interfaces and types - see `Tellurian.Trains.Interfaces/CLAUDE.md`
 - **Tellurian.Trains.Protocols.XpressNet**: XpressNet protocol implementation - see `Tellurian.Trains.Protocols.XpressNet/CLAUDE.md`
@@ -18,9 +17,17 @@ This project targets .NET 10.0. and the .NET 10 SDK. This is only defined global
 - **Tellurian.Trains.Adapters.Z21**: Z21 command station adapter - see `Tellurian.Trains.Adapters.Z21/CLAUDE.md`
 - **Specifications/**: Detailed coding conventions and naming standards
 
-Each project has its own `CLAUDE.md` file with project-specific implementation details.
 
 ## Absolute paths
 Avoid using absolute paths when you searching in the project.
 If you need absolute paths, use:
 - C:\Utveckling\Github\Tellurian.Trains\Train.Control\
+
+## Additional Context
+- Additional context for specific tasks can be found 'Agent Guidlines' folder.
+  - System Architecture.md
+  - Coding Conventions.md
+  - Build and Release Process.md
+  - Running Tests.md
+  - Docmentation and Comments.md
+- Each project has its own `CLAUDE.md` file with project-specific implementation details.
