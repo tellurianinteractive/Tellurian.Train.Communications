@@ -25,7 +25,7 @@ public class IntegrationTests
     [TestInitialize]
     public async Task TestInitialize()
     {
-        Channel = new UdpDataChannel(31105, new IPEndPoint(IPAddress.Parse("192.168.0.111"), 21105));
+        Channel = new UdpDataChannel(31105, new IPEndPoint(IPAddress.Parse("192.168.0.111"), 21105), NullLogger<UdpDataChannel>.Instance);
         await StartAdapterAsync();
         await Task.Delay(100, TestContext.CancellationToken);
     }

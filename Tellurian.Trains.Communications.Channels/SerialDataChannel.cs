@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace Tellurian.Trains.Communications.Channels;
 
 /// <summary>
@@ -8,6 +10,7 @@ public sealed class SerialDataChannel : ICommunicationsChannel, IAsyncDisposable
     private readonly ISerialPortAdapter _serialPort;
     private readonly IByteStreamFramer _framer;
     private readonly Observers<CommunicationResult> _observers = new();
+    private readonly ILogger _logger;
     private Task? _receiveTask;
     private bool _disposed;
 
@@ -16,10 +19,14 @@ public sealed class SerialDataChannel : ICommunicationsChannel, IAsyncDisposable
     /// </summary>
     /// <param name="serialPort">The serial port adapter to use.</param>
     /// <param name="framer">The message framer for the protocol being used.</param>
-    public SerialDataChannel(ISerialPortAdapter serialPort, IByteStreamFramer framer)
+    /// <param name="logger">The logger instance.</param>
+    public SerialDataChannel(ISerialPortAdapter serialPort, IByteStreamFramer framer, ILogger<SerialDataChannel> logger)
     {
         _serialPort = serialPort ?? throw new ArgumentNullException(nameof(serialPort));
         _framer = framer ?? throw new ArgumentNullException(nameof(framer));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        if (_logger.IsEnabled(LogLevel.Information))
+            _logger.LogInformation("SerialDataChannel created for port {PortName} using {ProtocolName} protocol", serialPort.PortName, framer.ProtocolName);
     }
 
     /// <inheritdoc />
@@ -28,12 +35,21 @@ public sealed class SerialDataChannel : ICommunicationsChannel, IAsyncDisposable
         if (data is null || data.Length == 0) return CommunicationResult.NoOperation();
         try
         {
-            if (!_serialPort.IsOpen) _serialPort.Open();
+            if (!_serialPort.IsOpen)
+            {
+                if (_logger.IsEnabled(LogLevel.Warning))
+                    _logger.LogWarning("Serial port {PortName} was not open, opening now", _serialPort.PortName);
+                _serialPort.Open();
+            }
+            if (_logger.IsEnabled(LogLevel.Debug))
+                _logger.LogDebug("Serial send: {Data}", BitConverter.ToString(data));
             await _serialPort.WriteAsync(data, cancellationToken).ConfigureAwait(false);
             return CommunicationResult.Success(data, _serialPort.PortName, _framer.ProtocolName);
         }
         catch (Exception ex)
         {
+            if (_logger.IsEnabled(LogLevel.Error))
+                _logger.LogError(ex, "Serial send failed on port {PortName}", _serialPort.PortName);
             return CommunicationResult.Failure(ex);
         }
     }
@@ -47,7 +63,14 @@ public sealed class SerialDataChannel : ICommunicationsChannel, IAsyncDisposable
     /// <inheritdoc />
     public Task StartReceiveAsync(CancellationToken cancellationToken = default)
     {
-        if (!_serialPort.IsOpen) _serialPort.Open();
+        if (!_serialPort.IsOpen)
+        {
+            if (_logger.IsEnabled(LogLevel.Warning))
+                _logger.LogWarning("Serial port {PortName} was not open, opening now", _serialPort.PortName);
+            _serialPort.Open();
+        }
+        if (_logger.IsEnabled(LogLevel.Information))
+            _logger.LogInformation("Serial receive task starting on port {PortName}", _serialPort.PortName);
         _receiveTask = ReceiveAsync(cancellationToken);
         return Task.CompletedTask;
     }
@@ -64,6 +87,8 @@ public sealed class SerialDataChannel : ICommunicationsChannel, IAsyncDisposable
 
                 if (message is not null)
                 {
+                    if (_logger.IsEnabled(LogLevel.Debug))
+                        _logger.LogDebug("Serial receive: {Data}", BitConverter.ToString(message));
                     _observers.Notify(CommunicationResult.Success(
                         message,
                         _serialPort.PortName,
@@ -82,12 +107,16 @@ public sealed class SerialDataChannel : ICommunicationsChannel, IAsyncDisposable
         }
         catch (Exception ex)
         {
+            if (_logger.IsEnabled(LogLevel.Error))
+                _logger.LogError(ex, "Serial receive failed on port {PortName}", _serialPort.PortName);
             _observers.Error(ex);
         }
     }
 
     private async Task CloseAsync()
     {
+        if (_logger.IsEnabled(LogLevel.Information))
+            _logger.LogInformation("SerialDataChannel closing asynchronously on port {PortName}", _serialPort.PortName);
         _serialPort.Close();
         if (_receiveTask is not null)
         {
@@ -104,6 +133,8 @@ public sealed class SerialDataChannel : ICommunicationsChannel, IAsyncDisposable
 
     private void CloseSync()
     {
+        if (_logger.IsEnabled(LogLevel.Information))
+            _logger.LogInformation("SerialDataChannel closing synchronously on port {PortName}", _serialPort.PortName);
         _serialPort.Close();
         _observers.Completed();
     }

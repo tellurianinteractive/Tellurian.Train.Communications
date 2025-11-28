@@ -23,3 +23,12 @@ these tools for research purposes when dealing with specific / narrowly defined 
 ### Language Features
 - Target framework: **net10.0**
 - **Modern C# features**: Use C# 14 and later features as documented by Microsoft.
+
+### Logging
+- Use `Microsoft.Extensions.Logging` for structured logging.
+- **Log levels used:**
+  - `Information`: Component lifecycle events (creation, starting, stopping, disposal)
+  - `Debug`: Hex representation of bytes sent/received
+  - `Warning`: Unexpected but recoverable situations
+  - `Error`: Failures with exception details
+- Precede logging statements with checks like `if (logger.IsEnabled(LogLevel.Debug))` for performance.

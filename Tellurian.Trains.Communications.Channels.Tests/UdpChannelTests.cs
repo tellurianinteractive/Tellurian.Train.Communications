@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Tellurian.Trains.Communications.Channels.Tests;
 
@@ -9,6 +11,7 @@ public class UdpChannelTests
     private UdpDataChannel? Target;
     private byte[]? ReceivedData;
     private IPEndPoint? Destination;
+    private readonly ILogger<UdpDataChannel> _logger = NullLogger<UdpDataChannel>.Instance;
 
     public required TestContext TestContext { get; set; }
 
@@ -16,7 +19,7 @@ public class UdpChannelTests
     public void TestInitialize()
     {
         Destination = new IPEndPoint(IPAddress.Loopback, 9901);
-        Target = new UdpDataChannel(9902, Destination);
+        Target = new UdpDataChannel(9902, Destination, _logger);
         ReceivedData = null;
     }
 
@@ -116,7 +119,7 @@ public class UdpChannelTests
     {
         using var cts = new CancellationTokenSource();
         var listener = new DataObserver();
-        var channel = new UdpDataChannel(9903, new IPEndPoint(IPAddress.Loopback, 9904));
+        var channel = new UdpDataChannel(9903, new IPEndPoint(IPAddress.Loopback, 9904), _logger);
 
         using (var subscription = channel.Subscribe(listener))
         {
@@ -181,7 +184,7 @@ public class UdpChannelTests
     [TestMethod]
     public async Task DisposeAsyncIsIdempotent()
     {
-        var channel = new UdpDataChannel(9905, new IPEndPoint(IPAddress.Loopback, 9906));
+        var channel = new UdpDataChannel(9905, new IPEndPoint(IPAddress.Loopback, 9906), _logger);
 
         await channel.DisposeAsync();
         await channel.DisposeAsync(); // Second call should be no-op
@@ -192,7 +195,7 @@ public class UdpChannelTests
     [TestMethod]
     public void DisposeSyncIsIdempotent()
     {
-        var channel = new UdpDataChannel(9907, new IPEndPoint(IPAddress.Loopback, 9908));
+        var channel = new UdpDataChannel(9907, new IPEndPoint(IPAddress.Loopback, 9908), _logger);
 
         channel.Dispose();
         channel.Dispose(); // Second call should be no-op
@@ -203,7 +206,7 @@ public class UdpChannelTests
     [TestMethod]
     public async Task ObserversReceiveCompletedOnDisposal()
     {
-        var channel = new UdpDataChannel(9909, new IPEndPoint(IPAddress.Loopback, 9910));
+        var channel = new UdpDataChannel(9909, new IPEndPoint(IPAddress.Loopback, 9910), _logger);
         var observer = new CompletionTrackingObserver();
 
         channel.Subscribe(observer);
@@ -217,7 +220,7 @@ public class UdpChannelTests
     [TestMethod]
     public async Task SendAsyncAfterDisposeReturnsFailure()
     {
-        var channel = new UdpDataChannel(9911, new IPEndPoint(IPAddress.Loopback, 9912));
+        var channel = new UdpDataChannel(9911, new IPEndPoint(IPAddress.Loopback, 9912), _logger);
         await channel.DisposeAsync();
 
         var data = new byte[] { 1, 2, 3 };
@@ -231,7 +234,7 @@ public class UdpChannelTests
     public async Task ReceiveLoopStopsAfterSocketClose()
     {
         using var cts = new CancellationTokenSource();
-        var channel = new UdpDataChannel(9913, new IPEndPoint(IPAddress.Loopback, 9914));
+        var channel = new UdpDataChannel(9913, new IPEndPoint(IPAddress.Loopback, 9914), _logger);
         var observer = new CompletionTrackingObserver();
 
         channel.Subscribe(observer);
