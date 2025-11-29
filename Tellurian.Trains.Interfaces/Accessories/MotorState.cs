@@ -1,11 +1,8 @@
-using System.Runtime.Serialization;
-
 namespace Tellurian.Trains.Interfaces.Accessories;
 
 /// <summary>
 /// Represents the output state of an accessory.
 /// </summary>
-[DataContract]
 public enum MotorState : byte
 {
     /// <summary>

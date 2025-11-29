@@ -1,8 +1,5 @@
-using System.Runtime.Serialization;
-
 namespace Tellurian.Trains.Interfaces.Locos;
 
-[DataContract]
 public readonly struct Address : IEquatable<Address>
 {
     /// <summary>
@@ -67,7 +64,6 @@ public readonly struct Address : IEquatable<Address>
     /// <summary>
     /// The address.
     /// </summary>
-    [field: DataMember(Name = "number")]
     public short Number
     {
         get;

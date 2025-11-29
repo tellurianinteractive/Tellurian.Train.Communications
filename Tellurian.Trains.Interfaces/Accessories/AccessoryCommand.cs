@@ -1,11 +1,8 @@
-using System.Runtime.Serialization;
-
 namespace Tellurian.Trains.Interfaces.Accessories;
 
 /// <summary>
 /// Represents a command to control an accessory (switch/turnout/signal).
 /// </summary>
-[DataContract]
 public readonly struct AccessoryCommand : IEquatable<AccessoryCommand>
 {
     /// <summary>
@@ -40,10 +37,8 @@ public readonly struct AccessoryCommand : IEquatable<AccessoryCommand>
         _output = (byte)output;
     }
 
-    [DataMember(Name = "Function", Order = 1)]
     private readonly byte _function;
 
-    [DataMember(Name = "Output", Order = 2)]
     private readonly byte _output;
 
     /// <summary>

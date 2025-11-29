@@ -1,11 +1,8 @@
-using System.Runtime.Serialization;
-
 namespace Tellurian.Trains.Interfaces.Accessories;
 
 /// <summary>
 /// Represents a protocol-agnostic accessory (switch/turnout) address.
 /// </summary>
-[DataContract]
 public readonly struct Address : IEquatable<Address>
 {
     /// <summary>
@@ -40,7 +37,6 @@ public readonly struct Address : IEquatable<Address>
     /// <summary>
     /// The accessory address value.
     /// </summary>
-    [field: DataMember(Name = "number")]
     public short Number
     {
         get;

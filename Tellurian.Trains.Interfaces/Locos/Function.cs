@@ -1,8 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿namespace Tellurian.Trains.Interfaces.Locos;
 
-namespace Tellurian.Trains.Interfaces.Locos;
-
-[DataContract]
 public readonly struct Function : IEquatable<Function>
 {
     public static Function On(Functions number) => new(number, true);
@@ -15,10 +12,8 @@ public readonly struct Function : IEquatable<Function>
         _isOn = isOn;
     }
 
-    [DataMember(Name = "Number", Order = 1)]
     private readonly byte _number;
 
-    [DataMember(Name = "On", Order = 2)]
     private readonly bool _isOn;
 
     public Functions Number => (Functions)_number;

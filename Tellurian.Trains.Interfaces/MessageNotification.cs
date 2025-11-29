@@ -1,8 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿namespace Tellurian.Trains.Interfaces;
 
-namespace Tellurian.Trains.Interfaces;
-
-[DataContract]
 public sealed class MessageNotification : Notification
 {
     public MessageNotification(DateTimeOffset timestamp, string message) : base(timestamp, message) { }

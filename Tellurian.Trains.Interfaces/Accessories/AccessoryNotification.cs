@@ -1,18 +1,13 @@
-using System.Runtime.Serialization;
-
 namespace Tellurian.Trains.Interfaces.Accessories;
 
 /// <summary>
 /// Notification for accessory state changes.
 /// </summary>
-[DataContract]
 public class AccessoryNotification(Address address, Position function, DateTimeOffset timestamp)
     : Notification(timestamp)
 {
-    [DataMember]
     private readonly Address _Address = address;
 
-    [DataMember]
     private readonly Position _Function = function;
 
     /// <summary>

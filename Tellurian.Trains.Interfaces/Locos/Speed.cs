@@ -1,8 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿namespace Tellurian.Trains.Interfaces.Locos;
 
-namespace Tellurian.Trains.Interfaces.Locos;
-
-[DataContract]
 public readonly struct Speed : IEquatable<Speed>
 {
     public static Speed Set126(byte step) => new(LocoSpeedSteps.Steps126, step);
@@ -14,10 +11,8 @@ public readonly struct Speed : IEquatable<Speed>
         _currentStep = currentStep;
     }
 
-    [DataMember(Name = "CurrentStep")]
     private readonly byte _currentStep;
 
-    [DataMember(Name = "MaxSteps")]
     private readonly byte _maxSteps;
 
     public LocoSpeedSteps MaxSteps => _maxSteps.AsLocoSpeedSteps();
