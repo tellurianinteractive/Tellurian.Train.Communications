@@ -5,5 +5,6 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 ### Version 1.0.0 - Initial Release
-Release Date: 2025-11-25
-- **Inital Release** for Tellurian.Trains.Control NuGet-packages. Consult the main README file and README files in each package repository for detailed information on features and usage.
+Release Date: 2025-11-29
+- **Inital Release** for Tellurian.Trains.Control NuGet-packages. 
+Consult the README files in each package repository for detailed information on features and usage.
