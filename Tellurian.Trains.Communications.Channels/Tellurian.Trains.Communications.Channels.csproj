@@ -8,6 +8,10 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Title>$(AssemblyName)</Title>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Documentation>
+			A protocol-agnostic transport layer library for model train control systems. 
+			Provides UDP and serial port communication with async/await patterns and observer-based notifications.
+		</Documentation>
 	</PropertyGroup>
 
 	<PropertyGroup>

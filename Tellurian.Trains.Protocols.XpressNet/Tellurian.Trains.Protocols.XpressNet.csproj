@@ -8,6 +8,9 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Title>$(AssemblyName)</Title>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Documentation>
+			A complete C# implementation of the XpressNet protocol for digital model railroad control.
+		</Documentation>
 	</PropertyGroup>
 
 	<PropertyGroup>

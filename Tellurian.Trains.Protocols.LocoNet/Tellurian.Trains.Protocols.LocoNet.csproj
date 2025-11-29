@@ -9,6 +9,10 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Title>$(AssemblyName)</Title>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Documentation>
+			A comprehensive C# implementation of the LocoNet protocol for model railroad control.
+		</Documentation>
+		
 	</PropertyGroup>
 
 	<PropertyGroup>
