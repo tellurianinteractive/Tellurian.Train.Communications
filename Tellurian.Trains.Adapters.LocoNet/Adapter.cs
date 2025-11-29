@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Tellurian.Trains.Communications.Channels;
 using Tellurian.Trains.Interfaces.Accessories;
 using Tellurian.Trains.Interfaces.Decoder;
-using Tellurian.Trains.Interfaces.Locos;
 using Tellurian.Trains.Protocols.LocoNet;
 using Tellurian.Trains.Protocols.LocoNet.Commands;
 using Tellurian.Trains.Protocols.LocoNet.Notifications;
@@ -61,9 +60,10 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
     /// </summary>
     public async Task<bool> SendAsync(Command command, CancellationToken cancellationToken = default)
     {
-        if (command is null) throw new ArgumentNullException(nameof(command));
+        ArgumentNullException.ThrowIfNull(command);
         var data = command.GetBytesWithChecksum();
-        _logger.LogDebug("Sending: {Data}", BitConverter.ToString(data));
+        if(_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("Sending: {Data}", BitConverter.ToString(data));
         var result = await _channel.SendAsync(data, cancellationToken).ConfigureAwait(false);
         return result.IsSuccess;
     }
@@ -75,7 +75,8 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
         var data = successResult.Data();
         if (data.Length == 0) return;
 
-        _logger.LogDebug("Received: {Data}", BitConverter.ToString(data));
+        if(_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("Received: {Data}", BitConverter.ToString(data));
 
         try
         {
@@ -123,14 +124,16 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
             _pendingSlotRequest?.TrySetResult(slotData);
         }
 
-        _logger.LogDebug("Slot {Slot} updated: Address={Address}, Speed={Speed}, Direction={Direction}",
-            slotData.SlotNumber, slotData.Address, slotData.Speed, slotData.Direction ? "FWD" : "REV");
+        if (_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("Slot {Slot} updated: Address={Address}, Speed={Speed}, Direction={Direction}",
+        slotData.SlotNumber, slotData.Address, slotData.Speed, slotData.Direction ? "FWD" : "REV");
     }
 
     private void HandleSwitchReportNotification(SwitchReportNotification notification)
     {
-        _logger.LogDebug("Switch {Address}: {Direction}",
-            notification.Address, notification.CurrentDirection);
+        if (_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("Switch {Address}: {Direction}",
+        notification.Address, notification.CurrentDirection);
     }
 
     private Interfaces.Notification? MapToInterfaceNotification(Notification notification)

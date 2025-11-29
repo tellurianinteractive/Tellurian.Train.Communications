@@ -15,6 +15,17 @@ public sealed class SetLocoSpeedCommand : Command
         data[1] = slot;
         data[2] = speedSteps;
     }
+
+    /// <summary>
+    /// The slot number this command is for.
+    /// </summary>
+    public byte Slot => data[1];
+
+    /// <summary>
+    /// The speed step value (0-127).
+    /// </summary>
+    public byte Speed => data[2];
+
     public override byte[] GetBytesWithChecksum() => AppendChecksum(data);
 
 

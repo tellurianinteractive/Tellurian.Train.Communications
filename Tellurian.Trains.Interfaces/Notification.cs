@@ -1,18 +1,30 @@
-﻿#pragma warning disable CA1051 // Do not declare visible instance fields
+using System.Text.Json.Serialization;
+using Tellurian.Trains.Interfaces.Accessories;
+using Tellurian.Trains.Interfaces.Locos;
 
 namespace Tellurian.Trains.Interfaces;
 
+/// <summary>
+/// Base class for all protocol-agnostic notifications.
+/// </summary>
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+[JsonDerivedType(typeof(MessageNotification), "MessageNotification")]
+[JsonDerivedType(typeof(ShortCircuitNotification), "ShortCircuitNotification")]
+[JsonDerivedType(typeof(LocoMovementNotification), "LocoMovementNotification")]
+[JsonDerivedType(typeof(LocoFunctionsNotification), "LocoFunctionsNotification")]
+[JsonDerivedType(typeof(AccessoryNotification), "AccessoryNotification")]
 public abstract class Notification(DateTimeOffset timestamp)
 {
     protected Notification() : this(DateTimeOffset.Now) { }
 
     protected Notification(DateTimeOffset timestamp, string message) : this(timestamp) => Message = message ?? string.Empty;
 
+    [JsonIgnore]
     public virtual bool IsLocoNotification { get; }
 
-    public readonly DateTimeOffset Timestamp = timestamp;
+    public DateTimeOffset Timestamp { get; } = timestamp;
 
-    public readonly string? Message;
+    public string? Message { get; init; }
 
     public override string ToString() => $"{GetType().Name} {Message}";
 }

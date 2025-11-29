@@ -1,13 +1,22 @@
-﻿using System.Globalization;
+using System.Globalization;
+using System.Text.Json.Serialization;
 
 #pragma warning disable CA1051 // Do not declare visible instance fields
 
 namespace Tellurian.Trains.Protocols.XpressNet;
 
+/// <summary>
+/// Base class for all XpressNet protocol messages.
+/// JSON serialization is handled by <see cref="Json.Converters.XpressNetMessageConverter"/>.
+/// </summary>
 public abstract class Message
 {
     protected byte[] Data;
+
+    [JsonPropertyName("header")]
     public byte Header { get; }
+
+    [JsonPropertyName("length")]
     public int Length { get { return HasData ? Data.Length : 0; } }
 
     protected Message(byte header)
@@ -74,6 +83,18 @@ public abstract class Message
     }
 
     protected bool HasData { get { return !((Data == null) || (Data.Length == 0)); } }
+
+    /// <summary>
+    /// Gets the raw data bytes as a hex string for serialization/debugging.
+    /// </summary>
+    [JsonPropertyName("dataHex")]
+    public string DataHex => HasData ? BitConverter.ToString(Data) : string.Empty;
+
+    /// <summary>
+    /// Gets the message type name for JSON serialization.
+    /// </summary>
+    [JsonPropertyName("messageType")]
+    public string MessageType => GetType().Name;
 
     public override string ToString()
     {

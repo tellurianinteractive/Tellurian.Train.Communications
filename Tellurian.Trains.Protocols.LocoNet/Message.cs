@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 [assembly: InternalsVisibleTo("Tellurian.Trains.Protocols.LocoNet.Tests")]
 
@@ -6,9 +7,15 @@ namespace Tellurian.Trains.Protocols.LocoNet;
 
 /// <summary>
 /// Base class for all LocoNet commands and notifications.
+/// JSON serialization is handled by <see cref="Json.Converters.LocoNetMessageConverter"/>.
 /// </summary>
 public class Message
 {
+    /// <summary>
+    /// Gets the message type name for JSON serialization.
+    /// </summary>
+    [JsonPropertyName("messageType")]
+    public string MessageType => GetType().Name;
     /// <summary>
     /// Creates the appropriate type of <see cref="Message"/> from binary data.
     /// </summary>

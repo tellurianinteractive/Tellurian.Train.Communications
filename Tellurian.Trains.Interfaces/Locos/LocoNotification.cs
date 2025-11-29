@@ -2,8 +2,6 @@
 
 public abstract class LocoNotification(Address address, DateTimeOffset timestamp) : Notification(timestamp)
 {
-    private readonly Address _Address = address;
-
-    public Address Address => _Address;
+    public Address Address { get; } = address;
     public override bool IsLocoNotification => true;
 }
