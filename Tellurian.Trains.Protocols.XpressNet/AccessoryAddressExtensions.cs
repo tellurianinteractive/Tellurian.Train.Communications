@@ -4,7 +4,7 @@ namespace Tellurian.Trains.Protocols.XpressNet;
 
 internal static class AccessoryAddressExtensions
 {
-    extension(AccessoryAddress address)
+    extension(Address address)
     {
         public byte Group => (byte)((address.Number - 1) / 4);
 
@@ -13,9 +13,9 @@ internal static class AccessoryAddressExtensions
         public byte[] GetBytes()
         {
             var result = new byte[2];
-            var a = BitConverter.GetBytes((short)(address.Number - 1));
-            result[0] = a[1];
-            result[1] = a[0];
+            var bytes = BitConverter.GetBytes((short)(address.Number - 1));
+            result[0] = bytes[1];
+            result[1] = bytes[0];
             return result;
         }
     }

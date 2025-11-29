@@ -73,7 +73,7 @@ public class CommandTests
     public void CreatesSetLocomotiveAddressModeCommand()
     {
         const short address = 1;
-        AssertCorrectFrameData(7, new byte[] { 0x00, 0x01, 0x01 }, Act(new SetLocoAddressModeCommand(address, AddressMode.MM )));
+        AssertCorrectFrameData(7, new byte[] { 0x00, 0x01, 0x01 }, Act(new SetLocoAddressModeCommand(address, AddressMode.MM)));
     }
 
     [TestMethod]

@@ -1,9 +1,11 @@
 ﻿
-namespace Tellurian.Trains.Protocols.XpressNet; 
+namespace Tellurian.Trains.Protocols.XpressNet;
+
 /// <summary>
 /// The direction of a locomotive.
 /// </summary>
-public enum LocoDirection {
+public enum LocoDirection
+{
     /// <summary>
     /// Locomotive direction shall be backwards.
     /// </summary>
@@ -16,9 +18,9 @@ public enum LocoDirection {
 
 public static class LocoDirectionExtensions
 {
-    public static Interfaces.Locos.LocoDirection Map(this LocoDirection me) =>
-        me == LocoDirection.Forward ? Interfaces.Locos.LocoDirection.Forward : Interfaces.Locos.LocoDirection.Backward;
+    public static Interfaces.Locos.Direction Map(this LocoDirection me) =>
+        me == LocoDirection.Forward ? Interfaces.Locos.Direction.Forward : Interfaces.Locos.Direction.Backward;
 
-    public static LocoDirection Map(this Interfaces.Locos.LocoDirection me) =>
-        me == Interfaces.Locos.LocoDirection.Forward ? LocoDirection.Forward : LocoDirection.Backward;
+    public static LocoDirection Map(this Interfaces.Locos.Direction me) =>
+        me == Interfaces.Locos.Direction.Forward ? LocoDirection.Forward : LocoDirection.Backward;
 }

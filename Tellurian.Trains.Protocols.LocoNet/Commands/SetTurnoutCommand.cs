@@ -12,7 +12,7 @@ public sealed class SetTurnoutCommand : Command
 {
     public const byte OperationCode = 0xB0;
 
-    public SetTurnoutCommand(AccessoryAddress address, AccessoryFunction direction, OutputState output)
+    public SetTurnoutCommand(Address address, Position direction, MotorState output)
     {
         Address = address;
         Direction = direction;
@@ -22,29 +22,29 @@ public sealed class SetTurnoutCommand : Command
     /// <summary>
     /// The accessory address (0-2047).
     /// </summary>
-    public AccessoryAddress Address { get; }
+    public Address Address { get; }
 
     /// <summary>
     /// Direction/function: Closed/Green or Thrown/Red.
     /// </summary>
-    public AccessoryFunction Direction { get; }
+    public Position Direction { get; }
 
     /// <summary>
     /// Output state: On or Off.
     /// </summary>
-    public OutputState Output { get; }
+    public MotorState Output { get; }
 
     /// <summary>
     /// Creates a command to throw a switch (set to Thrown/Red position).
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SetTurnoutCommand Throw(AccessoryAddress address, bool activate = true)
+    public static SetTurnoutCommand Throw(Address address, bool activate = true)
     {
         return new SetTurnoutCommand(
             address,
-            AccessoryFunction.ThrownOrRed,
-            activate ? OutputState.On : OutputState.Off);
+            Position.ThrownOrRed,
+            activate ? MotorState.On : MotorState.Off);
     }
 
     /// <summary>
@@ -52,12 +52,12 @@ public sealed class SetTurnoutCommand : Command
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SetTurnoutCommand Close(AccessoryAddress address, bool activate = true)
+    public static SetTurnoutCommand Close(Address address, bool activate = true)
     {
         return new SetTurnoutCommand(
             address,
-            AccessoryFunction.ClosedOrGreen,
-            activate ? OutputState.On : OutputState.Off);
+            Position.ClosedOrGreen,
+            activate ? MotorState.On : MotorState.Off);
     }
 
     /// <summary>
@@ -65,12 +65,12 @@ public sealed class SetTurnoutCommand : Command
     /// This prevents motor overheating in turnout motors.
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
-    public static SetTurnoutCommand TurnOff(AccessoryAddress address)
+    public static SetTurnoutCommand TurnOff(Address address)
     {
         return new SetTurnoutCommand(
             address,
-            AccessoryFunction.ClosedOrGreen,
-            OutputState.Off);
+            Position.ClosedOrGreen,
+            MotorState.Off);
     }
 
     /// <summary>

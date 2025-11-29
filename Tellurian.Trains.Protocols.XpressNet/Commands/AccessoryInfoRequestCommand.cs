@@ -19,7 +19,7 @@ public sealed class AccessoryInfoRequestCommand : Command
     /// Creates an accessory decoder information request for a specific turnout.
     /// </summary>
     /// <param name="address">Turnout address (1-1024)</param>
-    public AccessoryInfoRequestCommand(AccessoryAddress address)
+    public AccessoryInfoRequestCommand(Address address)
         : base(0x42, GetData(address)) { }
 
     /// <summary>
@@ -30,7 +30,7 @@ public sealed class AccessoryInfoRequestCommand : Command
     public AccessoryInfoRequestCommand(byte groupAddress, bool upperNibble)
         : base(0x42, GetData(groupAddress, upperNibble)) { }
 
-    private static byte[] GetData(AccessoryAddress address)
+    private static byte[] GetData(Address address)
     {
         var upperNibble = address.Subaddress >= 2;
         return GetData(address.Group, upperNibble);

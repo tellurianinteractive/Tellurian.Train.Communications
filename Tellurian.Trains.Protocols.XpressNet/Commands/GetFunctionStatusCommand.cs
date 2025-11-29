@@ -21,10 +21,10 @@ public sealed class GetFunctionStatusCommand : Command
     /// Creates a function status request command.
     /// </summary>
     /// <param name="address">Locomotive address (1-9999)</param>
-    public GetFunctionStatusCommand(LocoAddress address)
+    public GetFunctionStatusCommand(Address address)
         : base(0xE3, GetData(address)) { }
 
-    private static byte[] GetData(LocoAddress address)
+    private static byte[] GetData(Address address)
     {
         var addrBytes = address.GetBytesAccordingToXpressNet();
         return [0x07, addrBytes[0], addrBytes[1]];

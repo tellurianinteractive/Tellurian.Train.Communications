@@ -12,7 +12,7 @@ public sealed class SwitchAcknowledgeCommand : Command
 {
     public const byte OperationCode = 0xBD;
 
-    public SwitchAcknowledgeCommand(AccessoryAddress address, AccessoryFunction direction, OutputState output)
+    public SwitchAcknowledgeCommand(Address address, Position direction, MotorState output)
     {
         Address = address;
         Direction = direction;
@@ -22,29 +22,29 @@ public sealed class SwitchAcknowledgeCommand : Command
     /// <summary>
     /// The accessory address (0-2047).
     /// </summary>
-    public AccessoryAddress Address { get; }
+    public Address Address { get; }
 
     /// <summary>
     /// Direction/function: Closed/Green or Thrown/Red.
     /// </summary>
-    public AccessoryFunction Direction { get; }
+    public Position Direction { get; }
 
     /// <summary>
     /// Output state: On or Off.
     /// </summary>
-    public OutputState Output { get; }
+    public MotorState Output { get; }
 
     /// <summary>
     /// Creates a command to throw a switch with acknowledgment.
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SwitchAcknowledgeCommand Throw(AccessoryAddress address, bool activate = true)
+    public static SwitchAcknowledgeCommand Throw(Address address, bool activate = true)
     {
         return new SwitchAcknowledgeCommand(
             address,
-            AccessoryFunction.ThrownOrRed,
-            activate ? OutputState.On : OutputState.Off);
+            Position.ThrownOrRed,
+            activate ? MotorState.On : MotorState.Off);
     }
 
     /// <summary>
@@ -52,12 +52,12 @@ public sealed class SwitchAcknowledgeCommand : Command
     /// </summary>
     /// <param name="address">Switch address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SwitchAcknowledgeCommand Close(AccessoryAddress address, bool activate = true)
+    public static SwitchAcknowledgeCommand Close(Address address, bool activate = true)
     {
         return new SwitchAcknowledgeCommand(
             address,
-            AccessoryFunction.ClosedOrGreen,
-            activate ? OutputState.On : OutputState.Off);
+            Position.ClosedOrGreen,
+            activate ? MotorState.On : MotorState.Off);
     }
 
     /// <summary>

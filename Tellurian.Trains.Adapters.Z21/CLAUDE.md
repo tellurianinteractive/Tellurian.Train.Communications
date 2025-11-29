@@ -4,7 +4,7 @@ This project provides the **Z21 Adapter** - a protocol adapter for Z21 command s
 
 ## Purpose
 
-The Z21 adapter acts as a bridge between the protocol-agnostic interfaces (`ILocoControl`, `ILocoDecoder`) and the Z21 command station hardware. It handles Z21-specific framing and protocol encapsulation while delegating actual protocol work to XpressNet and LocoNet implementations.
+The Z21 adapter acts as a bridge between the protocol-agnostic interfaces (`ILoco`, `IAccessory`, `ISwitch`, `IDecoder`) and the Z21 command station hardware. It handles Z21-specific framing and protocol encapsulation while delegating actual protocol work to XpressNet implementations.
 
 ## Implementation Status
 
@@ -12,13 +12,30 @@ The Z21 adapter acts as a bridge between the protocol-agnostic interfaces (`ILoc
 
 ## Key Components
 
-### Z21Adapter
-Main adapter class that:
-- Implements `ILocoControl` and `ILocoDecoder` interfaces
-- Wraps XpressNet and LocoNet protocol handlers
+### Adapter
+Main adapter class (split across partial classes) that:
+- Implements `ILoco`, `IAccessory`, `ISwitch`, and `IDecoder` interfaces
+- Wraps XpressNet protocol handlers
 - Manages Z21 frame encapsulation/decapsulation
 - Distributes notifications to multiple observers
 - Handles broadcast subscription configuration
+
+### Interface Implementations
+
+#### ILoco (LocoControlAdapter.cs)
+- `DriveAsync` - Speed and direction control
+- `EmergencyStopAsync` - Per-locomotive emergency stop
+- `SetFunctionAsync` - Function control (F0-F28)
+
+#### IAccessory & ISwitch (AccessoryControlAdapter.cs)
+- `SetAccessoryAsync` - Generic accessory control via XpressNet AccessoryFunctionCommand
+- `QueryAccessoryStateAsync` - Query accessory state via AccessoryInfoRequestCommand
+- `SetThrownAsync`/`SetClosedAsync`/`TurnOffAsync` - Convenience methods
+
+#### IDecoder (DecoderControlAdapter.cs)
+- `ReadCVAsync` - CV read with async response handling
+- `WriteCVAsync` - CV write with async response handling
+- Uses TaskCompletionSource for async request/response correlation
 
 ### Frame Handling
 Z21 uses a specific frame structure that wraps protocol messages:
@@ -30,14 +47,14 @@ Z21 uses a specific frame structure that wraps protocol messages:
 The adapter automatically:
 - Adds Z21 framing when sending commands
 - Strips Z21 framing when receiving notifications
-- Routes data to appropriate protocol handler (XpressNet or LocoNet)
+- Routes data to appropriate protocol handler
 
 ### Notification Mapping
 Maps Z21 frames to protocol-agnostic notifications:
 - System state changes → interface notification types
-- Locomotive information → `ILocoControl` event notifications
-- Programming results → `ILocoDecoder` event notifications
-- Error conditions → appropriate error notifications
+- Locomotive information → `LocoMovementNotification` / `LocoFunctionsNotification`
+- Programming results → `DecoderResponse`
+- Accessory changes → `AccessoryNotification`
 
 ### Z21-Specific Commands
 Beyond protocol passthrough, provides Z21-specific functionality:
@@ -59,25 +76,6 @@ Byte 4+:  Data (protocol-specific payload)
 - **XpressNet commands**: Wrapped in header `0x40 0x00`
 - **LocoNet commands**: Wrapped in header `0x60 0x00` (send) / `0x61 0x00` (receive)
 - **Z21 commands**: Direct Z21 headers (e.g., `0x10 0x00` for system state)
-
-### NotificationFactory
-Parses incoming Z21 frames:
-1. Extracts length and header
-2. Validates frame completeness
-3. Routes to appropriate protocol parser based on header
-4. Creates typed notification objects
-5. Distributes to registered observers
-
-## Broadcast Subscriptions
-
-The Z21 supports selective event filtering via `BroadcastSubjects`:
-- Power status changes
-- Locomotive information updates
-- Turnout/accessory changes
-- Sensor/feedback events
-- System state changes
-
-Configure subscriptions to reduce network traffic and processing overhead.
 
 ## Observer Pattern
 

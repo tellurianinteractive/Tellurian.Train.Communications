@@ -8,7 +8,7 @@ public class EstablishDoubleHeaderCommandTests
     [TestMethod]
     public void EstablishDoubleHeader_ReturnsCorrectBytes_ForShortAddresses()
     {
-        var target = new EstablishDoubleHeaderCommand(LocoAddress.From(3), LocoAddress.From(5));
+        var target = new EstablishDoubleHeaderCommand(Address.From(3), Address.From(5));
         var data = target.GetData();
 
         Assert.AreEqual(0xE5, data[0]);
@@ -22,7 +22,7 @@ public class EstablishDoubleHeaderCommandTests
     [TestMethod]
     public void EstablishDoubleHeader_ReturnsCorrectBytes_ForLongAddresses()
     {
-        var target = new EstablishDoubleHeaderCommand(LocoAddress.From(1234), LocoAddress.From(5678));
+        var target = new EstablishDoubleHeaderCommand(Address.From(1234), Address.From(5678));
         var data = target.GetData();
 
         Assert.AreEqual(0xE5, data[0]);

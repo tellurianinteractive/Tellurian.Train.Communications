@@ -3,9 +3,11 @@
 namespace Tellurian.Trains.Protocols.XpressNet.Tests;
 
 [TestClass]
-public class VersionNotificationTests {
+public class VersionNotificationTests
+{
     [TestMethod]
-    public void XpressNetVersion_ParsesPropertiesCorrectly() {
+    public void XpressNetVersion_ParsesPropertiesCorrectly()
+    {
         var data = new byte[] { 0x63, 0x21, 0x30, 0x12, 0xFF };
         var actual = new VersionNotification(data);
         Assert.AreEqual(0x63, actual.Header);
@@ -16,7 +18,8 @@ public class VersionNotificationTests {
     }
 
     [TestMethod]
-    public void XBusVersion_ParsesPropertiesCorrectly() {
+    public void XBusVersion_ParsesPropertiesCorrectly()
+    {
         var data = new byte[] { 0x62, 0x21, 0x20, 0xFF };
         var actual = new VersionNotification(data);
         Assert.AreEqual(0x62, actual.Header);

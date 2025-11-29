@@ -61,8 +61,8 @@ public class IntegrationTests
     [TestMethod]
     public async Task SetDrive()
     {
-        var address = Interfaces.Locos.LocoAddress.From(999);
-        var drive = new Interfaces.Locos.LocoDrive { Direction = Interfaces.Locos.LocoDirection.Backward, Speed = Interfaces.Locos.LocoSpeed.Set(Interfaces.Locos.LocoSpeedSteps.Steps126, 2)};
+        var address = Interfaces.Locos.Address.From(999);
+        var drive = new Interfaces.Locos.Drive { Direction = Interfaces.Locos.Direction.Backward, Speed = Interfaces.Locos.Speed.Set(Interfaces.Locos.LocoSpeedSteps.Steps126, 2) };
         await (Target?.DriveAsync(address, drive, TestContext.CancellationToken) ?? Task.FromResult(false));
         await Task.Delay(100, TestContext.CancellationToken);
     }

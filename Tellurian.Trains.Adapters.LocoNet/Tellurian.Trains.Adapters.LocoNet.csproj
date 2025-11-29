@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>Tellurian.Trains.Adapters.LocoNet</AssemblyName>
+		<RootNamespace>Tellurian.Trains.Adapters.LocoNet</RootNamespace>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<Title>$(AssemblyName)</Title>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Description>
+			A .NET adapter for LocoNet-based command stations via serial port, providing a high-level API
+			for locomotive control, accessory switching, and decoder programming.
+		</Description>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+		<Deterministic>true</Deterministic>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<DebugType>embedded</DebugType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Tellurian.Trains.Communications.Channels\Tellurian.Trains.Communications.Channels.csproj" />
+		<ProjectReference Include="..\Tellurian.Trains.Protocols.LocoNet\Tellurian.Trains.Protocols.LocoNet.csproj" />
+		<ProjectReference Include="..\Tellurian.Trains.Interfaces\Tellurian.Trains.Interfaces.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+</Project>

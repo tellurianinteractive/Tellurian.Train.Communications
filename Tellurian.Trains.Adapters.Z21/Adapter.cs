@@ -34,7 +34,7 @@ public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notifi
 
     #region Commands
 
-    public Task<bool> GetLocoInfoAsync(Interfaces.Locos.LocoAddress address, CancellationToken cancellationToken = default)
+    public Task<bool> GetLocoInfoAsync(Interfaces.Locos.Address address, CancellationToken cancellationToken = default)
     {
         return SendAsync(new XpressNet.GetLocoInfoCommand(address), cancellationToken);
     }
@@ -79,8 +79,9 @@ public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notifi
             {
                 var n = frame.Notification();
                 var notification = n.Map();
-                if (notification.Length == 1 && notification[0] is DecoderResponse)
+                if (notification.Length == 1 && notification[0] is DecoderResponse decoderResponse)
                 {
+                    HandleDecoderResponse(decoderResponse);
                     _ = SendAsync(new TrackPowerOnCommand());
                 }
                 Observers.Notify(notification);

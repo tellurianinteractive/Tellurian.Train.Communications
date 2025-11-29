@@ -8,7 +8,7 @@ public class RemoveLocoFromMultiUnitCommandTests
     [TestMethod]
     public void RemoveLocoFromMultiUnit_ReturnsCorrectBytes()
     {
-        var target = new RemoveLocoFromMultiUnitCommand(LocoAddress.From(3), 10);
+        var target = new RemoveLocoFromMultiUnitCommand(Address.From(3), 10);
         var data = target.GetData();
 
         Assert.AreEqual(0xE4, data[0]);
@@ -21,7 +21,7 @@ public class RemoveLocoFromMultiUnitCommandTests
     [TestMethod]
     public void RemoveLocoFromMultiUnit_ReturnsCorrectBytes_ForLongAddress()
     {
-        var target = new RemoveLocoFromMultiUnitCommand(LocoAddress.From(1234), 50);
+        var target = new RemoveLocoFromMultiUnitCommand(Address.From(1234), 50);
         var data = target.GetData();
 
         Assert.AreEqual(0xE4, data[0]);
@@ -36,7 +36,7 @@ public class RemoveLocoFromMultiUnitCommandTests
     {
         try
         {
-            _ = new RemoveLocoFromMultiUnitCommand(LocoAddress.From(3), 0);
+            _ = new RemoveLocoFromMultiUnitCommand(Address.From(3), 0);
             Assert.Fail("Expected ArgumentOutOfRangeException");
         }
         catch (ArgumentOutOfRangeException) { }

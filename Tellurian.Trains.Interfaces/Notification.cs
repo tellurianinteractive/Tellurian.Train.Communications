@@ -8,6 +8,7 @@ namespace Tellurian.Trains.Interfaces;
 [KnownType(typeof(ShortCircuitNotification))]
 [KnownType(typeof(MessageNotification))]
 [KnownType(typeof(Locos.LocoNotification))]
+[KnownType(typeof(Accessories.AccessoryNotification))]
 public abstract class Notification(DateTimeOffset timestamp)
 {
     protected Notification() : this(DateTimeOffset.Now) { }

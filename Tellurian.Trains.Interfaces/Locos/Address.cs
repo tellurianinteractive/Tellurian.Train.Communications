@@ -3,30 +3,30 @@ using System.Runtime.Serialization;
 namespace Tellurian.Trains.Interfaces.Locos;
 
 [DataContract]
-public readonly struct LocoAddress : IEquatable<LocoAddress>
+public readonly struct Address : IEquatable<Address>
 {
     /// <summary>
-    /// Static method for creating a <see cref="LocoAddress"/> from a number.
+    /// Static method for creating a <see cref="Address"/> from a number.
     /// </summary>
-    public static LocoAddress From(int shortOrLongAddress) => new((short)shortOrLongAddress);
+    public static Address From(int shortOrLongAddress) => new((short)shortOrLongAddress);
     /// <summary>
     /// Creates a LocoAddress from LocoNet-encoded bytes.
     /// </summary>
     /// <param name="high">High 7 bits of the address (0 for short addresses 1-127).</param>
     /// <param name="low">Low 7 bits of the address.</param>
     /// <returns>A LocoAddress reconstructed from the LocoNet encoding.</returns>
-    public static LocoAddress From(byte high, byte low)
+    public static Address From(byte high, byte low)
     {
         return From((high << 7) | low);
     }
     /// <summary>
-    /// Creates a new instance of <see cref="LocoAddress"/> from a two-byte buffer.
+    /// Creates a new instance of <see cref="Address"/> from a two-byte buffer.
     /// </summary>
     /// <param name="buffer">A byte array containing exactly two bytes representing the address to convert.
     /// The first byte is high address byte and the seconc is low address byte.</param>
-    /// <returns>A <see cref="LocoAddress"/> instance constructed from the specified buffer.</returns>
+    /// <returns>A <see cref="Address"/> instance constructed from the specified buffer.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="buffer"/> does not contain exactly two bytes.</exception>
-    public static LocoAddress From(byte[] buffer) 
+    public static Address From(byte[] buffer)
     {
         ArgumentNullException.ThrowIfNull(buffer);
         if (buffer.Length != 2) throw new ArgumentOutOfRangeException(nameof(buffer), "Buffer must contain  2 bytes.");
@@ -35,12 +35,12 @@ public readonly struct LocoAddress : IEquatable<LocoAddress>
     /// <summary>
     /// Represents a zero loco address (used as sentinel for "no address").
     /// </summary>
-    public static LocoAddress Zero => new(0);
+    public static Address Zero => new(0);
     /// <summary>
-    /// Constructs a <see cref="LocoAddress"/> from a number.
+    /// Constructs a <see cref="Address"/> from a number.
     /// </summary>
     /// <param name="number">The loco address (1-9999).</param>
-    private LocoAddress(short number)
+    private Address(short number)
     {
         Number = number;
     }
@@ -49,7 +49,7 @@ public readonly struct LocoAddress : IEquatable<LocoAddress>
     /// High 7 bits of the address for LocoNet encoding.
     /// Returns 0 for short addresses (1-127).
     /// </summary>
-    public byte High => (byte)( IsShort ? 0 : (Number >> 7));
+    public byte High => (byte)(IsShort ? 0 : (Number >> 7));
 
     /// <summary>
     /// Low 7 bits of the address for LocoNet encoding.
@@ -94,10 +94,10 @@ public readonly struct LocoAddress : IEquatable<LocoAddress>
     /// </summary>
     public bool IsShortThreeDigit => IsShort && Number >= 100;
 
-    public bool Equals(LocoAddress other) => other.Number == Number;
-    public override bool Equals(object? obj) => obj is LocoAddress other && Equals(other);
+    public bool Equals(Address other) => other.Number == Number;
+    public override bool Equals(object? obj) => obj is Address other && Equals(other);
     public override int GetHashCode() => Number.GetHashCode();
     public override string ToString() => $"{Number}";
-    public static bool operator ==(LocoAddress left, LocoAddress right) => left.Equals(right);
-    public static bool operator !=(LocoAddress left, LocoAddress right) => !(left == right);
+    public static bool operator ==(Address left, Address right) => left.Equals(right);
+    public static bool operator !=(Address left, Address right) => !(left == right);
 }

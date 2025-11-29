@@ -9,10 +9,10 @@ namespace Tellurian.Trains.Protocols.XpressNet.Commands;
 /// </summary>
 public abstract class DoubleHeaderCommand : Command
 {
-    protected DoubleHeaderCommand(LocoAddress address1, LocoAddress address2)
+    protected DoubleHeaderCommand(Address address1, Address address2)
         : base(0xE5, GetData(address1, address2)) { }
 
-    private static byte[] GetData(LocoAddress address1, LocoAddress address2)
+    private static byte[] GetData(Address address1, Address address2)
     {
         var addr1Bytes = address1.GetBytesAccordingToXpressNet();
         var addr2Bytes = address2.GetBytesAccordingToXpressNet();
@@ -48,7 +48,7 @@ public sealed class EstablishDoubleHeaderCommand : DoubleHeaderCommand
     /// </summary>
     /// <param name="address1">First locomotive address (1-9999)</param>
     /// <param name="address2">Second locomotive address (1-9999)</param>
-    public EstablishDoubleHeaderCommand(LocoAddress address1, LocoAddress address2)
+    public EstablishDoubleHeaderCommand(Address address1, Address address2)
         : base(address1, address2) { }
 }
 
@@ -71,10 +71,10 @@ public sealed class DissolveDoubleHeaderCommand : Command
     /// Creates a command to dissolve a Double Header by removing a locomotive.
     /// </summary>
     /// <param name="address">Locomotive address to remove from Double Header (1-9999)</param>
-    public DissolveDoubleHeaderCommand(LocoAddress address)
+    public DissolveDoubleHeaderCommand(Address address)
         : base(0xE5, GetData(address)) { }
 
-    private static byte[] GetData(LocoAddress address)
+    private static byte[] GetData(Address address)
     {
         var addrBytes = address.GetBytesAccordingToXpressNet();
         return

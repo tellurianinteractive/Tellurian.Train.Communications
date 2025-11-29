@@ -159,7 +159,7 @@ public sealed class ProgrammingCommand : Command
         data[2] = ProgrammingSlot; // Slot 124
 
         // Build PCMD byte
-        byte programmingCommandByte = Mode.BuildProgrammingCommandByte( Operation);
+        byte programmingCommandByte = Mode.BuildProgrammingCommandByte(Operation);
         data[3] = programmingCommandByte;
 
         data[4] = 0x00; // Reserved

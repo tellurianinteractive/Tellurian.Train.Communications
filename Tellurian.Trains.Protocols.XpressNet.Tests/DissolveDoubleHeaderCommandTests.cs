@@ -8,7 +8,7 @@ public class DissolveDoubleHeaderCommandTests
     [TestMethod]
     public void DissolveDoubleHeader_ReturnsCorrectBytes_ForShortAddress()
     {
-        var target = new DissolveDoubleHeaderCommand(LocoAddress.From(3));
+        var target = new DissolveDoubleHeaderCommand(Address.From(3));
         var data = target.GetData();
 
         Assert.AreEqual(0xE5, data[0]);
@@ -22,7 +22,7 @@ public class DissolveDoubleHeaderCommandTests
     [TestMethod]
     public void DissolveDoubleHeader_ReturnsCorrectBytes_ForLongAddress()
     {
-        var target = new DissolveDoubleHeaderCommand(LocoAddress.From(1234));
+        var target = new DissolveDoubleHeaderCommand(Address.From(1234));
         var data = target.GetData();
 
         Assert.AreEqual(0xE5, data[0]);

@@ -8,7 +8,7 @@ public class LocoFunctionCommandTests
     [TestMethod]
     public void GetData_ReturnsCorrectBytes_WhenShortAddress()
     {
-        var target = new LocoFunctionCommand(LocoAddress.From(99), 1, LocoFunctionStates.On);
+        var target = new LocoFunctionCommand(Address.From(99), 1, LocoFunctionStates.On);
         var data = target.GetData();
         Assert.AreEqual(0xE0 + 4, data[0]);
         Assert.AreEqual(0xF8, data[1]);
@@ -19,7 +19,7 @@ public class LocoFunctionCommandTests
     [TestMethod]
     public void GetData_ReturnsCorrectBytes_WhenLongAddress()
     {
-        var target = new LocoFunctionCommand(LocoAddress.From(9999), 1, LocoFunctionStates.On);
+        var target = new LocoFunctionCommand(Address.From(9999), 1, LocoFunctionStates.On);
         var data = target.GetData();
         Assert.AreEqual(0xE0 + 4, data[0]);
         Assert.AreEqual(0xF8, data[1]);
@@ -31,7 +31,7 @@ public class LocoFunctionCommandTests
     [TestMethod]
     public void LocoEmergencyStopCommand_GetData_ReturnsCorrectBytes()
     {
-        var target = new LocoEmergencyStopCommand(LocoAddress.From(99));
+        var target = new LocoEmergencyStopCommand(Address.From(99));
         var data = target.GetData();
         Assert.AreEqual(0x92, data[0]);
         Assert.AreEqual(0x00, data[1]);

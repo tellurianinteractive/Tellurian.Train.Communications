@@ -8,7 +8,7 @@ public class AddressInquiryMultiUnitMemberCommandTests
     [TestMethod]
     public void AddressInquiryMultiUnitMember_ReturnsCorrectBytes_ForwardSearch()
     {
-        var target = new AddressInquiryMultiUnitMemberCommand(10, LocoAddress.From(100));
+        var target = new AddressInquiryMultiUnitMemberCommand(10, Address.From(100));
         var data = target.GetData();
 
         Assert.AreEqual(0xE4, data[0]);
@@ -21,7 +21,7 @@ public class AddressInquiryMultiUnitMemberCommandTests
     [TestMethod]
     public void AddressInquiryMultiUnitMember_ReturnsCorrectBytes_BackwardSearch()
     {
-        var target = new AddressInquiryMultiUnitMemberCommand(10, LocoAddress.From(100), SearchDirection.Backward);
+        var target = new AddressInquiryMultiUnitMemberCommand(10, Address.From(100), SearchDirection.Backward);
         var data = target.GetData();
 
         Assert.AreEqual(0x02, data[1]);

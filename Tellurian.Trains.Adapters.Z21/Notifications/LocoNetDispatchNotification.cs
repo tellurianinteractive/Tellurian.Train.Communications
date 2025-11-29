@@ -13,10 +13,10 @@ public sealed class LocoNetDispatchNotification : Notification
 {
     internal LocoNetDispatchNotification(Frame frame) : base(frame)
     {
-        Address = LocoAddress.From(BitConverter.ToInt16(frame.Data, 0));
+        Address = Address.From(BitConverter.ToInt16(frame.Data, 0));
         Slot = frame.Data[2];
     }
-    public LocoAddress Address { get; }
+    public Address Address { get; }
     public byte Slot { get; }
     public bool IsSuccess => Slot > 0;
 }

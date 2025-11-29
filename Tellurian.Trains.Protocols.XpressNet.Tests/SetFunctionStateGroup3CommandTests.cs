@@ -8,7 +8,7 @@ public class SetFunctionStateGroup3CommandTests
     [TestMethod]
     public void SetFunctionStateGroup3_ReturnsCorrectBytes_AllOnOff()
     {
-        var target = new SetFunctionStateGroup3Command(LocoAddress.From(3), true, true, true, true);
+        var target = new SetFunctionStateGroup3Command(Address.From(3), true, true, true, true);
         var data = target.GetData();
 
         Assert.AreEqual(0xE4, data[0]);
@@ -19,7 +19,7 @@ public class SetFunctionStateGroup3CommandTests
     [TestMethod]
     public void SetFunctionStateGroup3_ReturnsCorrectBytes_F12OnlyOnOff()
     {
-        var target = new SetFunctionStateGroup3Command(LocoAddress.From(3), false, false, false, true);
+        var target = new SetFunctionStateGroup3Command(Address.From(3), false, false, false, true);
         var data = target.GetData();
 
         Assert.AreEqual(0x08, data[4]);

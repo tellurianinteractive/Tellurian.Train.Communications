@@ -4,9 +4,9 @@ namespace Tellurian.Trains.Protocols.XpressNet.Commands;
 
 public sealed class GetLocoInfoCommand : Command
 {
-    public GetLocoInfoCommand(LocoAddress address) : base(0xE0, GetData(address)) { }
+    public GetLocoInfoCommand(Address address) : base(0xE0, GetData(address)) { }
 
-    private static byte[] GetData(LocoAddress address)
+    private static byte[] GetData(Address address)
     {
         var result = new byte[3];
         result[0] = 0xF0;

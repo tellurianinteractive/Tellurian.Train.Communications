@@ -3,7 +3,7 @@
 namespace Tellurian.Trains.Interfaces.Locos;
 
 [DataContract]
-public enum LocoDirection
+public enum Direction
 {
     Forward,
     Backward

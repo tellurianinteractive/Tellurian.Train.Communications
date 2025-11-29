@@ -8,5 +8,5 @@
 /// </remarks>
 public sealed class GetStatusCommand : Command
 {
-    public GetStatusCommand() : base(0x21, 0x24) {}
+    public GetStatusCommand() : base(0x21, 0x24) { }
 }

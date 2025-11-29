@@ -3,43 +3,50 @@
 namespace Tellurian.Trains.Protocols.XpressNet.Tests;
 
 [TestClass]
-public class LocoAddressTests {
+public class LocoAddressTests
+{
 
     [TestMethod]
-    public void Constructor_AllowsZero_AsSentinelValue() {
-        var address = LocoAddress.Zero;
+    public void Constructor_AllowsZero_AsSentinelValue()
+    {
+        var address = Address.Zero;
         Assert.AreEqual(0, address.Number);
     }
 
     [TestMethod]
-    public void Constructor_ThrowsArgumentOutOfRangeException_WhenNegative() {
-        Assert.Throws<ArgumentOutOfRangeException>(() => LocoAddress.From(-1));
+    public void Constructor_ThrowsArgumentOutOfRangeException_WhenNegative()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Address.From(-1));
     }
 
     [TestMethod]
-    public void Constructor_ThrowsArgumentOutOfRangeException_WhenAbove9999() {
-        Assert.Throws<ArgumentOutOfRangeException>(() => LocoAddress.From(10000));
+    public void Constructor_ThrowsArgumentOutOfRangeException_WhenAbove9999()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Address.From(10000));
     }
 
     [TestMethod]
-    public void ShortAddress_HasCorrectProperties() {
-        var target = LocoAddress.From(1);
+    public void ShortAddress_HasCorrectProperties()
+    {
+        var target = Address.From(1);
         Assert.IsTrue(target.IsShort);
         Assert.IsFalse(target.IsLong);
         Assert.IsFalse(target.IsShortThreeDigit);
     }
 
     [TestMethod]
-    public void LongAddress_HasCorrectProperties() {
-        var target = LocoAddress.From(128);
+    public void LongAddress_HasCorrectProperties()
+    {
+        var target = Address.From(128);
         Assert.IsFalse(target.IsShort);
         Assert.IsTrue(target.IsLong);
         Assert.IsFalse(target.IsShortThreeDigit);
     }
 
     [TestMethod]
-    public void GetBytesAccordingToXpressNet_ReturnsCorrectBytes_WhenShortAddress() {
-        var target = LocoAddress.From(127);
+    public void GetBytesAccordingToXpressNet_ReturnsCorrectBytes_WhenShortAddress()
+    {
+        var target = Address.From(127);
         var actual = target.GetBytesAccordingToXpressNet();
         Assert.IsNotNull(actual);
         Assert.HasCount(2, actual);
@@ -49,8 +56,9 @@ public class LocoAddressTests {
     }
 
     [TestMethod]
-    public void GetBytesAccordingToXpressNet_ReturnsCorrectBytes_WhenLongAddress() {
-        var target = LocoAddress.From(128);
+    public void GetBytesAccordingToXpressNet_ReturnsCorrectBytes_WhenLongAddress()
+    {
+        var target = Address.From(128);
         var actual = target.GetBytesAccordingToXpressNet();
         Assert.IsNotNull(actual);
         Assert.HasCount(2, actual);
@@ -59,9 +67,10 @@ public class LocoAddressTests {
     }
 
     [TestMethod]
-    public void Constructor_FromBytes_ReconstructsAddress() {
-        var target = LocoAddress.From(241);
+    public void Constructor_FromBytes_ReconstructsAddress()
+    {
+        var target = Address.From(241);
         var actual = LocoAddressExtensions.FromXpressNet(target.GetBytesAccordingToXpressNet());
         Assert.AreEqual(241, actual.Number);
-     }
+    }
 }

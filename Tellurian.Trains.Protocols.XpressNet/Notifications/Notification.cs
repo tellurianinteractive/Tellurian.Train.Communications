@@ -26,7 +26,7 @@ public static class NotificationExtensions
     public static Interfaces.Notification[] Map(this Notification notification)
     {
         var key = notification?.GetType().Key() ?? throw new ArgumentNullException(nameof(notification));
-        if (key is null ) return MapDefaults.CreateUnmapped(notification.ToString());
+        if (key is null) return MapDefaults.CreateUnmapped(notification.ToString());
         return Mappings[key].Invoke(notification);
     }
 
@@ -36,8 +36,8 @@ public static class NotificationExtensions
     {
         var n = (LocoInfoNotification)notification;
         var result = new Interfaces.Notification[2];
-        result[0] = new MovementLocoNotification(n.Address, n.Direction.Map(), n.Speed.Map());
-        result[1] = new FunctionsLocoNotification(n.Address, n.Functions().Map());
+        result[0] = new LocoMovementNotification(n.Address, n.Direction.Map(), n.Speed.Map());
+        result[1] = new LocoFunctionsNotification(n.Address, n.Functions().Map());
         return result;
     }
 

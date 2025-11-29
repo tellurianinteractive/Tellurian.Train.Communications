@@ -63,7 +63,7 @@ public abstract class Message
 
     private static void EnsureHeader(byte header)
     {
-        if (header < 16) 
+        if (header < 16)
             throw new ArgumentOutOfRangeException(nameof(header));
     }
 

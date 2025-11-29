@@ -5,7 +5,7 @@ internal class NotSupportedNotification : Notification
     private readonly byte[] Buffer;
     private readonly string SourceBusName;
 
-    public NotSupportedNotification(byte[] buffer, string sourceBusName)  : base(0x00)
+    public NotSupportedNotification(byte[] buffer, string sourceBusName) : base(0x00)
     {
         Buffer = buffer;
         SourceBusName = sourceBusName;

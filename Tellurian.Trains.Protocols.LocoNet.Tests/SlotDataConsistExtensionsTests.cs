@@ -198,8 +198,15 @@ public class SlotDataConsistExtensionsTests
             Consist = consist,
             DecoderType = DecoderType.Steps128,
             TrackStatus = TrackStatus.PowerOn,
-            F0 = false, F1 = false, F2 = false, F3 = false, F4 = false,
-            F5 = false, F6 = false, F7 = false, F8 = false,
+            F0 = false,
+            F1 = false,
+            F2 = false,
+            F3 = false,
+            F4 = false,
+            F5 = false,
+            F6 = false,
+            F7 = false,
+            F8 = false,
             DeviceId = 0,
             Status2 = 0
         };

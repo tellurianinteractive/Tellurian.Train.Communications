@@ -52,7 +52,7 @@ public class AddressRetrievalNotificationTests
 
         Assert.AreEqual(AddressType.Zero, notification.AddressType);
         Assert.IsFalse(notification.HasValidAddress);
-        Assert.AreEqual(LocoAddress.Zero, notification.LocoAddress);
+        Assert.AreEqual(Address.Zero, notification.LocoAddress);
     }
 
     [TestMethod]

@@ -4,7 +4,7 @@ namespace Tellurian.Trains.Protocols.XpressNet;
 
 public static class LocoAddressExtensions
 {
-    extension(LocoAddress locoAddress)
+    extension(Address locoAddress)
     {
         /// <summary>
         /// Gets two-byte loco address according to XpressNet specification.
@@ -29,9 +29,9 @@ public static class LocoAddressExtensions
     /// <param name="high">High byte in XpressNet format (bits 6-7 set for long addresses, bits 0-5 are high address bits).</param>
     /// <param name="low">Low byte (bits 0-7 of address).</param>
     /// <returns>Decoded locomotive address.</returns>
-    public static LocoAddress FromXpressNet(byte high, byte low)
+    public static Address FromXpressNet(byte high, byte low)
     {
-        return LocoAddress.From(((high & 0x3F) << 8) | low);
+        return Address.From(((high & 0x3F) << 8) | low);
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ public static class LocoAddressExtensions
     /// </summary>
     /// <param name="data">Two bytes in XpressNet format: [AH, AL].</param>
     /// <returns>Decoded locomotive address.</returns>
-    public static LocoAddress FromXpressNet(byte[] data)
+    public static Address FromXpressNet(byte[] data)
     {
         ArgumentNullException.ThrowIfNull(data);
         if (data.Length != 2) throw new ArgumentOutOfRangeException(nameof(data), "Data must contain 2 bytes.");

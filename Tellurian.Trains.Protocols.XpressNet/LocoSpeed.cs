@@ -12,7 +12,7 @@ public struct LocoSpeed : IEquatable<LocoSpeed>
             2 => new LocoSpeed(Speed28, currentSpeedStep),
             4 => new LocoSpeed(Speed126, currentSpeedStep),
             7 => throw new ArgumentOutOfRangeException(nameof(code), Resources.Strings.IsRailComEnabled),
-            _ => throw new ArgumentOutOfRangeException(nameof(code), string.Format(CultureInfo.CurrentCulture,Resources.Strings.CodeIsInvalidSpeedCode, code))
+            _ => throw new ArgumentOutOfRangeException(nameof(code), string.Format(CultureInfo.CurrentCulture, Resources.Strings.CodeIsInvalidSpeedCode, code))
         };
 
     public static LocoSpeed FromNumberOfSteps(byte numberOfSteps, byte currentSpeedStep = ZeroStep) =>
@@ -32,7 +32,7 @@ public struct LocoSpeed : IEquatable<LocoSpeed>
     private readonly byte[] _stepsData;
     private byte _currentSpeedStep;
 
-    private LocoSpeed((byte code, byte[] stepsData) config, byte currentSpeedStep =0)
+    private LocoSpeed((byte code, byte[] stepsData) config, byte currentSpeedStep = 0)
     {
         Code = config.code;
         _stepsData = config.stepsData;
@@ -45,7 +45,7 @@ public struct LocoSpeed : IEquatable<LocoSpeed>
     public byte Step(byte index) { return _stepsData[index]; }
     private void SetSpeed(float percentage) => Current = GetSpeed(percentage);
     private void SetSpeed(byte step) => Step(step > MaxSteps ? Step(MaxSteps) : step);
-    private void SetMax() =>  Current = Step(MaxSteps);
+    private void SetMax() => Current = Step(MaxSteps);
     private void SetZero() => Current = ZeroStep;
     public byte GetSpeed(float percentage) => _stepsData[percentage < 0 ? 0 : percentage > 1 ? MaxSteps : (byte)(percentage * MaxSteps)];
     public bool Equals(LocoSpeed other) => other.Current == Current && other.MaxSteps == MaxSteps;
@@ -78,6 +78,6 @@ public struct LocoSpeed : IEquatable<LocoSpeed>
 
 public static class LocoSpeedExtensions
 {
-    public static Interfaces.Locos.LocoSpeed Map(this LocoSpeed me) => Interfaces.Locos.LocoSpeed.Set((Interfaces.Locos.LocoSpeedSteps)me.MaxSteps, me.Current);
-    public static LocoSpeed Map(this Interfaces.Locos.LocoSpeed me) => LocoSpeed.FromNumberOfSteps((byte)me.MaxSteps, me.CurrentStep);
+    public static Interfaces.Locos.Speed Map(this LocoSpeed me) => Interfaces.Locos.Speed.Set((Interfaces.Locos.LocoSpeedSteps)me.MaxSteps, me.Current);
+    public static LocoSpeed Map(this Interfaces.Locos.Speed me) => LocoSpeed.FromNumberOfSteps((byte)me.MaxSteps, me.CurrentStep);
 }

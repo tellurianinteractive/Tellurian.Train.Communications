@@ -4,19 +4,19 @@ using Tellurian.Trains.Protocols.XpressNet.Commands;
 
 namespace Tellurian.Trains.Adapters.Z21;
 
-public sealed partial class Adapter : ILocoControl
+public sealed partial class Adapter : ILoco
 {
-    public Task<bool> SetFunctionAsync(Interfaces.Locos.LocoAddress address, LocoFunction function, CancellationToken cancellationToken = default)
+    public Task<bool> SetFunctionAsync(Interfaces.Locos.Address address, Function function, CancellationToken cancellationToken = default)
     {
         return SendAsync(new LocoFunctionCommand(address, (byte)function.Number, function.IsOn ? LocoFunctionStates.On : LocoFunctionStates.Off), cancellationToken);
     }
 
-    public Task<bool> EmergencyStopAsync(Interfaces.Locos.LocoAddress address, CancellationToken cancellationToken = default)
+    public Task<bool> EmergencyStopAsync(Interfaces.Locos.Address address, CancellationToken cancellationToken = default)
     {
         return SendAsync(new LocoEmergencyStopCommand(address), cancellationToken);
     }
 
-    public Task<bool> DriveAsync(Interfaces.Locos.LocoAddress address, LocoDrive drive, CancellationToken cancellationToken = default)
+    public Task<bool> DriveAsync(Interfaces.Locos.Address address, Drive drive, CancellationToken cancellationToken = default)
     {
         return SendAsync(new LocoDriveCommand(address, drive.Speed.Map(), drive.Direction.Map()), cancellationToken);
     }

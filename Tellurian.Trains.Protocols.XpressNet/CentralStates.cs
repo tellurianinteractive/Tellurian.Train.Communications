@@ -2,7 +2,7 @@
 
 #pragma warning disable CA1028 // Enum Storage should be Int32
 [Flags]
-public enum CentralStates: byte
+public enum CentralStates : byte
 {
     None = 0x00,
     EmergencyStop = 0x01,

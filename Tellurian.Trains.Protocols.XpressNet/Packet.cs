@@ -8,12 +8,14 @@ public class Packet
 {
     private readonly byte[] _Data;
 
-    public Packet(Command command) {
+    public Packet(Command command)
+    {
         if (command == null) throw new ArgumentNullException(nameof(command));
         _Data = command.GetData();
     }
 
-    public Packet(byte[] data) {
+    public Packet(byte[] data)
+    {
         if (data == null) throw new ArgumentNullException(nameof(data));
         var payload = data.Take(data.Length - 1).ToArray();
         var xor = GetXorChecksum(payload);
@@ -21,18 +23,21 @@ public class Packet
         _Data = data;
     }
 
-    public byte[] GetBytes() {
+    public byte[] GetBytes()
+    {
         var result = new byte[_Data.Length + 1];
         Array.Copy(_Data, result, _Data.Length);
         result[_Data.Length] = GetXorChecksum(_Data);
         return result;
     }
 
-     public Notification Notification => NotificationFactory.Create(_Data);
+    public Notification Notification => NotificationFactory.Create(_Data);
 
-    static private byte GetXorChecksum(byte[] value) {
+    static private byte GetXorChecksum(byte[] value)
+    {
         byte result = value[0];
-        foreach (var d in value.Skip(1)) {
+        foreach (var d in value.Skip(1))
+        {
             result = (byte)(result ^ d);
         }
         return result;

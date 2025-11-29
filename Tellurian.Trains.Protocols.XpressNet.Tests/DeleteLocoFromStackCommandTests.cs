@@ -8,7 +8,7 @@ public class DeleteLocoFromStackCommandTests
     [TestMethod]
     public void DeleteLocoFromStack_ReturnsCorrectBytes_ShortAddress()
     {
-        var target = new DeleteLocoFromStackCommand(LocoAddress.From(3));
+        var target = new DeleteLocoFromStackCommand(Address.From(3));
         var data = target.GetData();
 
         Assert.AreEqual(0xE3, data[0]);
@@ -20,7 +20,7 @@ public class DeleteLocoFromStackCommandTests
     [TestMethod]
     public void DeleteLocoFromStack_ReturnsCorrectBytes_LongAddress()
     {
-        var target = new DeleteLocoFromStackCommand(LocoAddress.From(5000));
+        var target = new DeleteLocoFromStackCommand(Address.From(5000));
         var data = target.GetData();
 
         Assert.AreEqual(0xE3, data[0]);

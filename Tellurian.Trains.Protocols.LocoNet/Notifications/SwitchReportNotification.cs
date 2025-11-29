@@ -23,7 +23,7 @@ public sealed class SwitchReportNotification : Notification
         byte highBits = data[2];
 
         // Extract address from sn1 (bits A6-A0) and sn2 (bits A10-A7)
-        Address = AccessoryAddress.From((short)(lowBits | ((highBits & 0x0F) << 7)));
+        Address = Address.From((short)(lowBits | ((highBits & 0x0F) << 7)));
 
         // Bit 6 determines interpretation
         IsInputFeedback = (highBits & 0x40) != 0;
@@ -59,7 +59,7 @@ public sealed class SwitchReportNotification : Notification
     /// <summary>
     /// The accessory address being reported (0-2047).
     /// </summary>
-    public AccessoryAddress Address { get; }
+    public Address Address { get; }
 
     /// <summary>
     /// True if this is input feedback, false if output status.
@@ -103,13 +103,13 @@ public sealed class SwitchReportNotification : Notification
     /// For output status: the current direction based on which output is active.
     /// Returns null if both or neither outputs are on, or if this is input feedback.
     /// </summary>
-    public AccessoryFunction? CurrentDirection
+    public Position? CurrentDirection
     {
         get
         {
             if (IsInputFeedback) return null;
-            if (ClosedOutputOn && !ThrownOutputOn) return AccessoryFunction.ClosedOrGreen;
-            if (ThrownOutputOn && !ClosedOutputOn) return AccessoryFunction.ThrownOrRed;
+            if (ClosedOutputOn && !ThrownOutputOn) return Position.ClosedOrGreen;
+            if (ThrownOutputOn && !ClosedOutputOn) return Position.ThrownOrRed;
             return null; // Both on, both off, or indeterminate
         }
     }
@@ -128,8 +128,8 @@ public sealed class SwitchReportNotification : Notification
         {
             string status = CurrentDirection switch
             {
-                AccessoryFunction.ClosedOrGreen => "CLOSED",
-                AccessoryFunction.ThrownOrRed => "THROWN",
+                Position.ClosedOrGreen => "CLOSED",
+                Position.ThrownOrRed => "THROWN",
                 _ => "UNKNOWN"
             };
 

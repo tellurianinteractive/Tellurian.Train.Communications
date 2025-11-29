@@ -8,51 +8,64 @@ Defines common interfaces and data types that are independent of any specific pr
 
 ## Key Interfaces
 
-### ILocoControl
+### ILoco
 Locomotive control interface providing:
-- `Drive(LocoAddress, LocoDrive)` - Speed and direction control
-- `EmergencyStop(LocoAddress)` - Per-locomotive emergency stop
-- `SetFunction(LocoAddress, LocoFunction)` - Function control (lights, sound, etc.)
+- `DriveAsync(Address, Drive)` - Speed and direction control
+- `EmergencyStopAsync(Address)` - Per-locomotive emergency stop
+- `SetFunctionAsync(Address, Function)` - Function control (lights, sound, etc.)
 
-### ILocoDecoder
+### IAccessory
+Accessory control interface providing:
+- `SetAccessoryAsync(Address, AccessoryCommand)` - Set accessory state
+- `QueryAccessoryStateAsync(Address)` - Query current accessory state
+
+### ISwitch
+Switch control interface (convenience methods for accessories):
+- `SetThrownAsync(Address, bool)` - Set switch to thrown/diverging position
+- `SetClosedAsync(Address, bool)` - Set switch to closed/straight position
+- `TurnOffAsync(Address)` - Turn off switch motor
+
+### IDecoder
 Decoder programming interface providing:
-- `ReadCV(LocoAddress, int cvNumber)` - Read configuration variable
-- `WriteCV(LocoAddress, int cvNumber, byte value)` - Write configuration variable
+- `ReadCVAsync(ushort)` - Read configuration variable value
+- `WriteCVAsync(ushort, byte)` - Write configuration variable value
 
 ## Data Types
 
-### Core Types
-- **`LocoAddress`**: Locomotive address (short 1-127, long 128-9999)
-- **`LocoDrive`**: Combined speed and direction control
-- **`LocoSpeed`**: Speed value with step mode (14/27/28/126 steps)
-- **`LocoDirection`**: Forward/backward/unchanged
-- **`LocoFunction`**: Function number (F0-F28) with on/off state
+### Locomotive Types (Locos namespace)
+- **`Address`**: Locomotive address (short 1-127, long 128-9999)
+- **`Drive`**: Combined speed and direction control
+- **`Speed`**: Speed value with step mode (14/27/28/126 steps)
+- **`Direction`**: Forward/Backward
+- **`Function`**: Function number (F0-F28) with on/off state
+- **`Functions`**: Enum of function numbers
+
+### Accessory Types (Accessories namespace)
+- **`Address`**: Accessory address (0-2047)
+- **`AccessoryCommand`**: Command with position and motor state
+- **`Position`**: ClosedOrGreen / ThrownOrRed
+- **`MotorState`**: On / Off
 
 ### Decoder Types
-- **`CV`**: Configuration variable with number (1-1024) and value (0-255). Protocol-agnostic struct for CV operations.
-- **`DecoderResponse`**: Result of a decoder programming operation (success/failure with CV data).
+- **`CV`**: Configuration variable with number (1-1024) and value (0-255)
+- **`DecoderResponse`**: Result of a decoder programming operation (success/failure with CV data)
 
 ### Notifications
 Abstract notification types for broadcasting state changes:
-- System state changes (power, emergency stop, short circuit)
-- Locomotive information updates
-- Programming operation results
-- Accessory/turnout feedback
-
-## Extensions
-
-Helper methods for data conversions:
-- Byte manipulation utilities
-- CV address encoding/decoding
-- Address range validation
-- Speed step conversions
+- **`Notification`**: Base class for all notifications
+- **`LocoNotification`**: Base for locomotive notifications
+- **`LocoMovementNotification`**: Speed/direction changes
+- **`LocoFunctionsNotification`**: Function state changes
+- **`AccessoryNotification`**: Accessory/switch state changes
+- **`DecoderResponse`**: Programming operation results
 
 ## Design Philosophy
 
 - **Protocol independence**: No protocol-specific details leak into interfaces
 - **Type safety**: Strong typing for addresses, speeds, functions
-- **Immutability**: Data types are immutable records where possible
+- **Immutability**: Data types are immutable structs/records where possible
 - **Validation**: Input validation at interface boundaries
+- **Async-first**: All interface methods are async for non-blocking operations
 
 ## Testing
 

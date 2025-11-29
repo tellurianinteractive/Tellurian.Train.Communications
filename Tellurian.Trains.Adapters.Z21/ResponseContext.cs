@@ -6,7 +6,7 @@ internal class ResponseContext
     {
         CommandHandlers = commandHandlers;
     }
-    
+
     private readonly IEnumerable<CommandHandler> CommandHandlers;
 
 
@@ -20,7 +20,7 @@ internal class ResponseContext
 
 internal sealed class CommandHandler
 {
-    public  CommandHandler(Type commandType, Type awaitedNotificationResponse )
+    public CommandHandler(Type commandType, Type awaitedNotificationResponse)
     {
         CommandType = commandType;
         AwaitedNotificationResponse = awaitedNotificationResponse;

@@ -45,7 +45,7 @@ public sealed class FailureResult : CommunicationResult
     {
         Exception = ex;
     }
-    public  Exception Exception { get; }
+    public Exception Exception { get; }
     public override string ToString() => string.Format(CultureInfo.InvariantCulture, "FAILURE: Message: {0}", Exception.Message);
 }
 

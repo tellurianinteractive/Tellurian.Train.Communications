@@ -40,14 +40,14 @@ public sealed class AddressInquiryMultiUnitMemberCommand : Command
     /// <param name="multiUnitAddress">Multi-Unit base address (1-99)</param>
     /// <param name="startAddress">Starting locomotive address, or null to get first member</param>
     /// <param name="direction">Search direction (forward or backward)</param>
-    public AddressInquiryMultiUnitMemberCommand(byte multiUnitAddress, LocoAddress? startAddress = null,
+    public AddressInquiryMultiUnitMemberCommand(byte multiUnitAddress, Address? startAddress = null,
         SearchDirection direction = SearchDirection.Forward)
         : base(0xE4, GetData(multiUnitAddress, startAddress, direction))
     {
         ValidateMultiUnitAddress(multiUnitAddress);
     }
 
-    private static byte[] GetData(byte multiUnitAddress, LocoAddress? startAddress, SearchDirection direction)
+    private static byte[] GetData(byte multiUnitAddress, Address? startAddress, SearchDirection direction)
     {
         var identification = direction == SearchDirection.Forward ? (byte)0x01 : (byte)0x02;
         byte ah = 0x00, al = 0x00;
@@ -127,11 +127,11 @@ public sealed class AddressInquiryStackCommand : Command
     /// </summary>
     /// <param name="startAddress">Starting locomotive address, or null to get first entry</param>
     /// <param name="direction">Search direction (forward or backward)</param>
-    public AddressInquiryStackCommand(LocoAddress? startAddress = null,
+    public AddressInquiryStackCommand(Address? startAddress = null,
         SearchDirection direction = SearchDirection.Forward)
         : base(0xE3, GetData(startAddress, direction)) { }
 
-    private static byte[] GetData(LocoAddress? startAddress, SearchDirection direction)
+    private static byte[] GetData(Address? startAddress, SearchDirection direction)
     {
         var identification = direction == SearchDirection.Forward ? (byte)0x05 : (byte)0x06;
         byte ah = 0x00, al = 0x00;
@@ -168,10 +168,10 @@ public sealed class DeleteLocoFromStackCommand : Command
     /// Creates a command to delete a locomotive from the command station stack.
     /// </summary>
     /// <param name="address">Locomotive address to delete (1-9999)</param>
-    public DeleteLocoFromStackCommand(LocoAddress address)
+    public DeleteLocoFromStackCommand(Address address)
         : base(0xE3, GetData(address)) { }
 
-    private static byte[] GetData(LocoAddress address)
+    private static byte[] GetData(Address address)
     {
         var addrBytes = address.GetBytesAccordingToXpressNet();
         return [0x44, addrBytes[0], addrBytes[1]];

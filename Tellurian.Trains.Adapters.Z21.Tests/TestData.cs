@@ -16,4 +16,4 @@ internal static class TestData
     {
         return Enumerable.Range(1, 3).Select(i => CreateTestBuffer(header, i)).SelectMany(b => b).ToArray();
     }
- }
+}

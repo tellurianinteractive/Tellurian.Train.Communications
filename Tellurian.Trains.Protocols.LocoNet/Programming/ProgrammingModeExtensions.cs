@@ -13,7 +13,7 @@ public static class ProgrammingModeExtensions
         /// <param name="mode">Programming mode</param>
         /// <param name="operation">Read or Write</param>
         /// <returns>PCMD byte value</returns>
-        public  byte BuildProgrammingCommandByte(ProgrammingOperation operation)
+        public byte BuildProgrammingCommandByte(ProgrammingOperation operation)
         {
             byte programmingCommandByte = 0;
 

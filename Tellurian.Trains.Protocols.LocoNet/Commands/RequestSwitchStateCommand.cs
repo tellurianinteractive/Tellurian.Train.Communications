@@ -11,7 +11,7 @@ public sealed class RequestSwitchStateCommand : Command
 {
     public const byte OperationCode = 0xBC;
 
-    public RequestSwitchStateCommand(AccessoryAddress address)
+    public RequestSwitchStateCommand(Address address)
     {
         Address = address;
     }
@@ -19,7 +19,7 @@ public sealed class RequestSwitchStateCommand : Command
     /// <summary>
     /// The accessory address to query (0-2047).
     /// </summary>
-    public AccessoryAddress Address { get; }
+    public Address Address { get; }
 
     /// <summary>
     /// Generates the 4-byte message: [0xBC, sw1, sw2, checksum].
@@ -28,7 +28,7 @@ public sealed class RequestSwitchStateCommand : Command
     public override byte[] GetBytesWithChecksum()
     {
         // For state request, we typically use DIR=0, ON=0
-        var (sw1, sw2) = Address.EncodeSwitchBytes(AccessoryFunction.ThrownOrRed, OutputState.Off);
+        var (sw1, sw2) = Address.EncodeSwitchBytes(Position.ThrownOrRed, MotorState.Off);
         return AppendChecksum([OperationCode, sw1, sw2]);
     }
 }

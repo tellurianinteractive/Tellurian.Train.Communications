@@ -56,9 +56,9 @@ public abstract class ProgramOnMainCommand(byte[] data) : Command(0xE6, data)
 /// </remarks>
 /// <param name="address">Locomotive address (1-9999)</param>
 /// <param name="cv">CV with number (1-1024) and value (0-255)</param>
-public sealed class ProgramOnMainWriteByteCommand(LocoAddress address, CV cv) : ProgramOnMainCommand(GetData(address, (ushort)cv.Number, cv.Value))
+public sealed class ProgramOnMainWriteByteCommand(Address address, CV cv) : ProgramOnMainCommand(GetData(address, (ushort)cv.Number, cv.Value))
 {
-    private static byte[] GetData(LocoAddress address, ushort cv, byte value)
+    private static byte[] GetData(Address address, ushort cv, byte value)
     {
         ValidateCv(cv);
         var (cvUpper, cvLower) = EncodeCv(cv);
@@ -97,9 +97,9 @@ public sealed class ProgramOnMainWriteByteCommand(LocoAddress address, CV cv) : 
 /// <param name="cvNumber">CV number (1-1024)</param>
 /// <param name="bitPosition">Bit position within the CV (0-7, where 0 is LSB)</param>
 /// <param name="bitValue">Bit value to write (true=1, false=0)</param>
-public sealed class ProgramOnMainWriteBitCommand(LocoAddress address, ushort cvNumber, byte bitPosition, bool bitValue) : ProgramOnMainCommand(GetData(address, cvNumber, bitPosition, bitValue))
+public sealed class ProgramOnMainWriteBitCommand(Address address, ushort cvNumber, byte bitPosition, bool bitValue) : ProgramOnMainCommand(GetData(address, cvNumber, bitPosition, bitValue))
 {
-    private static byte[] GetData(LocoAddress address, ushort cvNumber, byte bitPosition, bool bitValue)
+    private static byte[] GetData(Address address, ushort cvNumber, byte bitPosition, bool bitValue)
     {
         ValidateCv(cvNumber);
         if (bitPosition > 7)

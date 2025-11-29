@@ -8,5 +8,5 @@
 /// </remarks>
 public sealed class GetVersionCommand : Command
 {
-    public GetVersionCommand(): base(0x21,  0x21) { }
+    public GetVersionCommand() : base(0x21, 0x21) { }
 }

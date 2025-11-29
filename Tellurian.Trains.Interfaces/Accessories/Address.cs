@@ -6,26 +6,26 @@ namespace Tellurian.Trains.Interfaces.Accessories;
 /// Represents a protocol-agnostic accessory (switch/turnout) address.
 /// </summary>
 [DataContract]
-public readonly struct AccessoryAddress : IEquatable<AccessoryAddress>
+public readonly struct Address : IEquatable<Address>
 {
     /// <summary>
-    /// Static method for creating an <see cref="AccessoryAddress"/> from a number.
+    /// Static method for creating an <see cref="Address"/> from a number.
     /// </summary>
-    public static AccessoryAddress From(short accessoryAddress) => 
+    public static Address From(short accessoryAddress) =>
         new(accessoryAddress);
     /// <summary>
-    /// Creates an <see cref="AccessoryAddress"/> from low and high bits.
+    /// Creates an <see cref="Address"/> from low and high bits.
     /// </summary>
     /// <param name="lowBits"></param>
     /// <param name="highBits"></param>
     /// <returns></returns>
-    public static AccessoryAddress From(byte lowBits, byte highBits) => 
+    public static Address From(byte lowBits, byte highBits) =>
         From((short)(lowBits | ((highBits & 0x0F) << 7)));
     /// <summary>
-    /// Constructs an <see cref="AccessoryAddress"/> from a number.
+    /// Constructs an <see cref="Address"/> from a number.
     /// </summary>
     /// <param name="number">The accessory address (0-2047).</param>
-    private AccessoryAddress(short number)
+    private Address(short number)
     {
         Number = number;
     }
@@ -47,10 +47,10 @@ public readonly struct AccessoryAddress : IEquatable<AccessoryAddress>
         init => field = IsValid(value) ? value : throw new ArgumentOutOfRangeException(nameof(value), "Address must be 0-2047.");
     }
 
-    public bool Equals(AccessoryAddress other) => other.Number == Number;
-    public override bool Equals(object? obj) => obj is AccessoryAddress other && Equals(other);
+    public bool Equals(Address other) => other.Number == Number;
+    public override bool Equals(object? obj) => obj is Address other && Equals(other);
     public override int GetHashCode() => Number.GetHashCode();
     public override string ToString() => $"{Number}";
-    public static bool operator ==(AccessoryAddress left, AccessoryAddress right) => left.Equals(right);
-    public static bool operator !=(AccessoryAddress left, AccessoryAddress right) => !(left == right);
+    public static bool operator ==(Address left, Address right) => left.Equals(right);
+    public static bool operator !=(Address left, Address right) => !(left == right);
 }

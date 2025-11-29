@@ -10,6 +10,7 @@
 /// Reference: Z21 LAN Protokoll Spezifikation 2.14
 /// Reference: Lenz XpressNet Specification 2.1.4.3
 /// </remarks>
-public class EmergencyStopBroadcast : Notification {
+public class EmergencyStopBroadcast : Notification
+{
     internal EmergencyStopBroadcast() : base(0x81, 0x00) { }
 }

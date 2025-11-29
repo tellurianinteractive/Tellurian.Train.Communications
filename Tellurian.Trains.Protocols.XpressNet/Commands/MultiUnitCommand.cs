@@ -26,13 +26,13 @@ public sealed class AddLocoToMultiUnitCommand : Command
     /// <param name="locoAddress">Locomotive address to add (1-9999)</param>
     /// <param name="multiUnitAddress">Multi-Unit base address (1-99)</param>
     /// <param name="reversed">True if locomotive direction is reversed relative to consist</param>
-    public AddLocoToMultiUnitCommand(LocoAddress locoAddress, byte multiUnitAddress, bool reversed = false)
+    public AddLocoToMultiUnitCommand(Address locoAddress, byte multiUnitAddress, bool reversed = false)
         : base(0xE4, GetData(locoAddress, multiUnitAddress, reversed))
     {
         ValidateMultiUnitAddress(multiUnitAddress);
     }
 
-    private static byte[] GetData(LocoAddress locoAddress, byte multiUnitAddress, bool reversed)
+    private static byte[] GetData(Address locoAddress, byte multiUnitAddress, bool reversed)
     {
         var addrBytes = locoAddress.GetBytesAccordingToXpressNet();
         return
@@ -71,13 +71,13 @@ public sealed class RemoveLocoFromMultiUnitCommand : Command
     /// </summary>
     /// <param name="locoAddress">Locomotive address to remove (1-9999)</param>
     /// <param name="multiUnitAddress">Multi-Unit base address (1-99)</param>
-    public RemoveLocoFromMultiUnitCommand(LocoAddress locoAddress, byte multiUnitAddress)
+    public RemoveLocoFromMultiUnitCommand(Address locoAddress, byte multiUnitAddress)
         : base(0xE4, GetData(locoAddress, multiUnitAddress))
     {
         ValidateMultiUnitAddress(multiUnitAddress);
     }
 
-    private static byte[] GetData(LocoAddress locoAddress, byte multiUnitAddress)
+    private static byte[] GetData(Address locoAddress, byte multiUnitAddress)
     {
         var addrBytes = locoAddress.GetBytesAccordingToXpressNet();
         return

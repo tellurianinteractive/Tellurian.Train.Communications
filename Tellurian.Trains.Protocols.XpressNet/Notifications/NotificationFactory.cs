@@ -6,7 +6,8 @@ public static class NotificationFactory
 {
     public const string SourceBusName = "XpressNet";
 
-    public static Notification Create(byte[] buffer) {
+    public static Notification Create(byte[] buffer)
+    {
         if (buffer == null) throw new ArgumentNullException(nameof(buffer));
         var Xheader = buffer[0];
         byte db0 = (buffer.Length > 1 ? buffer[1] : (byte)0x00);

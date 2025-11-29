@@ -2,7 +2,7 @@
 
 public static class NotificationFactory
 {
-   internal static Notification Notification(this Frame sourceFrame)
+    internal static Notification Notification(this Frame sourceFrame)
     {
         return sourceFrame.Header switch
         {

@@ -3,13 +3,13 @@
 namespace Tellurian.Trains.Interfaces.Locos;
 
 [DataContract]
-[KnownType(typeof(MovementLocoNotification))]
-[KnownType(typeof(FunctionsLocoNotification))]
-public abstract class LocoNotification(LocoAddress address, DateTimeOffset timestamp) : Notification(timestamp)
+[KnownType(typeof(LocoMovementNotification))]
+[KnownType(typeof(LocoFunctionsNotification))]
+public abstract class LocoNotification(Address address, DateTimeOffset timestamp) : Notification(timestamp)
 {
     [DataMember]
-    private readonly LocoAddress _Address = address;
+    private readonly Address _Address = address;
 
-    public LocoAddress Address => _Address;
+    public Address Address => _Address;
     public override bool IsLocoNotification => true;
 }

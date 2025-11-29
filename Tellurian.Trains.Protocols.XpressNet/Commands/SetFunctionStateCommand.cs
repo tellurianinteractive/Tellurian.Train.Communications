@@ -20,10 +20,10 @@ namespace Tellurian.Trains.Protocols.XpressNet.Commands;
 /// </remarks>
 public abstract class SetFunctionStateCommand : Command
 {
-    protected SetFunctionStateCommand(byte identification, LocoAddress address, byte stateByte)
+    protected SetFunctionStateCommand(byte identification, Address address, byte stateByte)
         : base(0xE4, GetData(identification, address, stateByte)) { }
 
-    private static byte[] GetData(byte identification, LocoAddress address, byte stateByte)
+    private static byte[] GetData(byte identification, Address address, byte stateByte)
     {
         var addrBytes = address.GetBytesAccordingToXpressNet();
         return [identification, addrBytes[0], addrBytes[1], stateByte];
@@ -48,7 +48,7 @@ public sealed class SetFunctionStateGroup1Command : SetFunctionStateCommand
     /// <param name="f2OnOff">True if F2 is on/off, false if momentary</param>
     /// <param name="f3OnOff">True if F3 is on/off, false if momentary</param>
     /// <param name="f4OnOff">True if F4 is on/off, false if momentary</param>
-    public SetFunctionStateGroup1Command(LocoAddress address,
+    public SetFunctionStateGroup1Command(Address address,
         bool f0OnOff = true, bool f1OnOff = true, bool f2OnOff = true,
         bool f3OnOff = true, bool f4OnOff = true)
         : base(0x24, address, CreateStateByte(f0OnOff, f1OnOff, f2OnOff, f3OnOff, f4OnOff)) { }
@@ -58,7 +58,7 @@ public sealed class SetFunctionStateGroup1Command : SetFunctionStateCommand
     /// </summary>
     /// <param name="address">Locomotive address (1-9999)</param>
     /// <param name="stateByte">State byte: 000S0S4S3S2S1 (bit=1 means on/off, bit=0 means momentary)</param>
-    public SetFunctionStateGroup1Command(LocoAddress address, byte stateByte)
+    public SetFunctionStateGroup1Command(Address address, byte stateByte)
         : base(0x24, address, (byte)(stateByte & 0x1F)) { }
 
     private static byte CreateStateByte(bool f0OnOff, bool f1OnOff, bool f2OnOff, bool f3OnOff, bool f4OnOff)
@@ -90,7 +90,7 @@ public sealed class SetFunctionStateGroup2Command : SetFunctionStateCommand
     /// <param name="f6OnOff">True if F6 is on/off, false if momentary</param>
     /// <param name="f7OnOff">True if F7 is on/off, false if momentary</param>
     /// <param name="f8OnOff">True if F8 is on/off, false if momentary</param>
-    public SetFunctionStateGroup2Command(LocoAddress address,
+    public SetFunctionStateGroup2Command(Address address,
         bool f5OnOff = true, bool f6OnOff = true, bool f7OnOff = true, bool f8OnOff = true)
         : base(0x25, address, CreateStateByte(f5OnOff, f6OnOff, f7OnOff, f8OnOff)) { }
 
@@ -99,7 +99,7 @@ public sealed class SetFunctionStateGroup2Command : SetFunctionStateCommand
     /// </summary>
     /// <param name="address">Locomotive address (1-9999)</param>
     /// <param name="stateByte">State byte: 0000S8S7S6S5 (bit=1 means on/off, bit=0 means momentary)</param>
-    public SetFunctionStateGroup2Command(LocoAddress address, byte stateByte)
+    public SetFunctionStateGroup2Command(Address address, byte stateByte)
         : base(0x25, address, (byte)(stateByte & 0x0F)) { }
 
     private static byte CreateStateByte(bool f5OnOff, bool f6OnOff, bool f7OnOff, bool f8OnOff)
@@ -130,7 +130,7 @@ public sealed class SetFunctionStateGroup3Command : SetFunctionStateCommand
     /// <param name="f10OnOff">True if F10 is on/off, false if momentary</param>
     /// <param name="f11OnOff">True if F11 is on/off, false if momentary</param>
     /// <param name="f12OnOff">True if F12 is on/off, false if momentary</param>
-    public SetFunctionStateGroup3Command(LocoAddress address,
+    public SetFunctionStateGroup3Command(Address address,
         bool f9OnOff = true, bool f10OnOff = true, bool f11OnOff = true, bool f12OnOff = true)
         : base(0x26, address, CreateStateByte(f9OnOff, f10OnOff, f11OnOff, f12OnOff)) { }
 
@@ -139,7 +139,7 @@ public sealed class SetFunctionStateGroup3Command : SetFunctionStateCommand
     /// </summary>
     /// <param name="address">Locomotive address (1-9999)</param>
     /// <param name="stateByte">State byte: 0000S12S11S10S9 (bit=1 means on/off, bit=0 means momentary)</param>
-    public SetFunctionStateGroup3Command(LocoAddress address, byte stateByte)
+    public SetFunctionStateGroup3Command(Address address, byte stateByte)
         : base(0x26, address, (byte)(stateByte & 0x0F)) { }
 
     private static byte CreateStateByte(bool f9OnOff, bool f10OnOff, bool f11OnOff, bool f12OnOff)

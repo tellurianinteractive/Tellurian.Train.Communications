@@ -40,12 +40,12 @@ public sealed class AddressRetrievalNotification : Notification
     /// Gets the locomotive address if one was found.
     /// Returns null if no address was found.
     /// </summary>
-    public LocoAddress LocoAddress
+    public Address LocoAddress
     {
         get
         {
             if (!HasValidAddress || (AddressHigh == 0 && AddressLow == 0))
-                return LocoAddress.Zero;
+                return Address.Zero;
 
             return LocoAddressExtensions.FromXpressNet(AddressHigh, AddressLow);
         }

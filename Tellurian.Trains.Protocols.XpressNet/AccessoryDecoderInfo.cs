@@ -10,6 +10,6 @@ public class AccessoryDecoderInfo
 
     public byte Address { get; }
     public byte Info { get; }
-    public bool IsCompleted =>(Info & 0x80) == 0;
+    public bool IsCompleted => (Info & 0x80) == 0;
     public bool IsWithFeedback => (Info & 0x60) > 0;
 }

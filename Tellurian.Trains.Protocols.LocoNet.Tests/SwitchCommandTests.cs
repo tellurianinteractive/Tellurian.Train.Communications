@@ -10,9 +10,9 @@ public class SetTurnoutCommandTests
     public void SetTurnoutCommand_GeneratesCorrectOpcode_InBytes()
     {
         var command = new SetTurnoutCommand(
-            AccessoryAddress.From(0),
-            AccessoryFunction.ClosedOrGreen,
-            OutputState.Off);
+            Address.From(0),
+            Position.ClosedOrGreen,
+            MotorState.Off);
 
         var bytes = command.GetBytesWithChecksum();
 
@@ -24,45 +24,45 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void Throw_CreatesCommand_WithThrownDirection()
     {
-        var command = SetTurnoutCommand.Throw(AccessoryAddress.From(100));
+        var command = SetTurnoutCommand.Throw(Address.From(100));
 
-        Assert.AreEqual(AccessoryFunction.ThrownOrRed, command.Direction);
-        Assert.AreEqual(OutputState.On, command.Output);
+        Assert.AreEqual(Position.ThrownOrRed, command.Direction);
+        Assert.AreEqual(MotorState.On, command.Output);
     }
 
     [TestMethod]
     public void Throw_WithActivateFalse_CreatesCommand_WithOutputOff()
     {
-        var command = SetTurnoutCommand.Throw(AccessoryAddress.From(100), activate: false);
+        var command = SetTurnoutCommand.Throw(Address.From(100), activate: false);
 
-        Assert.AreEqual(AccessoryFunction.ThrownOrRed, command.Direction);
-        Assert.AreEqual(OutputState.Off, command.Output);
+        Assert.AreEqual(Position.ThrownOrRed, command.Direction);
+        Assert.AreEqual(MotorState.Off, command.Output);
     }
 
     [TestMethod]
     public void Close_CreatesCommand_WithClosedDirection()
     {
-        var command = SetTurnoutCommand.Close(AccessoryAddress.From(100));
+        var command = SetTurnoutCommand.Close(Address.From(100));
 
-        Assert.AreEqual(AccessoryFunction.ClosedOrGreen, command.Direction);
-        Assert.AreEqual(OutputState.On, command.Output);
+        Assert.AreEqual(Position.ClosedOrGreen, command.Direction);
+        Assert.AreEqual(MotorState.On, command.Output);
     }
 
     [TestMethod]
     public void Close_WithActivateFalse_CreatesCommand_WithOutputOff()
     {
-        var command = SetTurnoutCommand.Close(AccessoryAddress.From(100), activate: false);
+        var command = SetTurnoutCommand.Close(Address.From(100), activate: false);
 
-        Assert.AreEqual(AccessoryFunction.ClosedOrGreen, command.Direction);
-        Assert.AreEqual(OutputState.Off, command.Output);
+        Assert.AreEqual(Position.ClosedOrGreen, command.Direction);
+        Assert.AreEqual(MotorState.Off, command.Output);
     }
 
     [TestMethod]
     public void TurnOff_CreatesCommand_WithOutputOff()
     {
-        var command = SetTurnoutCommand.TurnOff(AccessoryAddress.From(100));
+        var command = SetTurnoutCommand.TurnOff(Address.From(100));
 
-        Assert.AreEqual(OutputState.Off, command.Output);
+        Assert.AreEqual(MotorState.Off, command.Output);
     }
 
     // ===== Address Encoding Tests =====
@@ -70,7 +70,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesAddress0_Correctly()
     {
-        var command = SetTurnoutCommand.Throw(AccessoryAddress.From(0));
+        var command = SetTurnoutCommand.Throw(Address.From(0));
         var bytes = command.GetBytesWithChecksum();
 
         // SW1 should have low 7 bits of address (0)
@@ -82,7 +82,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesAddress127_Correctly()
     {
-        var command = SetTurnoutCommand.Throw(AccessoryAddress.From(127));
+        var command = SetTurnoutCommand.Throw(Address.From(127));
         var bytes = command.GetBytesWithChecksum();
 
         // SW1 should have low 7 bits = 127
@@ -94,7 +94,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesAddress128_Correctly()
     {
-        var command = SetTurnoutCommand.Throw(AccessoryAddress.From(128));
+        var command = SetTurnoutCommand.Throw(Address.From(128));
         var bytes = command.GetBytesWithChecksum();
 
         // SW1 should have low 7 bits = 0 (128 & 0x7F)
@@ -106,7 +106,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesAddress2047_Correctly()
     {
-        var command = SetTurnoutCommand.Throw(AccessoryAddress.From(2047));
+        var command = SetTurnoutCommand.Throw(Address.From(2047));
         var bytes = command.GetBytesWithChecksum();
 
         // SW1 should have low 7 bits = 127 (2047 & 0x7F)
@@ -120,7 +120,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesDirectionBit_ForClosedGreen()
     {
-        var command = SetTurnoutCommand.Close(AccessoryAddress.From(0));
+        var command = SetTurnoutCommand.Close(Address.From(0));
         var bytes = command.GetBytesWithChecksum();
 
         // DIR bit (bit 5 of SW2) should be set for Closed/Green
@@ -130,7 +130,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesDirectionBit_ForThrownRed()
     {
-        var command = SetTurnoutCommand.Throw(AccessoryAddress.From(0));
+        var command = SetTurnoutCommand.Throw(Address.From(0));
         var bytes = command.GetBytesWithChecksum();
 
         // DIR bit (bit 5 of SW2) should be clear for Thrown/Red
@@ -140,7 +140,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesOutputBit_WhenOn()
     {
-        var command = SetTurnoutCommand.Throw(AccessoryAddress.From(0), activate: true);
+        var command = SetTurnoutCommand.Throw(Address.From(0), activate: true);
         var bytes = command.GetBytesWithChecksum();
 
         // ON bit (bit 4 of SW2) should be set
@@ -150,7 +150,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesOutputBit_WhenOff()
     {
-        var command = SetTurnoutCommand.Throw(AccessoryAddress.From(0), activate: false);
+        var command = SetTurnoutCommand.Throw(Address.From(0), activate: false);
         var bytes = command.GetBytesWithChecksum();
 
         // ON bit (bit 4 of SW2) should be clear
@@ -165,9 +165,9 @@ public class SwitchAcknowledgeCommandTests
     public void SwitchAcknowledgeCommand_GeneratesCorrectOpcode_InBytes()
     {
         var command = new SwitchAcknowledgeCommand(
-            AccessoryAddress.From(0),
-            AccessoryFunction.ClosedOrGreen,
-            OutputState.Off);
+            Address.From(0),
+            Position.ClosedOrGreen,
+            MotorState.Off);
 
         var bytes = command.GetBytesWithChecksum();
 
@@ -177,19 +177,19 @@ public class SwitchAcknowledgeCommandTests
     [TestMethod]
     public void Throw_CreatesCommand_WithThrownDirection()
     {
-        var command = SwitchAcknowledgeCommand.Throw(AccessoryAddress.From(100));
+        var command = SwitchAcknowledgeCommand.Throw(Address.From(100));
 
-        Assert.AreEqual(AccessoryFunction.ThrownOrRed, command.Direction);
-        Assert.AreEqual(OutputState.On, command.Output);
+        Assert.AreEqual(Position.ThrownOrRed, command.Direction);
+        Assert.AreEqual(MotorState.On, command.Output);
     }
 
     [TestMethod]
     public void Close_CreatesCommand_WithClosedDirection()
     {
-        var command = SwitchAcknowledgeCommand.Close(AccessoryAddress.From(100));
+        var command = SwitchAcknowledgeCommand.Close(Address.From(100));
 
-        Assert.AreEqual(AccessoryFunction.ClosedOrGreen, command.Direction);
-        Assert.AreEqual(OutputState.On, command.Output);
+        Assert.AreEqual(Position.ClosedOrGreen, command.Direction);
+        Assert.AreEqual(MotorState.On, command.Output);
     }
 }
 
@@ -200,7 +200,7 @@ public class RequestSwitchStateCommandTests
     [TestMethod]
     public void RequestSwitchStateCommand_GeneratesCorrectOpcode_InBytes()
     {
-        var command = new RequestSwitchStateCommand(AccessoryAddress.From(0));
+        var command = new RequestSwitchStateCommand(Address.From(0));
         var bytes = command.GetBytesWithChecksum();
 
         Assert.AreEqual(0xBC, bytes[0]);
@@ -209,7 +209,7 @@ public class RequestSwitchStateCommandTests
     [TestMethod]
     public void RequestSwitchStateCommand_EncodesAddressCorrectly()
     {
-        var command = new RequestSwitchStateCommand(AccessoryAddress.From(500));
+        var command = new RequestSwitchStateCommand(Address.From(500));
         var bytes = command.GetBytesWithChecksum();
 
         // Decode address from bytes to verify

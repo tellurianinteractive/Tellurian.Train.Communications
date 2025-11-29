@@ -36,5 +36,5 @@ public sealed class LocoOperatedByAnotherDeviceNotification : Notification
     /// <summary>
     /// Gets the locomotive address that is now being operated by another device.
     /// </summary>
-    public LocoAddress LocoAddress => LocoAddressExtensions.FromXpressNet(AddressHigh, AddressLow);
+    public Address LocoAddress => LocoAddressExtensions.FromXpressNet(AddressHigh, AddressLow);
 }

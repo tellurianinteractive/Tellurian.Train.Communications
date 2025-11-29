@@ -50,11 +50,11 @@ public enum BroadcastSubjects
     /// <summary>
     /// Subscribes on all notifications from Z21.
     /// </summary>
-    All = 
-        RunningAndSwitching | 
-        RbusFeedback | 
-        SystemStateChanges | 
-        ChangedLocomotiveInfo | 
+    All =
+        RunningAndSwitching |
+        RbusFeedback |
+        SystemStateChanges |
+        ChangedLocomotiveInfo |
         LocoNetExceptLocomotivesAndSwitches |
         LocoNetLocomotiveSpecific |
         LocoNetTurnouts |

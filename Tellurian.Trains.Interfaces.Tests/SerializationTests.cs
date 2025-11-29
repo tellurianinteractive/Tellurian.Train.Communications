@@ -9,10 +9,10 @@ public class SerializationTests
     [TestMethod]
     public void LocoDrive_SerializesAndDeserializes_WithJson()
     {
-        var target = new LocoDrive()
+        var target = new Drive()
         {
-            Direction = LocoDirection.Forward,
-            Speed = LocoSpeed.Set(LocoSpeedSteps.Steps126, 55)
+            Direction = Direction.Forward,
+            Speed = Speed.Set(LocoSpeedSteps.Steps126, 55)
         };
         var serializer = new JsonSerializer();
         using var s = new MemoryStream();
@@ -21,6 +21,6 @@ public class SerializationTests
         w.Flush();
         s.Position = 0;
         using var r = new StreamReader(s);
-        var actual = serializer.Deserialize(r, typeof(LocoDrive));
+        var actual = serializer.Deserialize(r, typeof(Drive));
     }
 }

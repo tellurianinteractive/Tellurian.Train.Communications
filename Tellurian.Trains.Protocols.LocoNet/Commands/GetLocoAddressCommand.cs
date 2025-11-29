@@ -11,7 +11,7 @@ public sealed class GetLocoAddressCommand : Command
 {
     public const byte OperationCode = 0xBF;
 
-    public GetLocoAddressCommand(LocoAddress address)
+    public GetLocoAddressCommand(Address address)
     {
         Address = address;
     }
@@ -19,7 +19,7 @@ public sealed class GetLocoAddressCommand : Command
     /// <summary>
     /// The locomotive address to request (1-9999).
     /// </summary>
-    public LocoAddress Address { get; }
+    public Address Address { get; }
 
     /// <summary>
     /// Generates the 4-byte message: [0xBF, adr_hi, adr_lo, checksum].

@@ -9,7 +9,7 @@ public class AccessoryInfoRequestCommandTests
     [TestMethod]
     public void AccessoryInfoRequest_ReturnsCorrectBytes_ForTurnout1()
     {
-        var target = new AccessoryInfoRequestCommand(AccessoryAddress.From(1));
+        var target = new AccessoryInfoRequestCommand(Interfaces.Accessories.Address.From(1));
         var data = target.GetData();
 
         Assert.AreEqual(0x42, data[0]);
@@ -20,7 +20,7 @@ public class AccessoryInfoRequestCommandTests
     [TestMethod]
     public void AccessoryInfoRequest_ReturnsCorrectBytes_ForTurnout3()
     {
-        var target = new AccessoryInfoRequestCommand(AccessoryAddress.From(3));
+        var target = new AccessoryInfoRequestCommand(Interfaces.Accessories.Address.From(3));
         var data = target.GetData();
 
         Assert.AreEqual(0x42, data[0]);
@@ -31,7 +31,7 @@ public class AccessoryInfoRequestCommandTests
     [TestMethod]
     public void AccessoryInfoRequest_ReturnsCorrectBytes_ForTurnout5()
     {
-        var target = new AccessoryInfoRequestCommand(AccessoryAddress.From(5));
+        var target = new AccessoryInfoRequestCommand(Interfaces.Accessories.Address.From(5));
         var data = target.GetData();
 
         Assert.AreEqual(0x42, data[0]);
@@ -42,7 +42,7 @@ public class AccessoryInfoRequestCommandTests
     [TestMethod]
     public void AccessoryInfoRequest_ReturnsCorrectBytes_ForTurnout100()
     {
-        var target = new AccessoryInfoRequestCommand(AccessoryAddress.From(100));
+        var target = new AccessoryInfoRequestCommand(Interfaces.Accessories.Address.From(100));
         var data = target.GetData();
 
         Assert.AreEqual(0x42, data[0]);
@@ -53,7 +53,7 @@ public class AccessoryInfoRequestCommandTests
     [TestMethod]
     public void AccessoryInfoRequest_ReturnsCorrectBytes_ForTurnout1024()
     {
-        var target = new AccessoryInfoRequestCommand(AccessoryAddress.From(1024));
+        var target = new AccessoryInfoRequestCommand(Interfaces.Accessories.Address.From(1024));
         var data = target.GetData();
 
         Assert.AreEqual(0x42, data[0]);

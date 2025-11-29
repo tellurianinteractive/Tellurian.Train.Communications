@@ -12,6 +12,7 @@
     <File Path="Running Tests.md" />
     <File Path="System Architecture.md" />
   </Folder>
+  <Project Path="Tellurian.Trains.Adapters.LocoNet/Tellurian.Trains.Adapters.LocoNet.csproj" />
   <Project Path="Tellurian.Trains.Adapters.Z21.Tests/Tellurian.Trains.Adapters.Z21.Tests.csproj" />
   <Project Path="Tellurian.Trains.Adapters.Z21/Tellurian.Trains.Adapters.Z21.csproj" />
   <Project Path="Tellurian.Trains.Communications.Channels.Tests/Tellurian.Trains.Communications.Channels.Tests.csproj" />
