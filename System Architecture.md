@@ -5,7 +5,7 @@ The library follows a **layered architecture** with clear separation of concerns
 ### 1. Transport Layer
 **Project**: `Tellurian.Communications.Channels`
 
-Protocol-agnostic UDP communication infrastructure.
+Protocol-agnostic communication infrastructure.
 
 See `Tellurian.Communications.Channels/CLAUDE.md` for details.
 
@@ -35,13 +35,13 @@ See `Tellurian.Trains.Adapters.Z21/CLAUDE.md` for details.
 
 ```
 Application
-    � (uses ILocoControl, ILocoDecoder)
+    ↓ (uses ILocoControl, ILocoDecoder)
 Adapter (Z21/LocoNet)
-    � (translates to)
+    ↓ (translates to)
 Protocol Layer (XpressNet/LocoNet Commands)
-    � (sends via)
-Transport Layer (UdpDataChannel)
-    �
+    ↓ (sends via)
+Transport Layer (UdpDataChannel or SerialDataChannel)
+    ↓
 Physical Hardware (Z21, Digitrax, etc.)
 
 (Notifications flow in reverse direction)
