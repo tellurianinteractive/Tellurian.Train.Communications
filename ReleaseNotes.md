@@ -8,3 +8,7 @@ Each NuGet-package may have its own specific release notes, which can be found i
 Release Date: 2025-11-29
 - **Inital Release** for Tellurian.Trains.Control NuGet-packages. 
 Consult the README files in each package repository for detailed information on features and usage.
+
+### Version 1.1.0 - Feature Update
+Release Date: 2025-11-30
+- Added JSON serialization support for LocoNet and XpressNet messages..

@@ -7,7 +7,7 @@
   </Folder>
   <Folder Name="/Solution Items/Agent Guidelines/">
     <File Path="Build and Release Process.md" />
-    <File Path="Code Conventions.md" />
+    <File Path="Coding Conventions.md" />
     <File Path="Documentation and comments.md" />
     <File Path="Running Tests.md" />
     <File Path="System Architecture.md" />
