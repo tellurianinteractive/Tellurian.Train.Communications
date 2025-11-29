@@ -6,6 +6,15 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IncludeSymbols>True</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<Title>$(AssemblyName)</Title>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+		<Deterministic>true</Deterministic>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -17,6 +26,13 @@
 		<ProjectReference Include="..\Tellurian.Trains.Protocols.LocoNet\Tellurian.Trains.Protocols.LocoNet.csproj" />
 		<ProjectReference Include="..\Tellurian.Trains.Interfaces\Tellurian.Trains.Interfaces.csproj" />
 		<ProjectReference Include="..\Tellurian.Trains.Protocols.XpressNet\Tellurian.Trains.Protocols.XpressNet.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 </Project>
