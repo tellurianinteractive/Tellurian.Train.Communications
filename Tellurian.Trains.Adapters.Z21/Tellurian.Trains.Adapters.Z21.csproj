@@ -4,9 +4,11 @@
 		<AssemblyName>Tellurian.Trains.Adapters.Z21</AssemblyName>
 		<RootNamespace>Tellurian.Trains.Adapters.Z21</RootNamespace>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<DebugSymbols>True</DebugSymbols>
 		<IncludeSymbols>True</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Title>$(AssemblyName)</Title>
+		<DebugSymbols>True</DebugSymbols>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Description>
 			A .NET adapter for the Roco/Fleischmann Z21 digital command station, providing a high-level API 
@@ -21,6 +23,18 @@
 		<DebugType>embedded</DebugType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <DebugType>portable</DebugType>
+	  <IsTrimmable>True</IsTrimmable>
+	  <IsAotCompatible>True</IsAotCompatible>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <DebugType>portable</DebugType>
+	  <IsTrimmable>True</IsTrimmable>
+	  <IsAotCompatible>True</IsAotCompatible>
 	</PropertyGroup>
 
 	<ItemGroup>

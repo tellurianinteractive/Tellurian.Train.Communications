@@ -5,7 +5,7 @@
       "Bash(dotnet test)",
       "Bash(dotnet test:*)",
       "Bash(cat:*)",
-      "Bash(dir \"C:\\Entwicklung\\Github\\Tellurian.Trains\\Tellurian.Trains.Control\" /b)"
+      "Bash(dir ." /b)"
     ],
     "deny": [],
     "ask": []

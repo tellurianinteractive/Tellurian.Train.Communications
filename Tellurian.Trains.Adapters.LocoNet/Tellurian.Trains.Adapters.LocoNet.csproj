@@ -4,7 +4,8 @@
 		<AssemblyName>Tellurian.Trains.Adapters.LocoNet</AssemblyName>
 		<RootNamespace>Tellurian.Trains.Adapters.LocoNet</RootNamespace>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<IncludeSymbols>True</IncludeSymbols>
+		<DebugSymbols>True</DebugSymbols>
+		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Title>$(AssemblyName)</Title>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -21,6 +22,18 @@
 		<DebugType>embedded</DebugType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <DebugType>portable</DebugType>
+	  <IsTrimmable>True</IsTrimmable>
+	  <IsAotCompatible>True</IsAotCompatible>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <DebugType>portable</DebugType>
+	  <IsTrimmable>True</IsTrimmable>
+	  <IsAotCompatible>True</IsAotCompatible>
 	</PropertyGroup>
 
 	<ItemGroup>
