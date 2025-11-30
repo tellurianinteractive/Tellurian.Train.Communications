@@ -6,19 +6,26 @@ Tests are organized by layer:
 - DO NOT use [ExpectedException] or Assert.ThrowsException; use Assert.Throws instead 
 
 ### Running Tests
+
+This project uses MSTest.Sdk with Microsoft Testing Platform (MTP), configured in `global.json`.
+
 ```bash
-# Run all tests
-dotnet test
+# Run all tests in the solution
+dotnet test --solution Tellurian.Trains.Control.sln
 
 # Run tests for a specific project
-dotnet test Tellurian.Trains.Protocols.XpressNet.Tests
-dotnet test Tellurian.Trains.Adapters.Z21.Tests
-dotnet test Tellurian.Communications.Channels.Tests
-dotnet test Tellurian.Protocols.LocoNet.Tests
-dotnet test Tellurian.Trains.Interfaces.Tests
+dotnet test --project Tellurian.Trains.Protocols.XpressNet.Tests
+dotnet test --project Tellurian.Trains.Adapters.Z21.Tests
+dotnet test --project Tellurian.Trains.Communications.Channels.Tests
+dotnet test --project Tellurian.Trains.Protocols.LocoNet.Tests
+dotnet test --project Tellurian.Trains.Interfaces.Tests
+
+# Alternative: run from within a test project directory
+cd Tellurian.Trains.Interfaces.Tests
+dotnet run
 
 # List all tests
-dotnet test --list-tests
+dotnet test --project Tellurian.Trains.Interfaces.Tests --list-tests
 ```
 
 ### Assembly Settings

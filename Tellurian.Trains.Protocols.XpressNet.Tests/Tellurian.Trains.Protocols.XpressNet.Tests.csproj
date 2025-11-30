@@ -1,17 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="MSTest.Sdk/4.0.2">
 	<PropertyGroup>
 		<AssemblyName>Tellurian.Trains.Protocols.XpressNet.Tests</AssemblyName>
 		<RootNamespace>Tellurian.Trains.Protocols.Xpressnet.Tests</RootNamespace>
 		<IsPackable>false</IsPackable>
+		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-		<PackageReference Include="MSTest.TestAdapter" Version="4.0.2" />
-		<PackageReference Include="MSTest.TestFramework" Version="4.0.2" />
-	</ItemGroup>
-
+	
 	<ItemGroup>
 		<ProjectReference Include="..\Tellurian.Trains.Protocols.XpressNet\Tellurian.Trains.Protocols.XpressNet.csproj" />
 	</ItemGroup>

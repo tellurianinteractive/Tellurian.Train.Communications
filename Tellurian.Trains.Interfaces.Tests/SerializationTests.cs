@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Newtonsoft.Json;
 using Tellurian.Trains.Interfaces.Accessories;
 using Tellurian.Trains.Interfaces.Json;
 using Tellurian.Trains.Interfaces.Locos;
@@ -12,21 +11,19 @@ namespace Tellurian.Trains.Interfaces.Tests;
 public class SerializationTests
 {
     [TestMethod]
-    public void LocoDrive_SerializesAndDeserializes_WithNewtonsoftJson()
+    public void LocoDrive_SerializesAndDeserializes()
     {
         var target = new Drive()
         {
             Direction = Direction.Forward,
             Speed = Speed.Set(LocoSpeedSteps.Steps126, 55)
         };
-        var serializer = new Newtonsoft.Json.JsonSerializer();
-        using var s = new MemoryStream();
-        using var w = new StreamWriter(s);
-        serializer.Serialize(w, target);
-        w.Flush();
-        s.Position = 0;
-        using var r = new StreamReader(s);
-        var actual = serializer.Deserialize(r, typeof(Drive));
+        var json = JsonSerializer.Serialize(target, JsonSerializationOptions.Default);
+        var actual = JsonSerializer.Deserialize<Drive>(json, JsonSerializationOptions.Default);
+
+        Assert.IsNotNull(actual);
+        Assert.AreEqual(target.Direction, actual.Direction);
+        Assert.AreEqual(target.Speed.CurrentStep, actual.Speed.CurrentStep);
     }
 
     [TestMethod]

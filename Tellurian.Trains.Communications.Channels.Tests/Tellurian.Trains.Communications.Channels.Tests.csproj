@@ -1,16 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="MSTest.Sdk/4.0.2">
 	<PropertyGroup>
 		<RootNamespace>Tellurian.Trains.Communications.Channels.Tests</RootNamespace>
 		<AssemblyName>Tellurian.Trains.Communications.Channels.Tests</AssemblyName>
 		<IsPackable>false</IsPackable>
+		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-		<PackageReference Include="MSTest.TestAdapter" Version="4.0.2" />
-		<PackageReference Include="MSTest.TestFramework" Version="4.0.2" />
-	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Tellurian.Trains.Communications.Channels\Tellurian.Trains.Communications.Channels.csproj" />
