@@ -94,7 +94,7 @@ public class MyObserver : IObserver<CommunicationResult>
 Add a reference to the project or NuGet package:
 
 ```xml
-<PackageReference Include="Tellurian.Trains.Communications.Channels" Version="1.0.0" />
+<PackageReference Include="Tellurian.Trains.Communications.Channels" Version="1.1.0" />
 ```
 
 ## Documentation
