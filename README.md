@@ -1,6 +1,9 @@
-# Tellurian Trains Control
+# Tellurian.Trains.Communications
 
-A .NET 10 library for controlling model trains using Z21, LocoNet, and XpressNet protocols. Program against protocol-agnostic interfaces while the library handles protocol-specific communication.
+A .NET 10 library for communication with model train layouts using 
+TOCO Z21, Digitrax LocoNet, and LENZ XpressNet protocols. 
+Program against protocol-agnostic interfaces while the library handles 
+protocol-specific communication.
 
 ## Architecture
 
