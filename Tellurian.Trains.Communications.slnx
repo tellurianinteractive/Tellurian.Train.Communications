@@ -7,11 +7,11 @@
     <File Path="TODO.txt" />
   </Folder>
   <Folder Name="/Solution Items/Agent Guidelines/">
-    <File Path="Build and Release Process.md" />
-    <File Path="Coding Conventions.md" />
-    <File Path="Documentation and comments.md" />
-    <File Path="Running Tests.md" />
-    <File Path="System Architecture.md" />
+    <File Path="Agent Guidelines/Build and Release Process.md" />
+    <File Path="Agent Guidelines/Coding Conventions.md" />
+    <File Path="Agent Guidelines/Documentation and comments.md" />
+    <File Path="Agent Guidelines/Running Tests.md" />
+    <File Path="Agent Guidelines/System Architecture.md" />
   </Folder>
   <Project Path="Tellurian.Trains.Adapters.LocoNet.Tests/Tellurian.Trains.Adapters.LocoNet.Tests.csproj" />
   <Project Path="Tellurian.Trains.Adapters.LocoNet/Tellurian.Trains.Adapters.LocoNet.csproj" />
