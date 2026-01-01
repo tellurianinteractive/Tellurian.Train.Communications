@@ -7,8 +7,7 @@
 		<Title>$(AssemblyName)</Title>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Description>
-			Protocol-agnostic interfaces and types for model train control applications. 
-			Program against these abstractions to decouple your application from specific protocols (XpressNet, LocoNet, etc.).
+			Protocol-agnostic interfaces and types for model train control applications.
 		</Description>
 
 	</PropertyGroup>
@@ -20,13 +19,13 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <IsTrimmable>True</IsTrimmable>
-	  <IsAotCompatible>True</IsAotCompatible>
+		<IsTrimmable>True</IsTrimmable>
+		<IsAotCompatible>True</IsAotCompatible>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <IsTrimmable>True</IsTrimmable>
-	  <IsAotCompatible>True</IsAotCompatible>
+		<IsTrimmable>True</IsTrimmable>
+		<IsAotCompatible>True</IsAotCompatible>
 	</PropertyGroup>
 
 	<ItemGroup>

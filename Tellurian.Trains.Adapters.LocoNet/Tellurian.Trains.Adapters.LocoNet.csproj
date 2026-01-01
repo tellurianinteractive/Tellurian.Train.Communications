@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<AssemblyName>Tellurian.Trains.Adapters.LocoNet</AssemblyName>
@@ -9,10 +9,6 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Title>$(AssemblyName)</Title>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Description>
-			A .NET adapter for LocoNet-based command stations via serial port, providing a high-level API
-			for locomotive control, accessory switching, and decoder programming.
-		</Description>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -22,6 +18,7 @@
 		<DebugType>embedded</DebugType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<Description>A .NET adapter for LocoNet-based command stations via serial port</Description>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

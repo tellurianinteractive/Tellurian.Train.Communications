@@ -10,8 +10,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<DebugSymbols>True</DebugSymbols>
 		<Documentation>
-			A protocol-agnostic transport layer library for model train control systems. 
-			Provides UDP and serial port communication with async/await patterns and observer-based notifications.
+			A protocol-agnostic transport layer library for model train control systems.
 		</Documentation>
 	</PropertyGroup>
 
@@ -24,14 +23,14 @@
 
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <IsTrimmable>True</IsTrimmable>
-	  <IsAotCompatible>True</IsAotCompatible>
-	  <DebugType>portable</DebugType>
+		<IsTrimmable>True</IsTrimmable>
+		<IsAotCompatible>True</IsAotCompatible>
+		<DebugType>portable</DebugType>
 	</PropertyGroup>
 
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <DebugType>portable</DebugType>
+		<DebugType>portable</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -40,10 +39,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 
 </Project>

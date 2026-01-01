@@ -21,15 +21,15 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <DebugType>portable</DebugType>
-	  <IsTrimmable>True</IsTrimmable>
-	  <IsAotCompatible>True</IsAotCompatible>
+		<DebugType>portable</DebugType>
+		<IsTrimmable>True</IsTrimmable>
+		<IsAotCompatible>True</IsAotCompatible>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <DebugType>portable</DebugType>
-	  <IsTrimmable>True</IsTrimmable>
-	  <IsAotCompatible>True</IsAotCompatible>
+		<DebugType>portable</DebugType>
+		<IsTrimmable>True</IsTrimmable>
+		<IsAotCompatible>True</IsAotCompatible>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -52,14 +52,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Specifications\" />
+		<Folder Include="Specifications\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 
 </Project>
