@@ -11,7 +11,7 @@ protocol-specific communication.
 ┌─────────────────────────────────────────────────────────────┐
 │                    Your Application                         │
 ├─────────────────────────────────────────────────────────────┤
-│        Tellurian.Trains.Interfaces (ILoco, IDecoder...)     │
+│        Tellurian.Trains.Communications.Interfaces (ILoco, IDecoder...)     │
 ├────────────────────────┬────────────────────────────────────┤
 │  Adapters.Z21 (UDP)    │   Adapters.LocoNet (Serial)        │
 ├────────────────────────┼────────────────────────────────────┤
@@ -25,7 +25,7 @@ protocol-specific communication.
 
 | Project | Description | Status |
 |---------|-------------|--------|
-| **Tellurian.Trains.Interfaces** | Protocol-agnostic interfaces (`ILoco`, `IAccessory`, `ISwitch`, `IDecoder`) and data types | ✅ Complete |
+| **Tellurian.Trains.Communications.Interfaces** | Protocol-agnostic interfaces (`ILoco`, `IAccessory`, `ISwitch`, `IDecoder`) and data types | ✅ Complete |
 | **Tellurian.Trains.Communications.Channels** | UDP and serial port transport layer with async operations and observer pattern | ✅ Complete |
 | **Tellurian.Trains.Protocols.XpressNet** | XpressNet protocol encoding/decoding (Lenz, Z21) | ✅ Complete |
 | **Tellurian.Trains.Protocols.LocoNet** | LocoNet protocol encoding/decoding (Digitrax) | ✅ ~75% |

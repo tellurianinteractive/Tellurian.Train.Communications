@@ -1,4 +1,4 @@
-using Tellurian.Trains.Interfaces.Accessories;
+using Tellurian.Trains.Communications.Interfaces.Accessories;
 
 namespace Tellurian.Trains.Protocols.LocoNet;
 
@@ -8,8 +8,8 @@ internal static class AccessoryAddressExtensions
     {
         public (byte sw1, byte sw2) EncodeSwitchBytes(Position direction, MotorState output)
         {
-            byte sw1 = (byte)(address.Number & 0x7F);
-            byte sw2 = (byte)((address.Number >> 7) & 0x0F);
+            byte sw1 = (byte)(address.WireAddress & 0x7F);
+            byte sw2 = (byte)((address.WireAddress >> 7) & 0x0F);
 
             if (direction == Position.ClosedOrGreen)
                 sw2 |= 0x20;
@@ -23,11 +23,11 @@ internal static class AccessoryAddressExtensions
 
     public static Address DecodeSwitchBytes(byte lowBits, byte highBits, out Position direction, out MotorState output)
     {
-        short address = (short)(lowBits | ((highBits & 0x0F) << 7));
+        short wireAddress = (short)(lowBits | ((highBits & 0x0F) << 7));
         direction = (highBits & 0x20) != 0 ? Position.ClosedOrGreen : Position.ThrownOrRed;
         output = (highBits & 0x10) != 0 ? MotorState.On : MotorState.Off;
 
-        return Address.From(address);
+        return Address.FromWireAddress(wireAddress);
     }
 }
 

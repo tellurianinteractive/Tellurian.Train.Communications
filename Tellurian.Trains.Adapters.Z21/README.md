@@ -22,7 +22,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Tellurian.Trains.Adapters.Z21;
 using Tellurian.Trains.Communications.Channels;
-using Tellurian.Trains.Interfaces.Locos;
+using Tellurian.Trains.Communications.Interfaces.Locos;
 
 var services = new ServiceCollection();
 
@@ -52,7 +52,7 @@ var provider = services.BuildServiceProvider();
 
 ```csharp
 using Tellurian.Trains.Adapters.Z21;
-using Tellurian.Trains.Interfaces.Locos;
+using Tellurian.Trains.Communications.Interfaces.Locos;
 
 // Get the adapter from DI
 var adapter = provider.GetRequiredService<Adapter>();
@@ -81,7 +81,7 @@ await adapter.EmergencyStopAsync(locoAddress);
 ### Notification Observer
 
 ```csharp
-using Tellurian.Trains.Interfaces;
+using Tellurian.Trains.Communications.Interfaces;
 
 public class MyNotificationObserver : IObserver<Notification>
 {
@@ -112,6 +112,15 @@ public class MyNotificationObserver : IObserver<Notification>
 
 Ensure your computer is on the same network as the Z21 command station.
 
+## Accessory Addressing
+
+This library uses **1-based user addresses** (1-2048) for accessories/turnouts, which matches how users typically configure their systems. The protocol layer automatically converts to 0-based wire addresses.
+
+### Z21 Address Shift (+4)
+There is a historical ambiguity in DCC where Roco/Z21 numbers accessory modules starting from 0, while other manufacturers start from 1. This creates a 4-address shift between systems.
+
+The Z21 has a hardware setting **"DCC-Weichenadressverschiebung +4"** to compensate. If your turnouts are off by 4 addresses compared to another system, enable this option in Z21 Maintenance.
+
 ## Documentation
 
 For detailed API documentation, architecture overview, and advanced usage patterns, see [DOCUMENTATION.md](DOCUMENTATION.md).
@@ -120,6 +129,6 @@ For detailed API documentation, architecture overview, and advanced usage patter
 
 - `Microsoft.Extensions.Logging.Abstractions` - Logging infrastructure
 - `Tellurian.Trains.Communications.Channels` - UDP transport layer
-- `Tellurian.Trains.Interfaces` - Protocol-agnostic interfaces
+- `Tellurian.Trains.Communications.Interfaces` - Protocol-agnostic interfaces
 - `Tellurian.Trains.Protocols.XpressNet` - XpressNet protocol implementation
 - `Tellurian.Trains.Protocols.LocoNet` - LocoNet protocol implementation

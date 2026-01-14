@@ -5,28 +5,23 @@ namespace Tellurian.Trains.Communications.Channels;
 /// <summary>
 /// Adapter that wraps <see cref="SerialPort"/> and implements <see cref="ISerialPortAdapter"/>.
 /// </summary>
-public sealed class SerialPortAdapter : ISerialPortAdapter
+/// <remarks>
+/// Creates a new serial port adapter.
+/// </remarks>
+/// <param name="portName">The name of the serial port (e.g., "COM3").</param>
+/// <param name="baudRate">The baud rate. Default is 57600 (common for LocoNet USB adapters).</param>
+/// <param name="parity">The parity. Default is None.</param>
+/// <param name="dataBits">The data bits. Default is 8.</param>
+/// <param name="stopBits">The stop bits. Default is One.</param>
+public sealed class SerialPortAdapter(
+    string portName,
+    int baudRate = 57600,
+    Parity parity = Parity.None,
+    int dataBits = 8,
+    StopBits stopBits = StopBits.One) : ISerialPortAdapter
 {
-    private readonly SerialPort _serialPort;
+    private readonly SerialPort _serialPort = new(portName, baudRate, parity, dataBits, stopBits);
     private bool _disposed;
-
-    /// <summary>
-    /// Creates a new serial port adapter.
-    /// </summary>
-    /// <param name="portName">The name of the serial port (e.g., "COM3").</param>
-    /// <param name="baudRate">The baud rate. Default is 57600 (common for LocoNet USB adapters).</param>
-    /// <param name="parity">The parity. Default is None.</param>
-    /// <param name="dataBits">The data bits. Default is 8.</param>
-    /// <param name="stopBits">The stop bits. Default is One.</param>
-    public SerialPortAdapter(
-        string portName,
-        int baudRate = 57600,
-        Parity parity = Parity.None,
-        int dataBits = 8,
-        StopBits stopBits = StopBits.One)
-    {
-        _serialPort = new SerialPort(portName, baudRate, parity, dataBits, stopBits);
-    }
 
     /// <inheritdoc />
     public bool IsOpen => _serialPort.IsOpen;

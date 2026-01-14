@@ -1,13 +1,13 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Tellurian.Trains.Interfaces.Json;
+using Tellurian.Trains.Communications.Interfaces.Json;
 using Tellurian.Trains.Protocols.XpressNet.Json.Converters;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Json;
 
 /// <summary>
 /// Provides JSON serialization options for XpressNet protocol messages.
-/// Extends the base options from Tellurian.Trains.Interfaces with XpressNet-specific converters.
+/// Extends the base options from Tellurian.Trains.Communications.Interfaces with XpressNet-specific converters.
 /// </summary>
 public static class XpressNetJsonSerializationOptions
 {

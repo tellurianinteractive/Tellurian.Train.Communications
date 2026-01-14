@@ -365,3 +365,6 @@ FodyWeavers.xsd
 /Specifications/Pocesseed documents
 /Specifications/Processeed documents
 /TODO.txt
+
+# Claude Code temporary files
+tmpclaude-*

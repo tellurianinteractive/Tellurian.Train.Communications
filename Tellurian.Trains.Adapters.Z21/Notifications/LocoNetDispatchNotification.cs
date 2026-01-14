@@ -1,4 +1,4 @@
-﻿using Tellurian.Trains.Interfaces.Locos;
+﻿using Tellurian.Trains.Communications.Interfaces.Locos;
 using Tellurian.Trains.Protocols.XpressNet;
 
 namespace Tellurian.Trains.Adapters.Z21;

@@ -94,6 +94,29 @@ The `Tellurian.Trains.Adapters.Z21.Tests` project validates:
 - Broadcast subscription management
 - Observer notification delivery
 
+## DCC Accessory Addressing
+
+### User vs Wire Addressing
+- **User addresses**: 1-2048 (what users configure in their software)
+- **Wire addresses**: 0-2047 (what is sent on the DCC/LocoNet wire)
+- Protocol implementations handle this conversion automatically
+
+### Module-Based Addressing (+4 Shift)
+DCC accessory addresses are organized in **modules of 4 addresses**. There is a historical ambiguity in the DCC specification about whether modules start at 0 or 1:
+
+- **Roco/Z21**: Numbers modules starting from 0 (addresses 1-4 = module 0)
+- **Other manufacturers**: Number modules starting from 1 (addresses 1-4 = module 1)
+
+This creates a **shift of 4 addresses** between systems. For example, a turnout at address 1 on another system would appear at address 5 on Z21.
+
+### Z21 Configuration Option
+The Z21 has a configuration option **"DCC-Weichenadressverschiebung +4"** that compensates for this:
+- When enabled, the Z21 internally adds 4 to all accessory addresses
+- This allows users migrating from other systems to keep their existing address assignments
+- This is a hardware-level setting configured via Z21 maintenance software, not the protocol
+
+**Note**: This library uses 1-based user addressing consistently. The +4 shift is handled by the Z21 hardware setting, not by this code.
+
 ## Usage Notes
 
 - The adapter requires an `ICommunicationsChannel` (typically `UdpDataChannel`)

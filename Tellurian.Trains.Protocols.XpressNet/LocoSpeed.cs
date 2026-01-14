@@ -78,6 +78,6 @@ public struct LocoSpeed : IEquatable<LocoSpeed>
 
 public static class LocoSpeedExtensions
 {
-    public static Interfaces.Locos.Speed Map(this LocoSpeed me) => Interfaces.Locos.Speed.Set((Interfaces.Locos.LocoSpeedSteps)me.MaxSteps, me.Current);
-    public static LocoSpeed Map(this Interfaces.Locos.Speed me) => LocoSpeed.FromNumberOfSteps((byte)me.MaxSteps, me.CurrentStep);
+    public static Tellurian.Trains.Communications.Interfaces.Locos.Speed Map(this LocoSpeed me) => Tellurian.Trains.Communications.Interfaces.Locos.Speed.Set((Tellurian.Trains.Communications.Interfaces.Locos.LocoSpeedSteps)me.MaxSteps, me.Current);
+    public static LocoSpeed Map(this Tellurian.Trains.Communications.Interfaces.Locos.Speed me) => LocoSpeed.FromNumberOfSteps((byte)me.MaxSteps, me.CurrentStep);
 }

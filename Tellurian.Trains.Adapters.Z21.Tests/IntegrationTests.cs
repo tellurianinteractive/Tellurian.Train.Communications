@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Net;
 using Tellurian.Trains.Communications.Channels;
-using Tellurian.Trains.Interfaces.Decoder;
+using Tellurian.Trains.Communications.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.XpressNet.Decoder;
 
 
@@ -61,8 +61,8 @@ public class IntegrationTests
     [TestMethod]
     public async Task SetDrive()
     {
-        var address = Interfaces.Locos.Address.From(999);
-        var drive = new Interfaces.Locos.Drive { Direction = Interfaces.Locos.Direction.Backward, Speed = Interfaces.Locos.Speed.Set(Interfaces.Locos.LocoSpeedSteps.Steps126, 2) };
+        var address = Tellurian.Trains.Communications.Interfaces.Locos.Address.From(999);
+        var drive = new Tellurian.Trains.Communications.Interfaces.Locos.Drive { Direction = Tellurian.Trains.Communications.Interfaces.Locos.Direction.Backward, Speed = Tellurian.Trains.Communications.Interfaces.Locos.Speed.Set(Tellurian.Trains.Communications.Interfaces.Locos.LocoSpeedSteps.Steps126, 2) };
         await (Target?.DriveAsync(address, drive, TestContext.CancellationToken) ?? Task.FromResult(false));
         await Task.Delay(100, TestContext.CancellationToken);
     }
@@ -102,9 +102,9 @@ public class IntegrationTests
     }
 }
 
-internal class NotificationObserver : IObserver<Interfaces.Notification>
+internal class NotificationObserver : IObserver<Tellurian.Trains.Communications.Interfaces.Notification>
 {
-    public IList<Interfaces.Notification> Notifications = [];
+    public IList<Tellurian.Trains.Communications.Interfaces.Notification> Notifications = [];
     public void OnCompleted()
     {
     }
@@ -114,7 +114,7 @@ internal class NotificationObserver : IObserver<Interfaces.Notification>
         throw error;
     }
 
-    public void OnNext(Interfaces.Notification value)
+    public void OnNext(Tellurian.Trains.Communications.Interfaces.Notification value)
     {
         Notifications.Add(value);
     }

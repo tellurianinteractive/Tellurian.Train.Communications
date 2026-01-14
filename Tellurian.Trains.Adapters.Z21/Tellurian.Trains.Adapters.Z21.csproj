@@ -43,7 +43,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Tellurian.Trains.Communications.Channels\Tellurian.Trains.Communications.Channels.csproj" />
 		<ProjectReference Include="..\Tellurian.Trains.Protocols.LocoNet\Tellurian.Trains.Protocols.LocoNet.csproj" />
-		<ProjectReference Include="..\Tellurian.Trains.Interfaces\Tellurian.Trains.Interfaces.csproj" />
+		<ProjectReference Include="..\Tellurian.Trains.Communications.Interfaces\Tellurian.Trains.Communications.Interfaces.csproj" />
 		<ProjectReference Include="..\Tellurian.Trains.Protocols.XpressNet\Tellurian.Trains.Protocols.XpressNet.csproj" />
 	</ItemGroup>
 

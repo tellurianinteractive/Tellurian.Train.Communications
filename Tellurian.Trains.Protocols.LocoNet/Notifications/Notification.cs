@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using Tellurian.Trains.Interfaces.Extensions;
+using Tellurian.Trains.Communications.Interfaces.Extensions;
 
 namespace Tellurian.Trains.Protocols.LocoNet.Notifications;
 

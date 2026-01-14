@@ -85,6 +85,27 @@ The `Tellurian.Protocols.LocoNet.Tests` project validates:
 - Address encoding (short and long)
 - CV number encoding for programming
 
+## Accessory Addressing
+
+### User vs Wire Addressing
+LocoNet uses **0-based wire addressing** internally, but this library uses **1-based user addressing** for consistency with how users configure their systems:
+
+| User Address | Wire Address | Notes |
+|--------------|--------------|-------|
+| 1 | 0 | First address |
+| 128 | 127 | Last address in first 7 bits |
+| 129 | 128 | First address requiring high bits |
+| 2048 | 2047 | Maximum address |
+
+The `AccessoryAddressExtensions` class handles this conversion:
+- **Encoding** (user → wire): Subtracts 1 before encoding to SW1/SW2 bytes
+- **Decoding** (wire → user): Adds 1 after decoding from SW1/SW2 bytes
+
+### Wire Encoding
+Switch addresses are encoded in two bytes:
+- **SW1**: Low 7 bits of wire address (bits 0-6)
+- **SW2**: High 4 bits of wire address (bits 7-10) plus direction and output flags
+
 ## Usage Notes
 
 - All messages automatically calculate checksums via `GetBytesWithChecksum()`
@@ -99,6 +120,6 @@ The `Tellurian.Protocols.LocoNet.Tests` project validates:
 - **Commands**: Outgoing messages (power control, locomotive control, slot management, etc.)
 - **Notifications**: Incoming messages (slot data, sensor reports, acknowledgments, etc.)
 - **Data Types**: `SlotData`, `LocoAddress`, `AccessoryAddress`, status enums
-- **Shared Types**: Uses `CV` struct from `Tellurian.Trains.Interfaces.Decoder` for protocol-agnostic CV operations
+- **Shared Types**: Uses `CV` struct from `Tellurian.Trains.Communications.Interfaces.Decoder` for protocol-agnostic CV operations
 - **Helpers**: `CvExtensions` for LocoNet-specific CV byte encoding (CVH/CVL/DATA7), `ConsistExtensions` for complex operations
 - **Factory**: `MessageFactory` for parsing incoming byte arrays

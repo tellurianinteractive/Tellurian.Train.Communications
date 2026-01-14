@@ -1,5 +1,5 @@
-﻿using Tellurian.Trains.Interfaces.Extensions;
-using Tellurian.Trains.Interfaces.Locos;
+﻿using Tellurian.Trains.Communications.Interfaces.Extensions;
+using Tellurian.Trains.Communications.Interfaces.Locos;
 using Tellurian.Trains.Protocols.LocoNet;
 using Tellurian.Trains.Protocols.XpressNet;
 using Tellurian.Trains.Protocols.XpressNet.Notifications;
@@ -11,13 +11,13 @@ namespace Tellurian.Trains.Adapters.Z21;
 /// </summary>
 public static class NotificationMapper
 {
-    private static readonly IDictionary<Type, Func<Notification, Interfaces.Notification[]>> Mappings = new Dictionary<Type, Func<Notification, Interfaces.Notification[]>>()
+    private static readonly IDictionary<Type, Func<Notification, Tellurian.Trains.Communications.Interfaces.Notification[]>> Mappings = new Dictionary<Type, Func<Notification, Tellurian.Trains.Communications.Interfaces.Notification[]>>()
     {
         {typeof(XpressNetNotification), MapXpressnetNotification },
         {typeof(LocoNetNotification), MapLocoNetNotification}
     };
 
-    public static Interfaces.Notification[] Map(this Notification notification)
+    public static Tellurian.Trains.Communications.Interfaces.Notification[] Map(this Notification notification)
     {
         if (notification is null) return [];
         var key = notification.GetType();
@@ -25,9 +25,9 @@ public static class NotificationMapper
         return MapDefaults.CreateUnmapped(notification.ToString());
     }
 
-    private static Interfaces.Notification[] MapXpressnetNotification(Notification notification) =>
+    private static Tellurian.Trains.Communications.Interfaces.Notification[] MapXpressnetNotification(Notification notification) =>
         ((XpressNetNotification)notification).Notification.Map();
 
-    private static Interfaces.Notification[] MapLocoNetNotification(Notification notification) =>
+    private static Tellurian.Trains.Communications.Interfaces.Notification[] MapLocoNetNotification(Notification notification) =>
         ((LocoNetNotification)notification).Message?.Map ?? [];
 }

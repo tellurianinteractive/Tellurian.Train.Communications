@@ -1,4 +1,4 @@
-﻿using Tellurian.Trains.Interfaces.Decoder;
+﻿using Tellurian.Trains.Communications.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.XpressNet.Commands;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Decoder;

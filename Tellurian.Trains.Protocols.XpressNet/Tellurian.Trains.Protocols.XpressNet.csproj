@@ -33,7 +33,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Tellurian.Trains.Interfaces\Tellurian.Trains.Interfaces.csproj" />
+		<ProjectReference Include="..\Tellurian.Trains.Communications.Interfaces\Tellurian.Trains.Communications.Interfaces.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -18,9 +18,9 @@ public enum LocoDirection
 
 public static class LocoDirectionExtensions
 {
-    public static Interfaces.Locos.Direction Map(this LocoDirection me) =>
-        me == LocoDirection.Forward ? Interfaces.Locos.Direction.Forward : Interfaces.Locos.Direction.Backward;
+    public static Tellurian.Trains.Communications.Interfaces.Locos.Direction Map(this LocoDirection me) =>
+        me == LocoDirection.Forward ? Tellurian.Trains.Communications.Interfaces.Locos.Direction.Forward : Tellurian.Trains.Communications.Interfaces.Locos.Direction.Backward;
 
-    public static LocoDirection Map(this Interfaces.Locos.Direction me) =>
-        me == Interfaces.Locos.Direction.Forward ? LocoDirection.Forward : LocoDirection.Backward;
+    public static LocoDirection Map(this Tellurian.Trains.Communications.Interfaces.Locos.Direction me) =>
+        me == Tellurian.Trains.Communications.Interfaces.Locos.Direction.Forward ? LocoDirection.Forward : LocoDirection.Backward;
 }

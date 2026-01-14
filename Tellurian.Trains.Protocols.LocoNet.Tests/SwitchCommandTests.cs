@@ -1,4 +1,4 @@
-using Tellurian.Trains.Interfaces.Accessories;
+using Tellurian.Trains.Communications.Interfaces.Accessories;
 using Tellurian.Trains.Protocols.LocoNet.Commands;
 
 namespace Tellurian.Trains.Protocols.LocoNet.Tests;
@@ -10,7 +10,7 @@ public class SetTurnoutCommandTests
     public void SetTurnoutCommand_GeneratesCorrectOpcode_InBytes()
     {
         var command = new SetTurnoutCommand(
-            Address.From(0),
+            Address.From(1),
             Position.ClosedOrGreen,
             MotorState.Off);
 
@@ -66,23 +66,26 @@ public class SetTurnoutCommandTests
     }
 
     // ===== Address Encoding Tests =====
+    // Note: LocoNet uses 1-based user addressing. User address N encodes as wire address N-1.
 
     [TestMethod]
-    public void SetTurnoutCommand_EncodesAddress0_Correctly()
+    public void SetTurnoutCommand_EncodesAddress1_Correctly()
     {
-        var command = SetTurnoutCommand.Throw(Address.From(0));
+        // User address 1 → wire address 0
+        var command = SetTurnoutCommand.Throw(Address.From(1));
         var bytes = command.GetBytesWithChecksum();
 
-        // SW1 should have low 7 bits of address (0)
+        // SW1 should have low 7 bits of wire address (0)
         Assert.AreEqual(0x00, bytes[1] & 0x7F, "SW1 - address low bits");
-        // SW2 should have high 4 bits of address (0)
+        // SW2 should have high 4 bits of wire address (0)
         Assert.AreEqual(0x00, bytes[2] & 0x0F, "SW2 - address high bits");
     }
 
     [TestMethod]
-    public void SetTurnoutCommand_EncodesAddress127_Correctly()
+    public void SetTurnoutCommand_EncodesAddress128_Correctly()
     {
-        var command = SetTurnoutCommand.Throw(Address.From(127));
+        // User address 128 → wire address 127
+        var command = SetTurnoutCommand.Throw(Address.From(128));
         var bytes = command.GetBytesWithChecksum();
 
         // SW1 should have low 7 bits = 127
@@ -92,9 +95,10 @@ public class SetTurnoutCommandTests
     }
 
     [TestMethod]
-    public void SetTurnoutCommand_EncodesAddress128_Correctly()
+    public void SetTurnoutCommand_EncodesAddress129_Correctly()
     {
-        var command = SetTurnoutCommand.Throw(Address.From(128));
+        // User address 129 → wire address 128
+        var command = SetTurnoutCommand.Throw(Address.From(129));
         var bytes = command.GetBytesWithChecksum();
 
         // SW1 should have low 7 bits = 0 (128 & 0x7F)
@@ -106,12 +110,13 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesAddress2047_Correctly()
     {
+        // User address 2047 → wire address 2046
         var command = SetTurnoutCommand.Throw(Address.From(2047));
         var bytes = command.GetBytesWithChecksum();
 
-        // SW1 should have low 7 bits = 127 (2047 & 0x7F)
-        Assert.AreEqual(0x7F, bytes[1] & 0x7F, "SW1 - address low bits");
-        // SW2 high 4 bits should be 15 (2047 >> 7 = 15)
+        // SW1 should have low 7 bits = 126 (2046 & 0x7F)
+        Assert.AreEqual(0x7E, bytes[1] & 0x7F, "SW1 - address low bits");
+        // SW2 high 4 bits should be 15 (2046 >> 7 = 15)
         Assert.AreEqual(0x0F, bytes[2] & 0x0F, "SW2 - address high bits");
     }
 
@@ -120,7 +125,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesDirectionBit_ForClosedGreen()
     {
-        var command = SetTurnoutCommand.Close(Address.From(0));
+        var command = SetTurnoutCommand.Close(Address.From(1));
         var bytes = command.GetBytesWithChecksum();
 
         // DIR bit (bit 5 of SW2) should be set for Closed/Green
@@ -130,7 +135,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesDirectionBit_ForThrownRed()
     {
-        var command = SetTurnoutCommand.Throw(Address.From(0));
+        var command = SetTurnoutCommand.Throw(Address.From(1));
         var bytes = command.GetBytesWithChecksum();
 
         // DIR bit (bit 5 of SW2) should be clear for Thrown/Red
@@ -140,7 +145,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesOutputBit_WhenOn()
     {
-        var command = SetTurnoutCommand.Throw(Address.From(0), activate: true);
+        var command = SetTurnoutCommand.Throw(Address.From(1), activate: true);
         var bytes = command.GetBytesWithChecksum();
 
         // ON bit (bit 4 of SW2) should be set
@@ -150,7 +155,7 @@ public class SetTurnoutCommandTests
     [TestMethod]
     public void SetTurnoutCommand_EncodesOutputBit_WhenOff()
     {
-        var command = SetTurnoutCommand.Throw(Address.From(0), activate: false);
+        var command = SetTurnoutCommand.Throw(Address.From(1), activate: false);
         var bytes = command.GetBytesWithChecksum();
 
         // ON bit (bit 4 of SW2) should be clear
@@ -165,7 +170,7 @@ public class SwitchAcknowledgeCommandTests
     public void SwitchAcknowledgeCommand_GeneratesCorrectOpcode_InBytes()
     {
         var command = new SwitchAcknowledgeCommand(
-            Address.From(0),
+            Address.From(1),
             Position.ClosedOrGreen,
             MotorState.Off);
 
@@ -200,7 +205,7 @@ public class RequestSwitchStateCommandTests
     [TestMethod]
     public void RequestSwitchStateCommand_GeneratesCorrectOpcode_InBytes()
     {
-        var command = new RequestSwitchStateCommand(Address.From(0));
+        var command = new RequestSwitchStateCommand(Address.From(1));
         var bytes = command.GetBytesWithChecksum();
 
         Assert.AreEqual(0xBC, bytes[0]);
@@ -209,12 +214,13 @@ public class RequestSwitchStateCommandTests
     [TestMethod]
     public void RequestSwitchStateCommand_EncodesAddressCorrectly()
     {
+        // User address 500 → wire address 499
         var command = new RequestSwitchStateCommand(Address.From(500));
         var bytes = command.GetBytesWithChecksum();
 
-        // Decode address from bytes to verify
-        ushort decodedAddress = (ushort)(bytes[1] | ((bytes[2] & 0x0F) << 7));
-        Assert.AreEqual(500, decodedAddress);
+        // Decode wire address from bytes to verify encoding
+        ushort wireAddress = (ushort)(bytes[1] | ((bytes[2] & 0x0F) << 7));
+        Assert.AreEqual(499, wireAddress, "User address 500 should encode to wire address 499");
     }
 
     [TestMethod]

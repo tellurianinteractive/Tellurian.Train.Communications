@@ -1,5 +1,5 @@
 using Tellurian.Trains.Communications.Channels;
-using Tellurian.Trains.Interfaces.Extensions;
+using Tellurian.Trains.Communications.Interfaces.Extensions;
 
 namespace Tellurian.Trains.Adapters.LocoNet.Tests;
 

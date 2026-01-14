@@ -1,1 +1,1 @@
-global using Tellurian.Trains.Interfaces.Locos;
+global using Tellurian.Trains.Communications.Interfaces.Locos;

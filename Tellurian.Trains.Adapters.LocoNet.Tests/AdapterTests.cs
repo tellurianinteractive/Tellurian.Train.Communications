@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Tellurian.Trains.Communications.Channels;
-using Tellurian.Trains.Interfaces.Extensions;
+using Tellurian.Trains.Communications.Interfaces.Extensions;
 using Tellurian.Trains.Protocols.LocoNet;
 using Tellurian.Trains.Protocols.LocoNet.Commands;
 using Tellurian.Trains.Protocols.LocoNet.Notifications;
@@ -141,8 +141,7 @@ public class AdapterTests
 
         adapter.Dispose();
 
-        // Should not throw
-        Assert.IsTrue(true);
+        // Test passes if no exception is thrown
     }
 
     [TestMethod]
@@ -153,8 +152,7 @@ public class AdapterTests
 
         await adapter.DisposeAsync();
 
-        // Should not throw
-        Assert.IsTrue(true);
+        // Test passes if no exception is thrown
     }
 
     private static byte CalculateChecksum(byte[] data)

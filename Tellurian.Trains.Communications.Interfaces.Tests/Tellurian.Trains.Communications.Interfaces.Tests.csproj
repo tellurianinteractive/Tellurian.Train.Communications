@@ -1,0 +1,14 @@
+﻿<Project Sdk="MSTest.Sdk/4.0.2">
+	<PropertyGroup>
+		<AssemblyName>Tellurian.Trains.Communications.Interfaces.Tests</AssemblyName>
+		<RootNamespace>Tellurian.Trains.Communications.Interfaces.Tests</RootNamespace>
+		<IsPackable>false</IsPackable>
+		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\Tellurian.Trains.Communications.Interfaces\Tellurian.Trains.Communications.Interfaces.csproj" />
+	</ItemGroup>
+
+</Project>

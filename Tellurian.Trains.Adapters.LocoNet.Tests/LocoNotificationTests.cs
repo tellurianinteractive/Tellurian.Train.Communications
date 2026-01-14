@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using Tellurian.Trains.Interfaces.Locos;
+using Tellurian.Trains.Communications.Interfaces.Locos;
 
 namespace Tellurian.Trains.Adapters.LocoNet.Tests;
 

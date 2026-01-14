@@ -35,7 +35,7 @@ LocoNet is a peer-to-peer, multi-drop network protocol developed by Digitrax for
 - ✅ Throw/close switches (with and without acknowledge)
 - ✅ Switch state requests
 - ✅ Switch feedback reports (input and output status)
-- ✅ 11-bit addressing (0-2047)
+- ✅ User addressing 1-2048 (maps to wire addresses 0-2047)
 
 #### Sensor & Feedback
 - ✅ General sensor input reports (OPC_INPUT_REP)
@@ -149,8 +149,10 @@ All LocoNet messages follow a consistent format:
 - Long (128-9999): 14-bit split across two 7-bit bytes
 
 **Switch Addresses:**
-- 11-bit addressing (0-2047)
+- User addresses: 1-2048 (what you configure in your software)
+- Wire addresses: 0-2047 (what is sent on LocoNet)
 - Encoded in SW1 (low 7 bits) and SW2 (high 4 bits + control)
+- The library automatically converts user → wire (-1) and wire → user (+1)
 
 ## Usage Examples
 
@@ -423,7 +425,7 @@ if (msg is UnsupportedNotification unsupported)
 #### Data Types
 - `SlotData` - Complete slot information structure
 - `LocoAddress` - Locomotive address (1-9999)
-- `AccessoryAddress` - Switch/turnout address (0-2047)
+- `AccessoryAddress` - Switch/turnout address (1-2048 user addresses)
 - `CV` - Configuration Variable with number (1-1024) and value (0-255)
 - `SlotStatus`, `ConsistStatus`, `DecoderType`, `TrackStatus` - Enums
 - `ProgrammingMode`, `ProgrammingOperation`, `ProgrammingStatus` - Programming types

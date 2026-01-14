@@ -1,11 +1,13 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Tellurian.Trains.Protocols.XpressNet.Notifications;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Json.Converters;
 
 /// <summary>
-/// JSON converter for XpressNet <see cref="Message"/> that serializes all public properties.
-/// Supports polymorphic serialization with type discrimination.
+/// JSON converter for XpressNet <see cref="Message"/> that serializes message properties.
+/// Supports polymorphic serialization with type discrimination for logging/debugging purposes.
+/// AOT-compatible: does not use reflection-based serialization.
 /// </summary>
 public sealed class XpressNetMessageConverter : JsonConverter<Message>
 {
@@ -31,62 +33,70 @@ public sealed class XpressNetMessageConverter : JsonConverter<Message>
         writer.WriteNumber("length", value.Length);
         writer.WriteString("dataHex", value.DataHex);
 
-        // Write type-specific properties using reflection
-        WriteTypeSpecificProperties(writer, value, options);
+        // Write type-specific properties explicitly for AOT compatibility
+        WriteTypeSpecificProperties(writer, value);
 
         writer.WriteEndObject();
     }
 
-    private static void WriteTypeSpecificProperties(Utf8JsonWriter writer, Message value, JsonSerializerOptions options)
+    private static void WriteTypeSpecificProperties(Utf8JsonWriter writer, Message value)
     {
-        var type = value.GetType();
-        var baseProperties = typeof(Message).GetProperties().Select(p => p.Name).ToHashSet();
-
-        foreach (var property in type.GetProperties())
+        switch (value)
         {
-            // Skip properties defined in the base class (already written)
-            if (baseProperties.Contains(property.Name))
-                continue;
+            // Notifications with meaningful properties
+            case LocoInfoNotification notification:
+                writer.WriteNumber("address", notification.Address.Number);
+                writer.WriteString("direction", ToCamelCase(notification.Direction.ToString()));
+                writer.WriteBoolean("isControlledByOtherDevice", notification.IsControlledByOtherDevice);
+                writer.WriteNumber("speedMaxSteps", notification.Speed.MaxSteps);
+                writer.WriteNumber("speedCurrent", notification.Speed.Current);
+                break;
 
-            // Skip properties with JsonIgnore attribute
-            if (property.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Length > 0)
-                continue;
+            case VersionNotification notification:
+                writer.WriteString("version", notification.Version);
+                writer.WriteString("busName", notification.BusName);
+                writer.WriteString("commandStationName", notification.CommandStationName);
+                break;
 
-            // Skip indexers
-            if (property.GetIndexParameters().Length > 0)
-                continue;
+            case FirmwareNotification notification:
+                writer.WriteNumber("majorVersion", notification.MajorVersion);
+                writer.WriteNumber("minorVersion", notification.MinorVersion);
+                break;
 
-            try
-            {
-                var propertyValue = property.GetValue(value);
-                var propertyName = GetPropertyName(property.Name, options);
+            case AccessoryDecoderInfoNotification notification:
+                writer.WriteNumber("groupAddress", notification.GroupAddress);
+                writer.WriteNumber("firstTurnoutAddress", notification.FirstTurnoutAddress);
+                writer.WriteNumber("secondTurnoutAddress", notification.SecondTurnoutAddress);
+                break;
 
-                if (propertyValue == null)
-                {
-                    if (options.DefaultIgnoreCondition != JsonIgnoreCondition.WhenWritingNull)
-                    {
-                        writer.WriteNull(propertyName);
-                    }
-                }
-                else
-                {
-                    writer.WritePropertyName(propertyName);
-                    JsonSerializer.Serialize(writer, propertyValue, propertyValue.GetType(), options);
-                }
-            }
-            catch
-            {
-                // Skip properties that throw exceptions when accessed
-            }
+            case LocoOperatedByAnotherDeviceNotification notification:
+                writer.WriteNumber("locoAddress", notification.LocoAddress.Number);
+                break;
+
+            case AddressRetrievalNotification notification:
+                writer.WriteNumber("locoAddress", notification.LocoAddress.Number);
+                break;
+
+            // Simple notifications and broadcasts (no additional properties beyond common ones)
+            case TrackPowerOnBroadcast:
+            case TrackPowerOffBroadcast:
+            case EmergencyStopBroadcast:
+            case TrackShortCircuitNotification:
+            case TransferErrorNotification:
+            case CommandStationBusyNotification:
+            case UnknownCommandNotification:
+                // No additional properties to write
+                break;
+
+            default:
+                // For unknown types, the common properties (header, length, dataHex) are sufficient for debugging
+                break;
         }
     }
 
-    private static string GetPropertyName(string propertyName, JsonSerializerOptions options)
+    private static string ToCamelCase(string value)
     {
-        if (options.PropertyNamingPolicy != null)
-        {
-            return options.PropertyNamingPolicy.ConvertName(propertyName);
-        }
-        return propertyName;
+        if (string.IsNullOrEmpty(value)) return value;
+        return char.ToLowerInvariant(value[0]) + value[1..];
     }
 }

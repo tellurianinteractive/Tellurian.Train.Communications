@@ -6,12 +6,12 @@
     <File Path="ReleaseNotes.md" />
     <File Path="TODO.txt" />
   </Folder>
-  <Folder Name="/Solution Items/Agent Guidelines/">
-    <File Path="Agent Guidelines/Build and Release Process.md" />
-    <File Path="Agent Guidelines/Coding Conventions.md" />
-    <File Path="Agent Guidelines/Documentation and comments.md" />
-    <File Path="Agent Guidelines/Running Tests.md" />
-    <File Path="Agent Guidelines/System Architecture.md" />
+  <Folder Name="/Solution Items/.agent_guidelines/">
+    <File Path=".agent_guidelines/Build and Release Process.md" />
+    <File Path=".agent_guidelines/Coding Conventions.md" />
+    <File Path=".agent_guidelines/Documentation and comments.md" />
+    <File Path=".agent_guidelines/Running Tests.md" />
+    <File Path=".agent_guidelines/System Architecture.md" />
   </Folder>
   <Project Path="Tellurian.Trains.Adapters.LocoNet.Tests/Tellurian.Trains.Adapters.LocoNet.Tests.csproj" />
   <Project Path="Tellurian.Trains.Adapters.LocoNet/Tellurian.Trains.Adapters.LocoNet.csproj" />
@@ -19,8 +19,8 @@
   <Project Path="Tellurian.Trains.Adapters.Z21/Tellurian.Trains.Adapters.Z21.csproj" />
   <Project Path="Tellurian.Trains.Communications.Channels.Tests/Tellurian.Trains.Communications.Channels.Tests.csproj" />
   <Project Path="Tellurian.Trains.Communications.Channels/Tellurian.Trains.Communications.Channels.csproj" />
-  <Project Path="Tellurian.Trains.Interfaces.Tests/Tellurian.Trains.Interfaces.Tests.csproj" />
-  <Project Path="Tellurian.Trains.Interfaces/Tellurian.Trains.Interfaces.csproj" />
+  <Project Path="Tellurian.Trains.Communications.Interfaces.Tests/Tellurian.Trains.Communications.Interfaces.Tests.csproj" />
+  <Project Path="Tellurian.Trains.Communications.Interfaces/Tellurian.Trains.Communications.Interfaces.csproj" />
   <Project Path="Tellurian.Trains.Protocols.LocoNet.Tests/Tellurian.Trains.Protocols.LocoNet.Tests.csproj" />
   <Project Path="Tellurian.Trains.Protocols.LocoNet/Tellurian.Trains.Protocols.LocoNet.csproj" />
   <Project Path="Tellurian.Trains.Protocols.XpressNet.Tests/Tellurian.Trains.Protocols.XpressNet.Tests.csproj" />

@@ -14,10 +14,11 @@ This document provides detailed documentation for the `Tellurian.Trains.Adapters
 - [Observer Pattern](#observer-pattern)
 - [Error Handling](#error-handling)
 - [Thread Safety](#thread-safety)
+- [Accessory Addressing](#accessory-addressing)
 
 ## Architecture Overview
 
-The Z21 adapter serves as a bridge between the protocol-agnostic interfaces defined in `Tellurian.Trains.Interfaces` and the Z21 command station hardware.
+The Z21 adapter serves as a bridge between the protocol-agnostic interfaces defined in `Tellurian.Trains.Communications.Interfaces` and the Z21 command station hardware.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -76,7 +77,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Tellurian.Trains.Adapters.Z21;
 using Tellurian.Trains.Communications.Channels;
-using Tellurian.Trains.Interfaces.Locos;
+using Tellurian.Trains.Communications.Interfaces.Locos;
 
 var services = new ServiceCollection();
 
@@ -287,7 +288,7 @@ The Z21 protocol uses a simple frame structure for all messages:
 | `LocoAddressMode` | 0x60 | Get locomotive address mode |
 | `SetLocomotiveAddressMode` | 0x61 | Set locomotive address mode |
 | `TurnoutAddressMode` | 0x70 | Get turnout address mode |
-| `SetTurnoutAddressMode` | 0x71 | Set turnout address mode |
+| `SetTurnoutAddressMode` | 0x71 | Set turnout address mode (see [Accessory Addressing](#accessory-addressing)) |
 | `SystemStateChanged` | 0x84 | System state change notification |
 | `SystemState` | 0x85 | Request system state |
 | `LocoNetReceive` | 0xA0 | LocoNet message received |
@@ -612,6 +613,43 @@ public class WpfObserver : IObserver<Notification>
     }
 }
 ```
+
+## Accessory Addressing
+
+### User vs Wire Addresses
+
+This library uses **1-based user addresses** (1-2048) for accessories and turnouts. This matches how users typically configure their systems - turnout #1 is address 1, not address 0.
+
+Internally, the protocol layers convert to **0-based wire addresses** (0-2047) when encoding commands. This conversion is automatic and transparent to your application code.
+
+```csharp
+// Your code uses user addresses (1-based)
+var turnoutAddress = AccessoryAddress.From(100);  // Turnout #100
+await adapter.SetThrownAsync(turnoutAddress, true);
+
+// Internally converted to wire address 99 for the protocol
+```
+
+### Z21 Module Addressing (+4 Shift)
+
+There is a historical ambiguity in the DCC specification about how accessory addresses map to decoder modules:
+
+| System | Module 0 Contains | Effect |
+|--------|-------------------|--------|
+| **Roco/Z21** | Addresses 1-4 | Standard for Z21 users |
+| **Other manufacturers** | Addresses 5-8 | Shifted by 4 |
+
+This means a turnout programmed as address 1 on another system may respond to address 5 on a Z21, and vice versa.
+
+### Fixing Address Mismatches
+
+The Z21 has a configuration option **"DCC-Weichenadressverschiebung +4"** (DCC turnout address shift +4) that compensates for this:
+
+- **Enable** if your accessories are off by 4 compared to another system
+- **Configure via** Z21 Maintenance software (not through the protocol API)
+- **Effect**: Z21 internally adds 4 to all accessory addresses before sending
+
+**Note**: This library does not handle the +4 shift - it's a hardware setting. Your application should use the same address scheme as displayed on your Z21 or throttle.
 
 ## Resource Management
 

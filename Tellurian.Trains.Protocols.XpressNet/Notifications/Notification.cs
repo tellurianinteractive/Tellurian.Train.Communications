@@ -1,6 +1,6 @@
-using Tellurian.Trains.Interfaces.Decoder;
-using Tellurian.Trains.Interfaces.Extensions;
-using Tellurian.Trains.Interfaces.Locos;
+using Tellurian.Trains.Communications.Interfaces.Decoder;
+using Tellurian.Trains.Communications.Interfaces.Extensions;
+using Tellurian.Trains.Communications.Interfaces.Locos;
 using Tellurian.Trains.Protocols.XpressNet.Decoder;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Notifications;
@@ -17,13 +17,13 @@ public abstract class Notification : Message
 
 public static class NotificationExtensions
 {
-    private static readonly IDictionary<Type, Func<Notification, Interfaces.Notification[]>> Mappings = new Dictionary<Type, Func<Notification, Interfaces.Notification[]>>()
+    private static readonly IDictionary<Type, Func<Notification, Tellurian.Trains.Communications.Interfaces.Notification[]>> Mappings = new Dictionary<Type, Func<Notification, Tellurian.Trains.Communications.Interfaces.Notification[]>>()
     {
         { typeof(LocoInfoNotification), MapLocoInfoNotification },
         { typeof(WriteCVResponse), MapDecoderResponse }
     };
 
-    public static Interfaces.Notification[] Map(this Notification notification)
+    public static Tellurian.Trains.Communications.Interfaces.Notification[] Map(this Notification notification)
     {
         var key = notification?.GetType().Key() ?? throw new ArgumentNullException(nameof(notification));
         if (key is null) return MapDefaults.CreateUnmapped(notification.ToString());
@@ -32,16 +32,16 @@ public static class NotificationExtensions
 
     private static Type Key(this Type type) => Mappings.Keys.SingleOrDefault(k => k.Equals(type) || type.IsSubclassOf(k)) ?? throw new InvalidOperationException(type.Name);
 
-    private static Interfaces.Notification[] MapLocoInfoNotification(Notification notification)
+    private static Tellurian.Trains.Communications.Interfaces.Notification[] MapLocoInfoNotification(Notification notification)
     {
         var n = (LocoInfoNotification)notification;
-        var result = new Interfaces.Notification[2];
+        var result = new Tellurian.Trains.Communications.Interfaces.Notification[2];
         result[0] = new LocoMovementNotification(n.Address, n.Direction.Map(), n.Speed.Map());
         result[1] = new LocoFunctionsNotification(n.Address, n.Functions().Map());
         return result;
     }
 
-    private static Interfaces.Notification[] MapDecoderResponse(Notification notification) =>
+    private static Tellurian.Trains.Communications.Interfaces.Notification[] MapDecoderResponse(Notification notification) =>
         [
             notification switch
             {

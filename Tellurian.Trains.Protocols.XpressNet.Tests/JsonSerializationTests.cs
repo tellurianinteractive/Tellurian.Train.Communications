@@ -20,8 +20,8 @@ public class JsonSerializationTests
 
         var json = JsonSerializer.Serialize<Message>(notification, XpressNetJsonSerializationOptions.Default);
 
-        Assert.IsTrue(json.Contains("\"$type\":\"LocoInfoNotification\""));
-        Assert.IsTrue(json.Contains("\"header\":224")); // 0xE0 = 224 (the internal parsed header)
+        StringAssert.Contains(json, "\"$type\":\"LocoInfoNotification\"");
+        StringAssert.Contains(json, "\"header\":224"); // 0xE0 = 224 (the internal parsed header)
     }
 
     [TestMethod]
@@ -31,7 +31,7 @@ public class JsonSerializationTests
 
         var json = JsonSerializer.Serialize<Message>(notification, XpressNetJsonSerializationOptions.Default);
 
-        Assert.IsTrue(json.Contains("\"$type\":\"TrackPowerOnBroadcast\""));
+        StringAssert.Contains(json, "\"$type\":\"TrackPowerOnBroadcast\"");
     }
 
     [TestMethod]
@@ -41,7 +41,7 @@ public class JsonSerializationTests
 
         var json = JsonSerializer.Serialize<Message>(notification, XpressNetJsonSerializationOptions.Default);
 
-        Assert.IsTrue(json.Contains("\"$type\":\"TrackPowerOffBroadcast\""));
+        StringAssert.Contains(json, "\"$type\":\"TrackPowerOffBroadcast\"");
     }
 
     [TestMethod]
@@ -51,7 +51,7 @@ public class JsonSerializationTests
 
         var json = JsonSerializer.Serialize<Message>(notification, XpressNetJsonSerializationOptions.Default);
 
-        Assert.IsTrue(json.Contains("\"$type\":\"EmergencyStopBroadcast\""));
+        StringAssert.Contains(json, "\"$type\":\"EmergencyStopBroadcast\"");
     }
 
     [TestMethod]
@@ -61,8 +61,8 @@ public class JsonSerializationTests
 
         var json = JsonSerializer.Serialize(speed, XpressNetJsonSerializationOptions.Default);
 
-        Assert.IsTrue(json.Contains("\"maxSteps\":126"));
-        Assert.IsTrue(json.Contains("\"current\":75"));
+        StringAssert.Contains(json, "\"maxSteps\":126");
+        StringAssert.Contains(json, "\"current\":75");
     }
 
     [TestMethod]
@@ -85,6 +85,6 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(notification, options);
 
         // Indented JSON should contain newlines
-        Assert.IsTrue(json.Contains("\n") || json.Contains("\r\n"));
+        StringAssert.Contains(json, "\n");
     }
 }

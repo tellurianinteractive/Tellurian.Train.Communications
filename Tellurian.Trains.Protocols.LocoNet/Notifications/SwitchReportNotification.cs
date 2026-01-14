@@ -1,5 +1,5 @@
 using System.Globalization;
-using Tellurian.Trains.Interfaces.Accessories;
+using Tellurian.Trains.Communications.Interfaces.Accessories;
 
 namespace Tellurian.Trains.Protocols.LocoNet.Notifications;
 
@@ -23,7 +23,8 @@ public sealed class SwitchReportNotification : Notification
         byte highBits = data[2];
 
         // Extract address from sn1 (bits A6-A0) and sn2 (bits A10-A7)
-        Address = Address.From((short)(lowBits | ((highBits & 0x0F) << 7)));
+        short wireAddress = (short)(lowBits | ((highBits & 0x0F) << 7));
+        Address = Address.FromWireAddress(wireAddress);
 
         // Bit 6 determines interpretation
         IsInputFeedback = (highBits & 0x40) != 0;
@@ -57,7 +58,7 @@ public sealed class SwitchReportNotification : Notification
     }
 
     /// <summary>
-    /// The accessory address being reported (0-2047).
+    /// The accessory address being reported (1-2048).
     /// </summary>
     public Address Address { get; }
 

@@ -22,7 +22,7 @@ public class NotificationMapperTests
         Assert.IsNotNull(result);
         Assert.HasCount(1, result);
         // Unsupported notifications should map to a message notification
-        Assert.IsInstanceOfType(result[0], typeof(Interfaces.MessageNotification));
+        Assert.IsInstanceOfType(result[0], typeof(Tellurian.Trains.Communications.Interfaces.MessageNotification));
     }
 
     [TestMethod]
@@ -38,7 +38,7 @@ public class NotificationMapperTests
 
         Assert.IsNotNull(result);
         Assert.HasCount(1, result);
-        Assert.IsInstanceOfType(result[0], typeof(Interfaces.MessageNotification));
+        Assert.IsInstanceOfType(result[0], typeof(Tellurian.Trains.Communications.Interfaces.MessageNotification));
     }
 
     [TestMethod]
@@ -65,7 +65,7 @@ public class NotificationMapperTests
 
         Assert.IsNotNull(result);
         Assert.HasCount(1, result);
-        Assert.IsInstanceOfType(result[0], typeof(Interfaces.MessageNotification));
+        Assert.IsInstanceOfType(result[0], typeof(Tellurian.Trains.Communications.Interfaces.MessageNotification));
     }
 
     [TestMethod]
@@ -79,6 +79,6 @@ public class NotificationMapperTests
 
         Assert.IsNotNull(result);
         Assert.HasCount(1, result);
-        Assert.IsInstanceOfType(result[0], typeof(Interfaces.MessageNotification));
+        Assert.IsInstanceOfType(result[0], typeof(Tellurian.Trains.Communications.Interfaces.MessageNotification));
     }
 }

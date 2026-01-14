@@ -3,10 +3,10 @@ namespace Tellurian.Trains.Adapters.LocoNet.Tests;
 /// <summary>
 /// Test helper for observing notifications from the adapter.
 /// </summary>
-internal class TestNotificationObserver : IObserver<Interfaces.Notification>
+internal class TestNotificationObserver : IObserver<Tellurian.Trains.Communications.Interfaces.Notification>
 {
     public int NotificationCount { get; private set; }
-    public List<Interfaces.Notification> Notifications { get; } = [];
+    public List<Tellurian.Trains.Communications.Interfaces.Notification> Notifications { get; } = [];
     public List<Exception> Errors { get; } = [];
     public bool IsCompleted { get; private set; }
 
@@ -20,7 +20,7 @@ internal class TestNotificationObserver : IObserver<Interfaces.Notification>
         Errors.Add(error);
     }
 
-    public void OnNext(Interfaces.Notification value)
+    public void OnNext(Tellurian.Trains.Communications.Interfaces.Notification value)
     {
         NotificationCount++;
         Notifications.Add(value);

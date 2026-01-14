@@ -1,8 +1,8 @@
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Tellurian.Trains.Communications.Channels;
-using Tellurian.Trains.Interfaces.Accessories;
-using Tellurian.Trains.Interfaces.Decoder;
+using Tellurian.Trains.Communications.Interfaces.Accessories;
+using Tellurian.Trains.Communications.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.LocoNet;
 using Tellurian.Trains.Protocols.LocoNet.Commands;
 using Tellurian.Trains.Protocols.LocoNet.Notifications;
@@ -17,12 +17,12 @@ namespace Tellurian.Trains.Adapters.LocoNet;
 /// LocoNet uses a slot-based architecture where each locomotive is assigned to a slot.
 /// This adapter manages slot allocation and caching automatically.
 /// </remarks>
-public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable<Interfaces.Notification>
+public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable<Tellurian.Trains.Communications.Interfaces.Notification>
 {
     private readonly ILogger _logger;
     private readonly ICommunicationsChannel _channel;
     private readonly ActionObserver<CommunicationResult> _receivingObserver;
-    private readonly Observers<Interfaces.Notification> _observers = new();
+    private readonly Observers<Tellurian.Trains.Communications.Interfaces.Notification> _observers = new();
     private readonly ConcurrentDictionary<ushort, byte> _addressToSlotCache = new();
     private readonly ConcurrentDictionary<byte, SlotData> _slotDataCache = new();
     private readonly SemaphoreSlim _slotRequestSemaphore = new(1, 1);
@@ -43,7 +43,7 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
     /// <summary>
     /// Subscribes to notifications from the adapter.
     /// </summary>
-    public IDisposable Subscribe(IObserver<Interfaces.Notification> observer) => _observers.Subscribe(observer);
+    public IDisposable Subscribe(IObserver<Tellurian.Trains.Communications.Interfaces.Notification> observer) => _observers.Subscribe(observer);
 
     /// <summary>
     /// Starts receiving messages from the LocoNet.
@@ -136,7 +136,7 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
         notification.Address, notification.CurrentDirection);
     }
 
-    private Interfaces.Notification? MapToInterfaceNotification(Notification notification)
+    private Tellurian.Trains.Communications.Interfaces.Notification? MapToInterfaceNotification(Notification notification)
     {
         // Map LocoNet notifications to interface notifications
         return notification switch
@@ -153,12 +153,12 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
         };
     }
 
-    private static Interfaces.Locos.LocoMovementNotification CreateLocoNotification(SlotNotification slot)
+    private static Tellurian.Trains.Communications.Interfaces.Locos.LocoMovementNotification CreateLocoNotification(SlotNotification slot)
     {
-        return new Interfaces.Locos.LocoMovementNotification(
-            Interfaces.Locos.Address.From(slot.Address),
-            slot.Direction ? Interfaces.Locos.Direction.Forward : Interfaces.Locos.Direction.Backward,
-            Interfaces.Locos.Speed.Set126((byte)(slot.Speed > 1 ? slot.Speed - 1 : 0)));
+        return new Tellurian.Trains.Communications.Interfaces.Locos.LocoMovementNotification(
+            Tellurian.Trains.Communications.Interfaces.Locos.Address.From(slot.Address),
+            slot.Direction ? Tellurian.Trains.Communications.Interfaces.Locos.Direction.Forward : Tellurian.Trains.Communications.Interfaces.Locos.Direction.Backward,
+            Tellurian.Trains.Communications.Interfaces.Locos.Speed.Set126((byte)(slot.Speed > 1 ? slot.Speed - 1 : 0)));
     }
 
     private static AccessoryNotification? CreateAccessoryNotification(SwitchReportNotification switchReport)

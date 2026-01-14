@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Tellurian.Trains.Communications.Channels;
-using Tellurian.Trains.Interfaces.Decoder;
-using Tellurian.Trains.Interfaces.Extensions;
+using Tellurian.Trains.Communications.Interfaces.Decoder;
+using Tellurian.Trains.Communications.Interfaces.Extensions;
 
 namespace Tellurian.Trains.Adapters.Z21.Tests;
 
@@ -166,10 +166,10 @@ internal class MockChannel : ICommunicationsChannel
     }
 }
 
-internal class TestNotificationObserver : IObserver<Interfaces.Notification>
+internal class TestNotificationObserver : IObserver<Tellurian.Trains.Communications.Interfaces.Notification>
 {
     public int NotificationCount { get; private set; }
-    public readonly List<Interfaces.Notification> Notifications = new List<Interfaces.Notification>();
+    public readonly List<Tellurian.Trains.Communications.Interfaces.Notification> Notifications = new List<Tellurian.Trains.Communications.Interfaces.Notification>();
 
     public void OnCompleted()
     {
@@ -180,7 +180,7 @@ internal class TestNotificationObserver : IObserver<Interfaces.Notification>
         throw error;
     }
 
-    public void OnNext(Interfaces.Notification value)
+    public void OnNext(Tellurian.Trains.Communications.Interfaces.Notification value)
     {
         NotificationCount++;
         Notifications.Add(value);

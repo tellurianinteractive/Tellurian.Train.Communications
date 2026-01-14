@@ -424,7 +424,7 @@ switch (notification)
 ### POM Byte Write
 
 ```csharp
-using Tellurian.Trains.Interfaces.Decoder;
+using Tellurian.Trains.Communications.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.XpressNet.Decoder;
 
 var address = new LocoAddress(1234);
@@ -793,10 +793,10 @@ var decoded = LocoSpeed.FromCode(0x04); // S126 mode
 
 ### CV (Configuration Variable)
 
-The `CV` struct from `Tellurian.Trains.Interfaces.Decoder` holds both the CV number and value:
+The `CV` struct from `Tellurian.Trains.Communications.Interfaces.Decoder` holds both the CV number and value:
 
 ```csharp
-using Tellurian.Trains.Interfaces.Decoder;
+using Tellurian.Trains.Communications.Interfaces.Decoder;
 
 // Create CV using constructor
 var cv = new CV(29, 6);  // CV29 = 6

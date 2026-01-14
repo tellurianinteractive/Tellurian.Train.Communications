@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.Logging;
 using Tellurian.Trains.Communications.Channels;
-using Tellurian.Trains.Interfaces.Decoder;
+using Tellurian.Trains.Communications.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.XpressNet;
 using Tellurian.Trains.Protocols.XpressNet.Commands;
 using XpressNet = Tellurian.Trains.Protocols.XpressNet.Commands;
 
 namespace Tellurian.Trains.Adapters.Z21;
 
-public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notification>
+public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.Communications.Interfaces.Notification>
 {
     private readonly ILogger Logger;
     private readonly ICommunicationsChannel Channel;
     private readonly ActionObserver<CommunicationResult> ReceivingObserver;
-    private readonly Observers<Interfaces.Notification> Observers = new();
+    private readonly Observers<Tellurian.Trains.Communications.Interfaces.Notification> Observers = new();
 
     public Adapter(ICommunicationsChannel? channel, ILogger<Adapter> logger)
     {
@@ -21,7 +21,7 @@ public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notifi
         ReceivingObserver = new ActionObserver<CommunicationResult>(ReceiveData, ReceiveError, ReceiveCompleted);
     }
 
-    public IDisposable Subscribe(IObserver<Interfaces.Notification> observer)
+    public IDisposable Subscribe(IObserver<Tellurian.Trains.Communications.Interfaces.Notification> observer)
     {
         return Observers.Subscribe(observer);
     }
@@ -34,7 +34,7 @@ public sealed partial class Adapter : IDisposable, IObservable<Interfaces.Notifi
 
     #region Commands
 
-    public Task<bool> GetLocoInfoAsync(Interfaces.Locos.Address address, CancellationToken cancellationToken = default)
+    public Task<bool> GetLocoInfoAsync(Tellurian.Trains.Communications.Interfaces.Locos.Address address, CancellationToken cancellationToken = default)
     {
         return SendAsync(new XpressNet.GetLocoInfoCommand(address), cancellationToken);
     }

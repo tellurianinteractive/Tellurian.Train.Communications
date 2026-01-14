@@ -535,10 +535,10 @@ var decoded = AccessoryAddress.DecodeSwitchBytes(
 
 ### CV (Configuration Variable)
 
-The `CV` struct is defined in `Tellurian.Trains.Interfaces.Decoder` and can be used across all protocol implementations.
+The `CV` struct is defined in `Tellurian.Trains.Communications.Interfaces.Decoder` and can be used across all protocol implementations.
 
 ```csharp
-using Tellurian.Trains.Interfaces.Decoder;
+using Tellurian.Trains.Communications.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.LocoNet.Programming;
 
 // Create CV using constructor
@@ -621,7 +621,7 @@ byte[] withChecksum = Message.AppendChecksum(dataWithoutChecksum);
 ### Programming Helpers
 
 ```csharp
-using Tellurian.Trains.Interfaces.Decoder;
+using Tellurian.Trains.Communications.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.LocoNet.Programming;
 
 // Build PCMD byte (extension method on ProgrammingMode)

@@ -1,12 +1,12 @@
 using System.Text.Json;
-using Tellurian.Trains.Interfaces.Json;
+using Tellurian.Trains.Communications.Interfaces.Json;
 using Tellurian.Trains.Protocols.LocoNet.Json.Converters;
 
 namespace Tellurian.Trains.Protocols.LocoNet.Json;
 
 /// <summary>
 /// Provides JSON serialization options for LocoNet protocol messages.
-/// Extends the base options from Tellurian.Trains.Interfaces with LocoNet-specific converters.
+/// Extends the base options from Tellurian.Trains.Communications.Interfaces with LocoNet-specific converters.
 /// </summary>
 public static class LocoNetJsonSerializationOptions
 {

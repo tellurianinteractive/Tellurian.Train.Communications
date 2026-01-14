@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using Tellurian.Trains.Interfaces.Accessories;
+using Tellurian.Trains.Communications.Interfaces.Accessories;
 
 namespace Tellurian.Trains.Adapters.LocoNet.Tests;
 
@@ -22,7 +22,7 @@ public class SwitchReportNotificationTests
         // Format: B1 <sn1> <sn2> <chk>
         // sn1 = address bits 0-6
         // sn2 = address bits 7-10 + flags
-        // For address 10, closed output on: sn1=0x0A, sn2=0x20 (C=1, T=0)
+        // For wire address 10 (user address 11), closed output on: sn1=0x0A, sn2=0x20 (C=1, T=0)
         byte[] switchReport = [0xB1, 0x0A, 0x20, 0x00];
         switchReport[3] = CalculateChecksum(switchReport);
         channel.SimulateReceive(switchReport);
@@ -33,7 +33,7 @@ public class SwitchReportNotificationTests
         Assert.IsInstanceOfType<AccessoryNotification>(observer.Notifications[0]);
 
         var accessoryNotification = (AccessoryNotification)observer.Notifications[0];
-        Assert.AreEqual(10, accessoryNotification.Address.Number);
+        Assert.AreEqual(11, accessoryNotification.Address.Number); // Wire address 10 → user address 11
         Assert.AreEqual(Position.ClosedOrGreen, accessoryNotification.Function);
     }
 
@@ -48,7 +48,7 @@ public class SwitchReportNotificationTests
         await adapter.StartReceiveAsync(TestContext.CancellationToken);
 
         // Switch report with thrown position
-        // For address 5, thrown output on: sn1=0x05, sn2=0x10 (C=0, T=1)
+        // For wire address 5 (user address 6), thrown output on: sn1=0x05, sn2=0x10 (C=0, T=1)
         byte[] switchReport = [0xB1, 0x05, 0x10, 0x00];
         switchReport[3] = CalculateChecksum(switchReport);
         channel.SimulateReceive(switchReport);
@@ -57,7 +57,7 @@ public class SwitchReportNotificationTests
 
         Assert.AreEqual(1, observer.NotificationCount);
         var accessoryNotification = (AccessoryNotification)observer.Notifications[0];
-        Assert.AreEqual(5, accessoryNotification.Address.Number);
+        Assert.AreEqual(6, accessoryNotification.Address.Number); // Wire address 5 → user address 6
         Assert.AreEqual(Position.ThrownOrRed, accessoryNotification.Function);
     }
 

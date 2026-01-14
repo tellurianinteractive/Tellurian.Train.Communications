@@ -1,9 +1,9 @@
 using System.Text.Json;
-using Tellurian.Trains.Interfaces.Accessories;
+using Tellurian.Trains.Communications.Interfaces.Accessories;
 using Tellurian.Trains.Protocols.LocoNet.Commands;
 using Tellurian.Trains.Protocols.LocoNet.Json;
-using LocoAddress = Tellurian.Trains.Interfaces.Locos.Address;
-using AccessoryAddress = Tellurian.Trains.Interfaces.Accessories.Address;
+using LocoAddress = Tellurian.Trains.Communications.Interfaces.Locos.Address;
+using AccessoryAddress = Tellurian.Trains.Communications.Interfaces.Accessories.Address;
 
 namespace Tellurian.Trains.Protocols.LocoNet.Tests;
 
@@ -17,8 +17,8 @@ public class JsonSerializationTests
 
         var json = JsonSerializer.Serialize<Message>(command, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsTrue(json.Contains("\"$type\":\"PowerOnCommand\""));
-        Assert.IsTrue(json.Contains("\"messageType\":\"PowerOnCommand\""));
+        StringAssert.Contains(json, "\"$type\":\"PowerOnCommand\"");
+        StringAssert.Contains(json, "\"messageType\":\"PowerOnCommand\"");
     }
 
     [TestMethod]
@@ -28,7 +28,7 @@ public class JsonSerializationTests
 
         var json = JsonSerializer.Serialize<Message>(command, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsTrue(json.Contains("\"$type\":\"PowerOffCommand\""));
+        StringAssert.Contains(json, "\"$type\":\"PowerOffCommand\"");
     }
 
     [TestMethod]
@@ -38,7 +38,7 @@ public class JsonSerializationTests
 
         var json = JsonSerializer.Serialize<Message>(command, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsTrue(json.Contains("\"$type\":\"ForceIdleCommand\""));
+        StringAssert.Contains(json, "\"$type\":\"ForceIdleCommand\"");
     }
 
     [TestMethod]
@@ -50,7 +50,7 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(command, options);
 
         // Indented JSON should contain newlines
-        Assert.IsTrue(json.Contains("\n") || json.Contains("\r\n"));
+        StringAssert.Contains(json, "\n");
     }
 
     // Round-trip tests

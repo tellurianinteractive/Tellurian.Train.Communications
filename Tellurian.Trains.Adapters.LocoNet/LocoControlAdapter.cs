@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using Tellurian.Trains.Interfaces.Locos;
+using Tellurian.Trains.Communications.Interfaces.Locos;
 using Tellurian.Trains.Protocols.LocoNet;
 using Tellurian.Trains.Protocols.LocoNet.Commands;
 

@@ -11,7 +11,7 @@ This project targets .NET 10.0. and the .NET 10 SDK. This is only defined global
 
 ## Project Structure Summary
 - **Tellurian.Communications.Channels**: UDP transport layer - see `Tellurian.Communications.Channels/CLAUDE.md`
-- **Tellurian.Trains.Interfaces**: Protocol-agnostic interfaces and types - see `Tellurian.Trains.Interfaces/CLAUDE.md`
+- **Tellurian.Trains.Communications.Interfaces**: Protocol-agnostic interfaces and types - see `Tellurian.Trains.Communications.Interfaces/CLAUDE.md`
 - **Tellurian.Trains.Protocols.XpressNet**: XpressNet protocol implementation - see `Tellurian.Trains.Protocols.XpressNet/CLAUDE.md`
 - **Tellurian.Protocols.LocoNet**: LocoNet protocol implementation - see `Tellurian.Protocols.LocoNet/CLAUDE.md`
 - **Tellurian.Trains.Adapters.Z21**: Z21 command station adapter - see `Tellurian.Trains.Adapters.Z21/CLAUDE.md`
@@ -23,7 +23,7 @@ If you need absolute paths, use:
 - C:\Utveckling\Github\Tellurian.Trains\Train.Control\
 
 ## Additional Context
-- Additional context for specific tasks can be found 'Agent Guidelines' sub-folder.
+- Additional context for specific tasks can be found '.agent_guidelines' folder:
   - System Architecture.md
   - Coding Conventions.md
   - Build and Release Process.md

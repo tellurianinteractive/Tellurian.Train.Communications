@@ -1,5 +1,5 @@
-using Tellurian.Trains.Interfaces.Decoder;
-using Tellurian.Trains.Interfaces.Locos;
+using Tellurian.Trains.Communications.Interfaces.Decoder;
+using Tellurian.Trains.Communications.Interfaces.Locos;
 using Tellurian.Trains.Protocols.XpressNet.Commands;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Decoder;

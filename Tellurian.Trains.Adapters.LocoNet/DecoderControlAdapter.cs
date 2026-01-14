@@ -1,4 +1,4 @@
-using Tellurian.Trains.Interfaces.Decoder;
+using Tellurian.Trains.Communications.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.LocoNet.Commands;
 using Tellurian.Trains.Protocols.LocoNet.Notifications;
 using Tellurian.Trains.Protocols.LocoNet.Programming;

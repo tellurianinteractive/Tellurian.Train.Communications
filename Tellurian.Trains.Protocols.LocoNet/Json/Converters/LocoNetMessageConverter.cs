@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Tellurian.Trains.Interfaces.Accessories;
+using Tellurian.Trains.Communications.Interfaces.Accessories;
 using Tellurian.Trains.Protocols.LocoNet.Commands;
 using Tellurian.Trains.Protocols.LocoNet.Notifications;
 
@@ -31,10 +31,10 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
         var typeName = typeProperty.GetString()
             ?? throw new JsonException("$type discriminator is null");
 
-        return CreateMessage(typeName, root, options);
+        return CreateMessage(typeName, root);
     }
 
-    private static Message CreateMessage(string typeName, JsonElement root, JsonSerializerOptions options)
+    private static Message CreateMessage(string typeName, JsonElement root)
     {
         return typeName switch
         {
@@ -47,10 +47,10 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
             nameof(SetLocoSpeedCommand) => CreateSetLocoSpeedCommand(root),
             nameof(RequestSlotDataCommand) => CreateRequestSlotDataCommand(root),
             nameof(MoveSlotCommand) => CreateMoveSlotCommand(root),
-            nameof(GetLocoAddressCommand) => CreateGetLocoAddressCommand(root, options),
-            nameof(SetTurnoutCommand) => CreateSetTurnoutCommand(root, options),
-            nameof(RequestSwitchStateCommand) => CreateRequestSwitchStateCommand(root, options),
-            nameof(SwitchAcknowledgeCommand) => CreateSwitchAcknowledgeCommand(root, options),
+            nameof(GetLocoAddressCommand) => CreateGetLocoAddressCommand(root),
+            nameof(SetTurnoutCommand) => CreateSetTurnoutCommand(root),
+            nameof(RequestSwitchStateCommand) => CreateRequestSwitchStateCommand(root),
+            nameof(SwitchAcknowledgeCommand) => CreateSwitchAcknowledgeCommand(root),
 
             // Notifications with raw data
             nameof(SlotNotification) => CreateSlotNotification(root),
@@ -84,32 +84,64 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
         return new MoveSlotCommand(sourceSlot, destinationSlot);
     }
 
-    private static GetLocoAddressCommand CreateGetLocoAddressCommand(JsonElement root, JsonSerializerOptions options)
+    private static GetLocoAddressCommand CreateGetLocoAddressCommand(JsonElement root)
     {
-        var address = GetProperty<Interfaces.Locos.Address>(root, "address", options);
+        var address = Tellurian.Trains.Communications.Interfaces.Locos.Address.From(GetInt16Property(root, "address"));
         return new GetLocoAddressCommand(address);
     }
 
-    private static SetTurnoutCommand CreateSetTurnoutCommand(JsonElement root, JsonSerializerOptions options)
+    private static SetTurnoutCommand CreateSetTurnoutCommand(JsonElement root)
     {
-        var address = GetProperty<Interfaces.Accessories.Address>(root, "address", options);
-        var direction = GetProperty<Position>(root, "direction", options);
-        var output = GetProperty<MotorState>(root, "output", options);
+        var address = Tellurian.Trains.Communications.Interfaces.Accessories.Address.From(GetInt16Property(root, "address"));
+        var direction = GetPositionProperty(root, "direction");
+        var output = GetMotorStateProperty(root, "output");
         return new SetTurnoutCommand(address, direction, output);
     }
 
-    private static RequestSwitchStateCommand CreateRequestSwitchStateCommand(JsonElement root, JsonSerializerOptions options)
+    private static RequestSwitchStateCommand CreateRequestSwitchStateCommand(JsonElement root)
     {
-        var address = GetProperty<Interfaces.Accessories.Address>(root, "address", options);
+        var address = Tellurian.Trains.Communications.Interfaces.Accessories.Address.From(GetInt16Property(root, "address"));
         return new RequestSwitchStateCommand(address);
     }
 
-    private static SwitchAcknowledgeCommand CreateSwitchAcknowledgeCommand(JsonElement root, JsonSerializerOptions options)
+    private static SwitchAcknowledgeCommand CreateSwitchAcknowledgeCommand(JsonElement root)
     {
-        var address = GetProperty<Interfaces.Accessories.Address>(root, "address", options);
-        var direction = GetProperty<Position>(root, "direction", options);
-        var output = GetProperty<MotorState>(root, "output", options);
+        var address = Tellurian.Trains.Communications.Interfaces.Accessories.Address.From(GetInt16Property(root, "address"));
+        var direction = GetPositionProperty(root, "direction");
+        var output = GetMotorStateProperty(root, "output");
         return new SwitchAcknowledgeCommand(address, direction, output);
+    }
+
+    private static Position GetPositionProperty(JsonElement element, string propertyName)
+    {
+        if (element.TryGetProperty(propertyName, out var prop) ||
+            element.TryGetProperty(ToCamelCase(propertyName), out prop))
+        {
+            var value = prop.GetString();
+            return value?.ToLowerInvariant() switch
+            {
+                "closedorgreen" => Position.ClosedOrGreen,
+                "thrownorred" => Position.ThrownOrRed,
+                _ => throw new JsonException($"Unknown Position value: {value}")
+            };
+        }
+        throw new JsonException($"Missing required property: {propertyName}");
+    }
+
+    private static MotorState GetMotorStateProperty(JsonElement element, string propertyName)
+    {
+        if (element.TryGetProperty(propertyName, out var prop) ||
+            element.TryGetProperty(ToCamelCase(propertyName), out prop))
+        {
+            var value = prop.GetString();
+            return value?.ToLowerInvariant() switch
+            {
+                "on" => MotorState.On,
+                "off" => MotorState.Off,
+                _ => throw new JsonException($"Unknown MotorState value: {value}")
+            };
+        }
+        throw new JsonException($"Missing required property: {propertyName}");
     }
 
     private static SlotNotification CreateSlotNotification(JsonElement root)
@@ -212,17 +244,6 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
         throw new JsonException($"Missing required property: {propertyName}");
     }
 
-    private static T GetProperty<T>(JsonElement element, string propertyName, JsonSerializerOptions options)
-    {
-        if (element.TryGetProperty(propertyName, out var prop) ||
-            element.TryGetProperty(ToCamelCase(propertyName), out prop))
-        {
-            return JsonSerializer.Deserialize<T>(prop.GetRawText(), options)
-                ?? throw new JsonException($"Failed to deserialize property: {propertyName}");
-        }
-        throw new JsonException($"Missing required property: {propertyName}");
-    }
-
     private static byte[] GetBytesFromHex(JsonElement element, string propertyName)
     {
         if (element.TryGetProperty(propertyName, out var prop) ||
@@ -234,12 +255,6 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
         throw new JsonException($"Missing required property: {propertyName}");
     }
 
-    private static string ToCamelCase(string name)
-    {
-        if (string.IsNullOrEmpty(name)) return name;
-        return char.ToLowerInvariant(name[0]) + name[1..];
-    }
-
     public override void Write(Utf8JsonWriter writer, Message value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
@@ -247,62 +262,106 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
         // Write the type discriminator
         writer.WriteString("$type", value.GetType().Name);
 
-        // Write type-specific properties using reflection
-        WriteTypeSpecificProperties(writer, value, options);
+        // Write common Message property (for backward compatibility)
+        writer.WriteString("messageType", value.MessageType);
+
+        // Write type-specific properties explicitly for AOT compatibility
+        WriteTypeSpecificProperties(writer, value);
 
         writer.WriteEndObject();
     }
 
-    private static void WriteTypeSpecificProperties(Utf8JsonWriter writer, Message value, JsonSerializerOptions options)
+    private static void WriteTypeSpecificProperties(Utf8JsonWriter writer, Message value)
     {
-        var type = value.GetType();
-
-        foreach (var property in type.GetProperties())
+        switch (value)
         {
-            // Skip properties with JsonIgnore attribute
-            if (property.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Length > 0)
-                continue;
+            // Simple commands (no additional properties)
+            case PowerOnCommand:
+            case PowerOffCommand:
+            case ForceIdleCommand:
+            case MasterBusyNotification:
+                break;
 
-            // Skip indexers
-            if (property.GetIndexParameters().Length > 0)
-                continue;
+            // Commands with simple numeric properties
+            case SetLocoSpeedCommand cmd:
+                writer.WriteNumber("slot", cmd.Slot);
+                writer.WriteNumber("speed", cmd.Speed);
+                break;
 
-            try
-            {
-                var propertyValue = property.GetValue(value);
-                var propertyName = GetPropertyName(property.Name, options);
+            case RequestSlotDataCommand cmd:
+                writer.WriteNumber("slotNumber", cmd.SlotNumber);
+                break;
 
-                if (propertyValue == null)
+            case MoveSlotCommand cmd:
+                writer.WriteNumber("sourceSlot", cmd.SourceSlot);
+                writer.WriteNumber("destinationSlot", cmd.DestinationSlot);
+                break;
+
+            case GetLocoAddressCommand cmd:
+                writer.WriteNumber("address", cmd.Address.Number);
+                break;
+
+            case SetTurnoutCommand cmd:
+                writer.WriteNumber("address", cmd.Address.Number);
+                writer.WriteString("direction", ToCamelCase(cmd.Direction.ToString()));
+                writer.WriteString("output", ToCamelCase(cmd.Output.ToString()));
+                break;
+
+            case RequestSwitchStateCommand cmd:
+                writer.WriteNumber("address", cmd.Address.Number);
+                break;
+
+            case SwitchAcknowledgeCommand cmd:
+                writer.WriteNumber("address", cmd.Address.Number);
+                writer.WriteString("direction", ToCamelCase(cmd.Direction.ToString()));
+                writer.WriteString("output", ToCamelCase(cmd.Output.ToString()));
+                break;
+
+            // Notifications
+            case SlotNotification notification:
+                writer.WriteString("rawData", BitConverter.ToString(notification.RawData));
+                writer.WriteNumber("slotNumber", notification.SlotNumber);
+                writer.WriteNumber("locoAddress", notification.Address);
+                writer.WriteNumber("speed", notification.Speed);
+                writer.WriteBoolean("direction", notification.Direction);
+                writer.WriteString("status", ToCamelCase(notification.Status.ToString()));
+                break;
+
+            case SensorInputNotification notification:
+                writer.WriteNumber("address", notification.Address);
+                writer.WriteBoolean("isSwitchInput", notification.IsSwitchInput);
+                writer.WriteBoolean("isHigh", notification.IsHigh);
+                break;
+
+            case SwitchReportNotification notification:
+                writer.WriteNumber("address", notification.Address.Number);
+                writer.WriteBoolean("isInputFeedback", notification.IsInputFeedback);
+                if (notification.IsInputFeedback)
                 {
-                    if (options.DefaultIgnoreCondition != JsonIgnoreCondition.WhenWritingNull)
-                    {
-                        writer.WriteNull(propertyName);
-                    }
-                }
-                else if (propertyValue is byte[] byteArray)
-                {
-                    // Serialize byte arrays as hex strings
-                    writer.WriteString(propertyName, BitConverter.ToString(byteArray));
+                    writer.WriteBoolean("isSwitchInput", notification.IsSwitchInput);
+                    writer.WriteBoolean("isInputHigh", notification.IsInputHigh);
                 }
                 else
                 {
-                    writer.WritePropertyName(propertyName);
-                    JsonSerializer.Serialize(writer, propertyValue, propertyValue.GetType(), options);
+                    writer.WriteBoolean("closedOutputOn", notification.ClosedOutputOn);
+                    writer.WriteBoolean("thrownOutputOn", notification.ThrownOutputOn);
                 }
-            }
-            catch
-            {
-                // Skip properties that throw exceptions when accessed
-            }
+                break;
+
+            case LongAcknowledge notification:
+                writer.WriteNumber("forOperationCode", notification.ForOperationCode);
+                writer.WriteNumber("responseCode", notification.ResponseCode);
+                break;
+
+            default:
+                // For unknown types, the common properties are sufficient for debugging
+                break;
         }
     }
 
-    private static string GetPropertyName(string propertyName, JsonSerializerOptions options)
+    private static string ToCamelCase(string value)
     {
-        if (options.PropertyNamingPolicy != null)
-        {
-            return options.PropertyNamingPolicy.ConvertName(propertyName);
-        }
-        return propertyName;
+        if (string.IsNullOrEmpty(value)) return value;
+        return char.ToLowerInvariant(value[0]) + value[1..];
     }
 }
