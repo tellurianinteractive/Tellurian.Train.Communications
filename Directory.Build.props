@@ -22,9 +22,9 @@
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
 
-	<Target Name="CopyPackageToLocalNugets" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release' AND '$(IsPackable)' != 'false'">
+	<Target Name="CopyPackageToLocalNugets" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release' AND '$(IsPackable)' != 'false' AND '$(CI)' != 'true'">
 		<Copy SourceFiles="$(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg" DestinationFolder="C:/Nugets" />
-		<Copy SourceFiles="$(PackageOutputPath)$(PackageId).$(PackageVersion).snupkg" DestinationFolder="C:/Nugets" />
+		<Copy SourceFiles="$(PackageOutputPath)$(PackageId).$(PackageVersion).snupkg" DestinationFolder="C:/Nugets" Condition="Exists('$(PackageOutputPath)$(PackageId).$(PackageVersion).snupkg')" />
 	</Target>
 
 </Project>
