@@ -36,7 +36,7 @@ public class PacketTests
     {
         var target = new Packet(data);
         var actual = target.Notification;
-        Assert.IsInstanceOfType(actual, typeof(T));
+        Assert.IsInstanceOfType<T>(actual);
     }
 
     private class TestMessage : Command

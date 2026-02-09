@@ -11,7 +11,7 @@ public class CommandStationBusyNotificationTests
         var notification = new CommandStationBusyNotification();
 
         Assert.AreEqual(0x61, notification.Header);
-        Assert.Contains("busy", notification.Description);
+        Assert.Contains("busy", CommandStationBusyNotification.Description);
     }
 
     [TestMethod]

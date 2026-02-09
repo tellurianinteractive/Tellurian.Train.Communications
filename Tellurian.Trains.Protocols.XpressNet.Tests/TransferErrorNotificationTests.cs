@@ -11,7 +11,7 @@ public class TransferErrorNotificationTests
         var notification = new TransferErrorNotification();
 
         Assert.AreEqual(0x61, notification.Header);
-        Assert.Contains("Transfer error", notification.Description);
+        Assert.Contains("Transfer error", TransferErrorNotification.Description);
     }
 
     [TestMethod]

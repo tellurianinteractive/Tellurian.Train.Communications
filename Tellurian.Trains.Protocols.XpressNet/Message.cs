@@ -43,7 +43,7 @@ public abstract class Message
 
     protected static byte[] GetData(byte[] buffer)
     {
-        if (buffer == null) throw new ArgumentNullException(nameof(buffer));
+        ArgumentNullException.ThrowIfNull(buffer);
         var result = new byte[buffer.Length - 2];
         Array.Copy(buffer, 1, result, 0, result.Length);
         return result;
@@ -51,7 +51,7 @@ public abstract class Message
 
     protected Message(Func<byte[], byte> headerFunc, byte[] buffer)
     {
-        if (headerFunc == null) throw new ArgumentNullException(nameof(headerFunc));
+        ArgumentNullException.ThrowIfNull(headerFunc);
         EnsureData(buffer);
         var header = headerFunc.Invoke(buffer);
         EnsureHeader(header);
@@ -60,8 +60,8 @@ public abstract class Message
 
     protected Message(Func<byte[], byte> headerFunc, byte[] buffer, Func<byte[], bool> lengthFunc)
     {
-        if (headerFunc == null) throw new ArgumentNullException(nameof(headerFunc));
-        if (lengthFunc == null) throw new ArgumentNullException(nameof(lengthFunc));
+        ArgumentNullException.ThrowIfNull(headerFunc);
+        ArgumentNullException.ThrowIfNull(lengthFunc);
         EnsureData(buffer);
         if (!lengthFunc.Invoke(buffer)) throw new ArgumentOutOfRangeException(nameof(buffer), Resources.Strings.DataHasIncorrectLength);
         var header = headerFunc.Invoke(buffer);

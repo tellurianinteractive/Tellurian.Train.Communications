@@ -3,16 +3,16 @@ using Tellurian.Trains.Communications.Interfaces.Accessories;
 namespace Tellurian.Trains.Protocols.LocoNet.Commands;
 
 /// <summary>
-/// OPC_SW_ACK (0xBD) - Switch request with acknowledge.
-/// Commands a turnout/switch change and waits for DCS100 acknowledgment.
+/// OPC_SW_ACK (0xBD) - Accessory request with acknowledge.
+/// Commands an accessory change and waits for DCS100 acknowledgment.
 /// Note: Not supported by DT200 throttles.
 /// Response: OPC_LONG_ACK with accept (0x7F) or reject (0x00) code.
 /// </summary>
-public sealed class SwitchAcknowledgeCommand : Command
+public sealed class AccessoryAcknowledgeCommand : Command
 {
     public const byte OperationCode = 0xBD;
 
-    public SwitchAcknowledgeCommand(Address address, Position direction, MotorState output)
+    public AccessoryAcknowledgeCommand(Address address, Position direction, MotorState output)
     {
         Address = address;
         Direction = direction;
@@ -35,26 +35,26 @@ public sealed class SwitchAcknowledgeCommand : Command
     public MotorState Output { get; }
 
     /// <summary>
-    /// Creates a command to throw a switch with acknowledgment.
+    /// Creates a command to throw an accessory with acknowledgment.
     /// </summary>
-    /// <param name="address">Switch address (0-2047)</param>
+    /// <param name="address">Accessory address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SwitchAcknowledgeCommand Throw(Address address, bool activate = true)
+    public static AccessoryAcknowledgeCommand Throw(Address address, bool activate = true)
     {
-        return new SwitchAcknowledgeCommand(
+        return new AccessoryAcknowledgeCommand(
             address,
             Position.ThrownOrRed,
             activate ? MotorState.On : MotorState.Off);
     }
 
     /// <summary>
-    /// Creates a command to close a switch with acknowledgment.
+    /// Creates a command to close an accessory with acknowledgment.
     /// </summary>
-    /// <param name="address">Switch address (0-2047)</param>
+    /// <param name="address">Accessory address (0-2047)</param>
     /// <param name="activate">True to activate output, false to turn off</param>
-    public static SwitchAcknowledgeCommand Close(Address address, bool activate = true)
+    public static AccessoryAcknowledgeCommand Close(Address address, bool activate = true)
     {
-        return new SwitchAcknowledgeCommand(
+        return new AccessoryAcknowledgeCommand(
             address,
             Position.ClosedOrGreen,
             activate ? MotorState.On : MotorState.Off);
@@ -66,7 +66,7 @@ public sealed class SwitchAcknowledgeCommand : Command
     /// </summary>
     public override byte[] GetBytesWithChecksum()
     {
-        var (sw1, sw2) = Address.EncodeSwitchBytes(Direction, Output);
+        var (sw1, sw2) = Address.EncodeAccessoryBytes(Direction, Output);
         return AppendChecksum([OperationCode, sw1, sw2]);
     }
 }

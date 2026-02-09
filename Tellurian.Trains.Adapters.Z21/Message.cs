@@ -9,7 +9,7 @@ public abstract class Message
 
     protected Message(Frame frame)
     {
-        if (frame is null) throw new ArgumentNullException(nameof(frame));
+        ArgumentNullException.ThrowIfNull(frame);
         Timestamp = frame.Timestamp;
     }
 

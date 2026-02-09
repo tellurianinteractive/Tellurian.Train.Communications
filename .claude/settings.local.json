@@ -7,7 +7,14 @@
       "Bash(cat:*)",
       "Bash(dir:*)",
       "mcp__microsoft-learn__microsoft_docs_search",
-      "mcp__microsoft-learn__microsoft_docs_fetch"
+      "mcp__microsoft-learn__microsoft_docs_fetch",
+      "Bash(del \"Tellurian.Trains.Protocols.LocoNet\\\\Commands\\\\SetTurnoutCommand.cs\")",
+      "Bash(del \"Tellurian.Trains.Protocols.LocoNet\\\\Commands\\\\SwitchAcknowledgeCommand.cs\")",
+      "Bash(del \"Tellurian.Trains.Protocols.LocoNet\\\\Commands\\\\RequestSwitchStateCommand.cs\")",
+      "Bash(del \"Tellurian.Trains.Protocols.LocoNet\\\\Notifications\\\\SwitchReportNotification.cs\")",
+      "Bash(del \"Tellurian.Trains.Protocols.LocoNet.Tests\\\\SwitchCommandTests.cs\")",
+      "Bash(del \"Tellurian.Trains.Adapters.LocoNet.Tests\\\\SwitchReportNotificationTests.cs\")",
+      "Bash(dotnet format:*)"
     ],
     "deny": [],
     "ask": []

@@ -46,6 +46,6 @@ public class ServiceModeDirectCVNotificationTests
         var buffer = new byte[] { 0x63, 0x14, 0x01, 0x03, 0xFF };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(ServiceModeDirectCVNotification));
+        Assert.IsInstanceOfType<ServiceModeDirectCVNotification>(notification);
     }
 }

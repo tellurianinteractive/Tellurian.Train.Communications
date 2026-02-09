@@ -11,7 +11,7 @@ public class FeedbackBroadcastTests
         var buffer = new byte[] { 0x41, 0x05, 0x25 };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(FeedbackBroadcast));
+        Assert.IsInstanceOfType<FeedbackBroadcast>(notification);
     }
 
     [TestMethod]
@@ -20,7 +20,7 @@ public class FeedbackBroadcastTests
         var buffer = new byte[] { 0x42, 0x05, 0x25, 0x06, 0x30 };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(FeedbackBroadcast));
+        Assert.IsInstanceOfType<FeedbackBroadcast>(notification);
     }
 
     [TestMethod]
@@ -29,6 +29,6 @@ public class FeedbackBroadcastTests
         var buffer = new byte[] { 0x43, 0x05, 0x25, 0x06, 0x30, 0x07, 0x35 };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(FeedbackBroadcast));
+        Assert.IsInstanceOfType<FeedbackBroadcast>(notification);
     }
 }

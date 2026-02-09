@@ -38,8 +38,7 @@ public sealed class UnlinkSlotsCommand : Command
     /// <returns>UnlinkSlotsCommand or null if not in consist</returns>
     public static UnlinkSlotsCommand? FromSlotData(SlotData slotData)
     {
-        if (slotData is null)
-            throw new ArgumentNullException(nameof(slotData));
+        ArgumentNullException.ThrowIfNull(slotData);
 
         // If not in a consist, can't unlink
         if (slotData.Consist == ConsistStatus.NotInConsist)

@@ -10,13 +10,13 @@ public class Packet
 
     public Packet(Command command)
     {
-        if (command == null) throw new ArgumentNullException(nameof(command));
+        ArgumentNullException.ThrowIfNull(command);
         _Data = command.GetData();
     }
 
     public Packet(byte[] data)
     {
-        if (data == null) throw new ArgumentNullException(nameof(data));
+        ArgumentNullException.ThrowIfNull(data);
         var payload = data.Take(data.Length - 1).ToArray();
         var xor = GetXorChecksum(payload);
         if (data.Last() != xor) throw new ArgumentOutOfRangeException(nameof(data), xor.ToString("X", CultureInfo.InvariantCulture));

@@ -15,7 +15,7 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer();
 
         // Act
-        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
 
         // Assert
         Assert.IsNotNull(result);
@@ -33,7 +33,7 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer();
 
         // Act
-        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
 
         // Assert
         Assert.IsNotNull(result);
@@ -52,7 +52,7 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer();
 
         // Act
-        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
 
         // Assert
         Assert.IsNotNull(result);
@@ -72,7 +72,7 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer();
 
         // Act
-        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
 
         // Assert
         Assert.IsNotNull(result);
@@ -93,7 +93,7 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer();
 
         // Act
-        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
 
         // Assert
         Assert.IsNotNull(result);
@@ -112,7 +112,7 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer(interByteTimeoutMs: 50);
 
         // Act
-        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
 
         // Assert
         Assert.IsNull(result); // Should return null due to checksum failure
@@ -128,7 +128,7 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer(validateChecksum: false);
 
         // Act
-        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
 
         // Assert
         Assert.IsNotNull(result); // Should return message despite bad checksum
@@ -146,7 +146,7 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer(interByteTimeoutMs: 50);
 
         // Act
-        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
 
         // Assert
         Assert.IsNull(result); // Should timeout waiting for remaining bytes
@@ -180,11 +180,11 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer();
 
         // Act & Assert
-        var first = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var first = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
         Assert.IsNotNull(first);
         Assert.AreEqual(0x82, first[0]);
 
-        var second = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var second = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
         Assert.IsNotNull(second);
         Assert.AreEqual(0x83, second[0]);
     }
@@ -206,7 +206,7 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer();
 
         // Act
-        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
 
         // Assert
         Assert.IsNotNull(result);
@@ -224,7 +224,7 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer();
 
         // Act
-        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
 
         // Assert
         Assert.IsNotNull(result);
@@ -242,11 +242,13 @@ public class LocoNetFramerTests
         var framer = new LocoNetFramer();
 
         // Act
-        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync);
+        var result = await framer.ReadMessageAsync(mockPort.ReadByteAsync, TestContext.CancellationToken);
 
         // Assert
         Assert.IsNotNull(result);
         Assert.HasCount(4, result);
         Assert.AreEqual(0xB4, result[0]);
     }
+
+    public TestContext TestContext { get; set; }
 }

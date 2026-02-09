@@ -8,7 +8,7 @@ public class FrameTests
     {
         var target = new Frame(FrameHeader.Test);
         Assert.AreEqual(FrameHeader.Test, target.Header);
-        Assert.IsFalse(target.Data.Any());
+        Assert.IsFalse(target.Data.Length != 0);
     }
 
     [TestMethod]

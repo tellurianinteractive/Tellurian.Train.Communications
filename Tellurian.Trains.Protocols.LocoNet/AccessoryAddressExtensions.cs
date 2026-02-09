@@ -6,7 +6,7 @@ internal static class AccessoryAddressExtensions
 {
     extension(Address address)
     {
-        public (byte sw1, byte sw2) EncodeSwitchBytes(Position direction, MotorState output)
+        public (byte sw1, byte sw2) EncodeAccessoryBytes(Position direction, MotorState output)
         {
             byte sw1 = (byte)(address.WireAddress & 0x7F);
             byte sw2 = (byte)((address.WireAddress >> 7) & 0x0F);
@@ -21,7 +21,7 @@ internal static class AccessoryAddressExtensions
         }
     }
 
-    public static Address DecodeSwitchBytes(byte lowBits, byte highBits, out Position direction, out MotorState output)
+    public static Address DecodeAccessoryBytes(byte lowBits, byte highBits, out Position direction, out MotorState output)
     {
         short wireAddress = (short)(lowBits | ((highBits & 0x0F) << 7));
         direction = (highBits & 0x20) != 0 ? Position.ClosedOrGreen : Position.ThrownOrRed;

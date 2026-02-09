@@ -46,6 +46,6 @@ public class ServiceModeRegisterPagedNotificationTests
         var buffer = new byte[] { 0x63, 0x10, 0x01, 0x55, 0xFF };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(ServiceModeRegisterPagedNotification));
+        Assert.IsInstanceOfType<ServiceModeRegisterPagedNotification>(notification);
     }
 }

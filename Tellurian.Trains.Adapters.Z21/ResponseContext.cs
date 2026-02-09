@@ -10,7 +10,7 @@ internal class ResponseContext
     private readonly IEnumerable<CommandHandler> CommandHandlers;
 
 
-    public void OnNotification(Notification notification)
+    public static void OnNotification(Notification notification)
     {
 
     }

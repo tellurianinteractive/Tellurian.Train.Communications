@@ -11,6 +11,6 @@ public class ServiceModeNotificationFactoryTests
         var buffer = new byte[] { 0x63, 0x21, 0x30, 0x12, 0xFF };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(VersionNotification));
+        Assert.IsInstanceOfType<VersionNotification>(notification);
     }
 }

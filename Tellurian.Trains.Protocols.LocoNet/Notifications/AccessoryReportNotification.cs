@@ -4,18 +4,18 @@ using Tellurian.Trains.Communications.Interfaces.Accessories;
 namespace Tellurian.Trains.Protocols.LocoNet.Notifications;
 
 /// <summary>
-/// OPC_SW_REP (0xB1) - Switch sensor report.
-/// Broadcast from DS54 stationary decoders reporting turnout feedback or output status.
+/// OPC_SW_REP (0xB1) - Accessory sensor report.
+/// Broadcast from DS54 stationary decoders reporting accessory feedback or output status.
 /// Can represent either input feedback (sensors) or output status (which direction is active).
 /// </summary>
-public sealed class SwitchReportNotification : Notification
+public sealed class AccessoryReportNotification : Notification
 {
     public const byte OperationCode = 0xB1;
 
-    internal SwitchReportNotification(byte[] data)
+    internal AccessoryReportNotification(byte[] data)
     {
         if (data is null || data.Length != 4)
-            throw new ArgumentException("Switch report must be exactly 4 bytes", nameof(data));
+            throw new ArgumentException("Accessory report must be exactly 4 bytes", nameof(data));
 
         ValidateData(OperationCode, data);
 
@@ -120,7 +120,7 @@ public sealed class SwitchReportNotification : Notification
         if (IsInputFeedback)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "Switch {0}: Input {1} {2}",
+                "Accessory {0}: Input {1} {2}",
                 Address.Number,
                 IsSwitchInput ? "Switch" : "Aux",
                 IsInputHigh ? "HIGH" : "LOW");
@@ -135,7 +135,7 @@ public sealed class SwitchReportNotification : Notification
             };
 
             return string.Format(CultureInfo.InvariantCulture,
-                "Switch {0}: Output {1}",
+                "Accessory {0}: Output {1}",
                 Address.Number,
                 status);
         }

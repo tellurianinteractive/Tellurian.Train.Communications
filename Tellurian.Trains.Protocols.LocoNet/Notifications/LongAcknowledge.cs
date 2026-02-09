@@ -25,10 +25,10 @@ public class LongAcknowledge : Notification
     {
         var (outcome, message) = (me.ForOperationCode, me.ResponseCode) switch
         {
-            // Switch commands (OPC_SW_REQ 0xB0, OPC_SW_ACK 0xBD)
-            (0xB0, 0x7F) or (SwitchAcknowledgeCommand.OperationCode, 0x7F)
+            // Accessory commands (OPC_SW_REQ 0xB0, OPC_SW_ACK 0xBD)
+            (0xB0, 0x7F) or (AccessoryAcknowledgeCommand.OperationCode, 0x7F)
                 => (true, Resources.Strings.Accepted),
-            (0xB0, 0x00) or (SwitchAcknowledgeCommand.OperationCode, 0x00)
+            (0xB0, 0x00) or (AccessoryAcknowledgeCommand.OperationCode, 0x00)
                 => (false, Resources.Strings.FifoIsFull),
 
             // Move slots command

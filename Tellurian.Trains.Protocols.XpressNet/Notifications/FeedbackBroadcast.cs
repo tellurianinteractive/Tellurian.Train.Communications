@@ -4,7 +4,7 @@ public sealed class FeedbackBroadcast : Notification
 {
     internal FeedbackBroadcast(byte[] buffer) : base(GetHeader, buffer, IsExpectedLength)
     {
-        if (buffer is null) throw new ArgumentNullException(nameof(buffer));
+        ArgumentNullException.ThrowIfNull(buffer);
         Changed = Enumerable.Range(0, GetStatusCount(buffer) - 1)
             .Select(i => new AccessoryDecoderInfo(buffer[1 + (i * 2)], buffer[2 + (i * 2)])).ToArray();
     }

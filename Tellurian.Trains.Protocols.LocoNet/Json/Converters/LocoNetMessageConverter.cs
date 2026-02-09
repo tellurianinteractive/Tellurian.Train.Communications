@@ -48,14 +48,14 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
             nameof(RequestSlotDataCommand) => CreateRequestSlotDataCommand(root),
             nameof(MoveSlotCommand) => CreateMoveSlotCommand(root),
             nameof(GetLocoAddressCommand) => CreateGetLocoAddressCommand(root),
-            nameof(SetTurnoutCommand) => CreateSetTurnoutCommand(root),
-            nameof(RequestSwitchStateCommand) => CreateRequestSwitchStateCommand(root),
-            nameof(SwitchAcknowledgeCommand) => CreateSwitchAcknowledgeCommand(root),
+            nameof(SetAccessoryCommand) => CreateSetAccessoryCommand(root),
+            nameof(RequestAccessoryStateCommand) => CreateRequestAccessoryStateCommand(root),
+            nameof(AccessoryAcknowledgeCommand) => CreateAccessoryAcknowledgeCommand(root),
 
             // Notifications with raw data
             nameof(SlotNotification) => CreateSlotNotification(root),
             nameof(SensorInputNotification) => CreateSensorInputNotification(root),
-            nameof(SwitchReportNotification) => CreateSwitchReportNotification(root),
+            nameof(AccessoryReportNotification) => CreateAccessoryReportNotification(root),
             nameof(MasterBusyNotification) => new MasterBusyNotification(),
             nameof(LongAcknowledge) => CreateLongAcknowledge(root),
 
@@ -90,26 +90,26 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
         return new GetLocoAddressCommand(address);
     }
 
-    private static SetTurnoutCommand CreateSetTurnoutCommand(JsonElement root)
+    private static SetAccessoryCommand CreateSetAccessoryCommand(JsonElement root)
     {
         var address = Tellurian.Trains.Communications.Interfaces.Accessories.Address.From(GetInt16Property(root, "address"));
         var direction = GetPositionProperty(root, "direction");
         var output = GetMotorStateProperty(root, "output");
-        return new SetTurnoutCommand(address, direction, output);
+        return new SetAccessoryCommand(address, direction, output);
     }
 
-    private static RequestSwitchStateCommand CreateRequestSwitchStateCommand(JsonElement root)
+    private static RequestAccessoryStateCommand CreateRequestAccessoryStateCommand(JsonElement root)
     {
         var address = Tellurian.Trains.Communications.Interfaces.Accessories.Address.From(GetInt16Property(root, "address"));
-        return new RequestSwitchStateCommand(address);
+        return new RequestAccessoryStateCommand(address);
     }
 
-    private static SwitchAcknowledgeCommand CreateSwitchAcknowledgeCommand(JsonElement root)
+    private static AccessoryAcknowledgeCommand CreateAccessoryAcknowledgeCommand(JsonElement root)
     {
         var address = Tellurian.Trains.Communications.Interfaces.Accessories.Address.From(GetInt16Property(root, "address"));
         var direction = GetPositionProperty(root, "direction");
         var output = GetMotorStateProperty(root, "output");
-        return new SwitchAcknowledgeCommand(address, direction, output);
+        return new AccessoryAcknowledgeCommand(address, direction, output);
     }
 
     private static Position GetPositionProperty(JsonElement element, string propertyName)
@@ -165,7 +165,7 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
         return (SensorInputNotification)LocoNetMessageFactory.Create([SensorInputNotification.OperationCode, in1, in2, checksum]);
     }
 
-    private static SwitchReportNotification CreateSwitchReportNotification(JsonElement root)
+    private static AccessoryReportNotification CreateAccessoryReportNotification(JsonElement root)
     {
         var addressNumber = GetInt16Property(root, "address");
         var isInputFeedback = GetBoolProperty(root, "isInputFeedback");
@@ -189,8 +189,8 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
             if (thrownOutputOn) highBits |= 0x10;
         }
 
-        byte checksum = (byte)(~(SwitchReportNotification.OperationCode ^ lowBits ^ highBits) & 0xFF);
-        return (SwitchReportNotification)LocoNetMessageFactory.Create([SwitchReportNotification.OperationCode, lowBits, highBits, checksum]);
+        byte checksum = (byte)(~(AccessoryReportNotification.OperationCode ^ lowBits ^ highBits) & 0xFF);
+        return (AccessoryReportNotification)LocoNetMessageFactory.Create([AccessoryReportNotification.OperationCode, lowBits, highBits, checksum]);
     }
 
     private static LongAcknowledge CreateLongAcknowledge(JsonElement root)
@@ -301,17 +301,17 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
                 writer.WriteNumber("address", cmd.Address.Number);
                 break;
 
-            case SetTurnoutCommand cmd:
+            case SetAccessoryCommand cmd:
                 writer.WriteNumber("address", cmd.Address.Number);
                 writer.WriteString("direction", ToCamelCase(cmd.Direction.ToString()));
                 writer.WriteString("output", ToCamelCase(cmd.Output.ToString()));
                 break;
 
-            case RequestSwitchStateCommand cmd:
+            case RequestAccessoryStateCommand cmd:
                 writer.WriteNumber("address", cmd.Address.Number);
                 break;
 
-            case SwitchAcknowledgeCommand cmd:
+            case AccessoryAcknowledgeCommand cmd:
                 writer.WriteNumber("address", cmd.Address.Number);
                 writer.WriteString("direction", ToCamelCase(cmd.Direction.ToString()));
                 writer.WriteString("output", ToCamelCase(cmd.Output.ToString()));
@@ -333,7 +333,7 @@ public sealed class LocoNetMessageConverter : JsonConverter<Message>
                 writer.WriteBoolean("isHigh", notification.IsHigh);
                 break;
 
-            case SwitchReportNotification notification:
+            case AccessoryReportNotification notification:
                 writer.WriteNumber("address", notification.Address.Number);
                 writer.WriteBoolean("isInputFeedback", notification.IsInputFeedback);
                 if (notification.IsInputFeedback)

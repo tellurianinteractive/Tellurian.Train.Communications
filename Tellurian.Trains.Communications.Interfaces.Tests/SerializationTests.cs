@@ -46,8 +46,8 @@ public class SerializationTests
     {
         var speed = Speed.Set126(75);
         var json = System.Text.Json.JsonSerializer.Serialize(speed, JsonSerializationOptions.Default);
-        StringAssert.Contains(json, "\"maxSteps\":126");
-        StringAssert.Contains(json, "\"currentStep\":75");
+        Assert.Contains("\"maxSteps\":126", json);
+        Assert.Contains("\"currentStep\":75", json);
     }
 
     [TestMethod]
@@ -64,8 +64,8 @@ public class SerializationTests
     {
         var function = Function.On(Functions.F5);
         var json = System.Text.Json.JsonSerializer.Serialize(function, JsonSerializationOptions.Default);
-        StringAssert.Contains(json, "\"number\":\"F5\"");
-        StringAssert.Contains(json, "\"isOn\":true");
+        Assert.Contains("\"number\":\"F5\"", json);
+        Assert.Contains("\"isOn\":true", json);
     }
 
     [TestMethod]
@@ -87,9 +87,9 @@ public class SerializationTests
 
         var json = System.Text.Json.JsonSerializer.Serialize(notification, JsonSerializationOptions.Default);
 
-        StringAssert.Contains(json, "\"$type\":\"LocoMovementNotification\"");
-        StringAssert.Contains(json, "\"address\":42");
-        StringAssert.Contains(json, "\"direction\":\"forward\"");
+        Assert.Contains("\"$type\":\"LocoMovementNotification\"", json);
+        Assert.Contains("\"address\":42", json);
+        Assert.Contains("\"direction\":\"forward\"", json);
     }
 
     [TestMethod]
@@ -98,7 +98,7 @@ public class SerializationTests
         var json = "{\"$type\":\"LocoMovementNotification\",\"address\":42,\"direction\":\"forward\",\"speed\":{\"maxSteps\":126,\"currentStep\":75}}";
         var notification = System.Text.Json.JsonSerializer.Deserialize<Notification>(json, JsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(notification, typeof(LocoMovementNotification));
+        Assert.IsInstanceOfType<LocoMovementNotification>(notification);
         var loco = (LocoMovementNotification)notification!;
         Assert.AreEqual(42, loco.Address.Number);
         Assert.AreEqual(Direction.Forward, loco.Direction);
@@ -114,9 +114,9 @@ public class SerializationTests
 
         var json = System.Text.Json.JsonSerializer.Serialize(notification, JsonSerializationOptions.Default);
 
-        StringAssert.Contains(json, "\"$type\":\"AccessoryNotification\"");
-        StringAssert.Contains(json, "\"address\":10");
-        StringAssert.Contains(json, "\"function\":\"thrownOrRed\"");
+        Assert.Contains("\"$type\":\"AccessoryNotification\"", json);
+        Assert.Contains("\"address\":10", json);
+        Assert.Contains("\"function\":\"thrownOrRed\"", json);
     }
 
     [TestMethod]
@@ -125,7 +125,7 @@ public class SerializationTests
         var json = "{\"$type\":\"AccessoryNotification\",\"address\":10,\"function\":\"thrownOrRed\"}";
         var notification = System.Text.Json.JsonSerializer.Deserialize<Notification>(json, JsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(notification, typeof(AccessoryNotification));
+        Assert.IsInstanceOfType<AccessoryNotification>(notification);
         var accessory = (AccessoryNotification)notification!;
         Assert.AreEqual(10, accessory.Address.Number);
         Assert.AreEqual(Position.ThrownOrRed, accessory.Function);
@@ -138,7 +138,7 @@ public class SerializationTests
 
         var json = System.Text.Json.JsonSerializer.Serialize(notification, JsonSerializationOptions.Default);
 
-        StringAssert.Contains(json, "\"$type\":\"ShortCircuitNotification\"");
+        Assert.Contains("\"$type\":\"ShortCircuitNotification\"", json);
     }
 
     [TestMethod]
@@ -148,8 +148,8 @@ public class SerializationTests
 
         var json = System.Text.Json.JsonSerializer.Serialize(notification, JsonSerializationOptions.Default);
 
-        StringAssert.Contains(json, "\"$type\":\"MessageNotification\"");
-        StringAssert.Contains(json, "\"message\":\"Test message\"");
+        Assert.Contains("\"$type\":\"MessageNotification\"", json);
+        Assert.Contains("\"message\":\"Test message\"", json);
     }
 
     [TestMethod]
@@ -161,8 +161,8 @@ public class SerializationTests
 
         var json = System.Text.Json.JsonSerializer.Serialize(notification, JsonSerializationOptions.Default);
 
-        StringAssert.Contains(json, "\"$type\":\"LocoFunctionsNotification\"");
-        StringAssert.Contains(json, "\"activeFunctions\"");
+        Assert.Contains("\"$type\":\"LocoFunctionsNotification\"", json);
+        Assert.Contains("\"activeFunctions\"", json);
     }
 
     [TestMethod]
@@ -173,6 +173,6 @@ public class SerializationTests
         var json = System.Text.Json.JsonSerializer.Serialize(notification, options);
 
         // Indented JSON should contain newlines
-        StringAssert.Contains(json, "\n");
+        Assert.Contains("\n", json);
     }
 }

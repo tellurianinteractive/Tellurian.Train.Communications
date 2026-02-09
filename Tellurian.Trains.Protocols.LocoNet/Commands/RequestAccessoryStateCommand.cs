@@ -3,15 +3,15 @@ using Tellurian.Trains.Communications.Interfaces.Accessories;
 namespace Tellurian.Trains.Protocols.LocoNet.Commands;
 
 /// <summary>
-/// OPC_SW_STATE (0xBC) - Request switch state.
-/// Requests the current state of a specific switch/turnout.
-/// Response: OPC_SW_REP (0xB1) with current switch state, or OPC_LONG_ACK.
+/// OPC_SW_STATE (0xBC) - Request accessory state.
+/// Requests the current state of a specific accessory.
+/// Response: OPC_SW_REP (0xB1) with current accessory state, or OPC_LONG_ACK.
 /// </summary>
-public sealed class RequestSwitchStateCommand : Command
+public sealed class RequestAccessoryStateCommand : Command
 {
     public const byte OperationCode = 0xBC;
 
-    public RequestSwitchStateCommand(Address address)
+    public RequestAccessoryStateCommand(Address address)
     {
         Address = address;
     }
@@ -28,7 +28,7 @@ public sealed class RequestSwitchStateCommand : Command
     public override byte[] GetBytesWithChecksum()
     {
         // For state request, we typically use DIR=0, ON=0
-        var (sw1, sw2) = Address.EncodeSwitchBytes(Position.ThrownOrRed, MotorState.Off);
+        var (sw1, sw2) = Address.EncodeAccessoryBytes(Position.ThrownOrRed, MotorState.Off);
         return AppendChecksum([OperationCode, sw1, sw2]);
     }
 }

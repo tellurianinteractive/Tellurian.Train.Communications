@@ -4,12 +4,12 @@ using Tellurian.Trains.Communications.Interfaces.Accessories;
 namespace Tellurian.Trains.Adapters.LocoNet.Tests;
 
 [TestClass]
-public class SwitchReportNotificationTests
+public class AccessoryReportNotificationTests
 {
     public required TestContext TestContext { get; set; }
 
     [TestMethod]
-    public async Task SwitchReportNotification_MapsToAccessoryNotification()
+    public async Task AccessoryReportNotification_MapsToAccessoryNotification()
     {
         var channel = new MockChannel();
         var adapter = new Adapter(channel, NullLogger<Adapter>.Instance);
@@ -18,14 +18,14 @@ public class SwitchReportNotificationTests
         adapter.Subscribe(observer);
         await adapter.StartReceiveAsync(TestContext.CancellationToken);
 
-        // OPC_SW_REP (0xB1) - Switch report with closed position
+        // OPC_SW_REP (0xB1) - Accessory report with closed position
         // Format: B1 <sn1> <sn2> <chk>
         // sn1 = address bits 0-6
         // sn2 = address bits 7-10 + flags
         // For wire address 10 (user address 11), closed output on: sn1=0x0A, sn2=0x20 (C=1, T=0)
-        byte[] switchReport = [0xB1, 0x0A, 0x20, 0x00];
-        switchReport[3] = CalculateChecksum(switchReport);
-        channel.SimulateReceive(switchReport);
+        byte[] accessoryReport = [0xB1, 0x0A, 0x20, 0x00];
+        accessoryReport[3] = CalculateChecksum(accessoryReport);
+        channel.SimulateReceive(accessoryReport);
 
         await Task.Delay(50, TestContext.CancellationToken);
 
@@ -38,7 +38,7 @@ public class SwitchReportNotificationTests
     }
 
     [TestMethod]
-    public async Task SwitchReportNotification_WithThrownPosition_MapsCorrectly()
+    public async Task AccessoryReportNotification_WithThrownPosition_MapsCorrectly()
     {
         var channel = new MockChannel();
         var adapter = new Adapter(channel, NullLogger<Adapter>.Instance);
@@ -47,11 +47,11 @@ public class SwitchReportNotificationTests
         adapter.Subscribe(observer);
         await adapter.StartReceiveAsync(TestContext.CancellationToken);
 
-        // Switch report with thrown position
+        // Accessory report with thrown position
         // For wire address 5 (user address 6), thrown output on: sn1=0x05, sn2=0x10 (C=0, T=1)
-        byte[] switchReport = [0xB1, 0x05, 0x10, 0x00];
-        switchReport[3] = CalculateChecksum(switchReport);
-        channel.SimulateReceive(switchReport);
+        byte[] accessoryReport = [0xB1, 0x05, 0x10, 0x00];
+        accessoryReport[3] = CalculateChecksum(accessoryReport);
+        channel.SimulateReceive(accessoryReport);
 
         await Task.Delay(50, TestContext.CancellationToken);
 

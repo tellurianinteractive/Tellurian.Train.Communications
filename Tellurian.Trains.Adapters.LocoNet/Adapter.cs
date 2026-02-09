@@ -107,8 +107,8 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
             case SlotNotification slotNotification when slotNotification.IsLocomotiveSlot:
                 HandleSlotNotification(slotNotification);
                 break;
-            case SwitchReportNotification switchReport:
-                HandleSwitchReportNotification(switchReport);
+            case AccessoryReportNotification accessoryReport:
+                HandleAccessoryReportNotification(accessoryReport);
                 break;
         }
     }
@@ -129,10 +129,10 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
         slotData.SlotNumber, slotData.Address, slotData.Speed, slotData.Direction ? "FWD" : "REV");
     }
 
-    private void HandleSwitchReportNotification(SwitchReportNotification notification)
+    private void HandleAccessoryReportNotification(AccessoryReportNotification notification)
     {
         if (_logger.IsEnabled(LogLevel.Debug))
-            _logger.LogDebug("Switch {Address}: {Direction}",
+            _logger.LogDebug("Accessory {Address}: {Direction}",
         notification.Address, notification.CurrentDirection);
     }
 
@@ -147,8 +147,8 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
                     : DecoderResponse.Timeout(),
             SlotNotification slot when slot.IsLocomotiveSlot =>
                 CreateLocoNotification(slot),
-            SwitchReportNotification switchReport =>
-                CreateAccessoryNotification(switchReport),
+            AccessoryReportNotification accessoryReport =>
+                CreateAccessoryNotification(accessoryReport),
             _ => null
         };
     }
@@ -161,11 +161,11 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
             Tellurian.Trains.Communications.Interfaces.Locos.Speed.Set126((byte)(slot.Speed > 1 ? slot.Speed - 1 : 0)));
     }
 
-    private static AccessoryNotification? CreateAccessoryNotification(SwitchReportNotification switchReport)
+    private static AccessoryNotification? CreateAccessoryNotification(AccessoryReportNotification accessoryReport)
     {
-        var position = switchReport.CurrentDirection;
+        var position = accessoryReport.CurrentDirection;
         if (position is null) return null;
-        return new AccessoryNotification(switchReport.Address, position.Value, DateTimeOffset.Now);
+        return new AccessoryNotification(accessoryReport.Address, position.Value, DateTimeOffset.Now);
     }
 
     private void ReceiveError(Exception ex)

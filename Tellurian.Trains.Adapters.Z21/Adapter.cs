@@ -55,7 +55,7 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
 
     public async Task<bool> SendAsync(Command command, CancellationToken cancellationToken = default)
     {
-        if (command is null) throw new ArgumentNullException(nameof(command));
+        ArgumentNullException.ThrowIfNull(command);
         Logger.LogInformation(new EventId(2101, nameof(SendAsync)), "Command: {0}", command);
         var data = command.ToFrame().GetBytes();
         var result = await Channel.SendAsync(data, cancellationToken).ConfigureAwait(false);

@@ -17,8 +17,8 @@ public class JsonSerializationTests
 
         var json = JsonSerializer.Serialize<Message>(command, LocoNetJsonSerializationOptions.Default);
 
-        StringAssert.Contains(json, "\"$type\":\"PowerOnCommand\"");
-        StringAssert.Contains(json, "\"messageType\":\"PowerOnCommand\"");
+        Assert.Contains("\"$type\":\"PowerOnCommand\"", json);
+        Assert.Contains("\"messageType\":\"PowerOnCommand\"", json);
     }
 
     [TestMethod]
@@ -28,7 +28,7 @@ public class JsonSerializationTests
 
         var json = JsonSerializer.Serialize<Message>(command, LocoNetJsonSerializationOptions.Default);
 
-        StringAssert.Contains(json, "\"$type\":\"PowerOffCommand\"");
+        Assert.Contains("\"$type\":\"PowerOffCommand\"", json);
     }
 
     [TestMethod]
@@ -38,7 +38,7 @@ public class JsonSerializationTests
 
         var json = JsonSerializer.Serialize<Message>(command, LocoNetJsonSerializationOptions.Default);
 
-        StringAssert.Contains(json, "\"$type\":\"ForceIdleCommand\"");
+        Assert.Contains("\"$type\":\"ForceIdleCommand\"", json);
     }
 
     [TestMethod]
@@ -50,7 +50,7 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(command, options);
 
         // Indented JSON should contain newlines
-        StringAssert.Contains(json, "\n");
+        Assert.Contains("\n", json);
     }
 
     // Round-trip tests
@@ -63,7 +63,7 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(original, LocoNetJsonSerializationOptions.Default);
         var deserialized = JsonSerializer.Deserialize<Message>(json, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(deserialized, typeof(PowerOnCommand));
+        Assert.IsInstanceOfType<PowerOnCommand>(deserialized);
     }
 
     [TestMethod]
@@ -74,7 +74,7 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(original, LocoNetJsonSerializationOptions.Default);
         var deserialized = JsonSerializer.Deserialize<Message>(json, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(deserialized, typeof(PowerOffCommand));
+        Assert.IsInstanceOfType<PowerOffCommand>(deserialized);
     }
 
     [TestMethod]
@@ -85,7 +85,7 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(original, LocoNetJsonSerializationOptions.Default);
         var deserialized = JsonSerializer.Deserialize<Message>(json, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(deserialized, typeof(ForceIdleCommand));
+        Assert.IsInstanceOfType<ForceIdleCommand>(deserialized);
     }
 
     [TestMethod]
@@ -96,7 +96,7 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(original, LocoNetJsonSerializationOptions.Default);
         var deserialized = JsonSerializer.Deserialize<Message>(json, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(deserialized, typeof(SetLocoSpeedCommand));
+        Assert.IsInstanceOfType<SetLocoSpeedCommand>(deserialized);
         var result = (SetLocoSpeedCommand)deserialized!;
         Assert.AreEqual(5, result.Slot);
         Assert.AreEqual(75, result.Speed);
@@ -110,7 +110,7 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(original, LocoNetJsonSerializationOptions.Default);
         var deserialized = JsonSerializer.Deserialize<Message>(json, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(deserialized, typeof(RequestSlotDataCommand));
+        Assert.IsInstanceOfType<RequestSlotDataCommand>(deserialized);
         var result = (RequestSlotDataCommand)deserialized!;
         Assert.AreEqual(10, result.SlotNumber);
     }
@@ -123,7 +123,7 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(original, LocoNetJsonSerializationOptions.Default);
         var deserialized = JsonSerializer.Deserialize<Message>(json, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(deserialized, typeof(MoveSlotCommand));
+        Assert.IsInstanceOfType<MoveSlotCommand>(deserialized);
         var result = (MoveSlotCommand)deserialized!;
         Assert.AreEqual(3, result.SourceSlot);
         Assert.AreEqual(5, result.DestinationSlot);
@@ -137,15 +137,15 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(original, LocoNetJsonSerializationOptions.Default);
         var deserialized = JsonSerializer.Deserialize<Message>(json, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(deserialized, typeof(GetLocoAddressCommand));
+        Assert.IsInstanceOfType<GetLocoAddressCommand>(deserialized);
         var result = (GetLocoAddressCommand)deserialized!;
         Assert.AreEqual(1234, result.Address.Number);
     }
 
     [TestMethod]
-    public void SetTurnoutCommand_RoundTrip()
+    public void SetAccessoryCommand_RoundTrip()
     {
-        var original = new SetTurnoutCommand(
+        var original = new SetAccessoryCommand(
             AccessoryAddress.From(100),
             Position.ThrownOrRed,
             MotorState.On);
@@ -153,30 +153,30 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(original, LocoNetJsonSerializationOptions.Default);
         var deserialized = JsonSerializer.Deserialize<Message>(json, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(deserialized, typeof(SetTurnoutCommand));
-        var result = (SetTurnoutCommand)deserialized!;
+        Assert.IsInstanceOfType<SetAccessoryCommand>(deserialized);
+        var result = (SetAccessoryCommand)deserialized!;
         Assert.AreEqual(100, result.Address.Number);
         Assert.AreEqual(Position.ThrownOrRed, result.Direction);
         Assert.AreEqual(MotorState.On, result.Output);
     }
 
     [TestMethod]
-    public void RequestSwitchStateCommand_RoundTrip()
+    public void RequestAccessoryStateCommand_RoundTrip()
     {
-        var original = new RequestSwitchStateCommand(AccessoryAddress.From(50));
+        var original = new RequestAccessoryStateCommand(AccessoryAddress.From(50));
 
         var json = JsonSerializer.Serialize<Message>(original, LocoNetJsonSerializationOptions.Default);
         var deserialized = JsonSerializer.Deserialize<Message>(json, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(deserialized, typeof(RequestSwitchStateCommand));
-        var result = (RequestSwitchStateCommand)deserialized!;
+        Assert.IsInstanceOfType<RequestAccessoryStateCommand>(deserialized);
+        var result = (RequestAccessoryStateCommand)deserialized!;
         Assert.AreEqual(50, result.Address.Number);
     }
 
     [TestMethod]
-    public void SwitchAcknowledgeCommand_RoundTrip()
+    public void AccessoryAcknowledgeCommand_RoundTrip()
     {
-        var original = new SwitchAcknowledgeCommand(
+        var original = new AccessoryAcknowledgeCommand(
             AccessoryAddress.From(200),
             Position.ClosedOrGreen,
             MotorState.Off);
@@ -184,8 +184,8 @@ public class JsonSerializationTests
         var json = JsonSerializer.Serialize<Message>(original, LocoNetJsonSerializationOptions.Default);
         var deserialized = JsonSerializer.Deserialize<Message>(json, LocoNetJsonSerializationOptions.Default);
 
-        Assert.IsInstanceOfType(deserialized, typeof(SwitchAcknowledgeCommand));
-        var result = (SwitchAcknowledgeCommand)deserialized!;
+        Assert.IsInstanceOfType<AccessoryAcknowledgeCommand>(deserialized);
+        var result = (AccessoryAcknowledgeCommand)deserialized!;
         Assert.AreEqual(200, result.Address.Number);
         Assert.AreEqual(Position.ClosedOrGreen, result.Direction);
         Assert.AreEqual(MotorState.Off, result.Output);

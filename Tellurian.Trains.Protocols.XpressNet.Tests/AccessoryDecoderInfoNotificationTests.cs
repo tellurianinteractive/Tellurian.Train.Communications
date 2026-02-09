@@ -87,6 +87,6 @@ public class AccessoryDecoderInfoNotificationTests
         var buffer = new byte[] { 0x42, 0x05, 0x25 };
         var notification = NotificationFactory.Create(buffer);
 
-        Assert.IsInstanceOfType(notification, typeof(AccessoryDecoderInfoNotification));
+        Assert.IsInstanceOfType<AccessoryDecoderInfoNotification>(notification);
     }
 }

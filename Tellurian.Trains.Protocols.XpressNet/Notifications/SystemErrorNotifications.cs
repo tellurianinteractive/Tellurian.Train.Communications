@@ -21,7 +21,7 @@ public sealed class TransferErrorNotification : Notification
     /// <summary>
     /// Gets a description of the error.
     /// </summary>
-    public string Description => "Transfer error - XOR checksum validation failed";
+    public static string Description => "Transfer error - XOR checksum validation failed";
 }
 
 /// <summary>
@@ -47,5 +47,5 @@ public sealed class CommandStationBusyNotification : Notification
     /// <summary>
     /// Gets a description of the response.
     /// </summary>
-    public string Description => "Command station busy - retry the request";
+    public static string Description => "Command station busy - retry the request";
 }

@@ -227,7 +227,7 @@ public class UdpChannelTests
         var result = await channel.SendAsync(data, TestContext.CancellationToken);
 
         Assert.IsFalse(result.IsSuccess);
-        Assert.IsInstanceOfType(result, typeof(FailureResult));
+        Assert.IsInstanceOfType<FailureResult>(result);
     }
 
     [TestMethod]

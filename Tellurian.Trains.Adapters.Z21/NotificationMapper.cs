@@ -21,7 +21,7 @@ public static class NotificationMapper
     {
         if (notification is null) return [];
         var key = notification.GetType();
-        if (Mappings.ContainsKey(key)) return Mappings[key].Invoke(notification);
+        if (Mappings.TryGetValue(key, out Func<Notification, Communications.Interfaces.Notification[]>? value)) return value.Invoke(notification);
         return MapDefaults.CreateUnmapped(notification.ToString());
     }
 

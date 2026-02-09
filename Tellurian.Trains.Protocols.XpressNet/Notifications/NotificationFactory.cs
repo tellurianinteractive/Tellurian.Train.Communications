@@ -8,7 +8,7 @@ public static class NotificationFactory
 
     public static Notification Create(byte[] buffer)
     {
-        if (buffer == null) throw new ArgumentNullException(nameof(buffer));
+        ArgumentNullException.ThrowIfNull(buffer);
         var Xheader = buffer[0];
         byte db0 = (buffer.Length > 1 ? buffer[1] : (byte)0x00);
         return Xheader switch

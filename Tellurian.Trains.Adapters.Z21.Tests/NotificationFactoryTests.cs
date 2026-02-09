@@ -14,7 +14,7 @@ public class NotificationFactoryTests
     public void Notification_CreatesUnsupportedNotification_WhenHeaderUndefined()
     {
         var actual = new Frame(FrameHeader.Undefined).Notification();
-        Assert.IsInstanceOfType(actual, typeof(UnsupportedNotification));
+        Assert.IsInstanceOfType<UnsupportedNotification>(actual);
     }
 
     [TestMethod]

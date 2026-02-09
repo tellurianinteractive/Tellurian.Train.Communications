@@ -10,7 +10,7 @@ public class AccessoryControlAdapterTests
     public required TestContext TestContext { get; set; }
 
     [TestMethod]
-    public async Task SetAccessoryAsync_SendsSetTurnoutCommand()
+    public async Task SetAccessoryAsync_SendsSetAccessoryCommand()
     {
         var channel = new MockChannel();
         var adapter = new Adapter(channel, NullLogger<Adapter>.Instance);
@@ -23,12 +23,12 @@ public class AccessoryControlAdapterTests
         Assert.IsTrue(result);
         Assert.HasCount(1, channel.SentData);
 
-        // Verify it's a SetTurnout command (0xB0)
-        Assert.AreEqual(SetTurnoutCommand.OperationCode, channel.SentData[0][0]);
+        // Verify it's a SetAccessory command (0xB0)
+        Assert.AreEqual(SetAccessoryCommand.OperationCode, channel.SentData[0][0]);
     }
 
     [TestMethod]
-    public async Task SetThrownAsync_SendsSetTurnoutCommand()
+    public async Task SetThrownAsync_SendsSetAccessoryCommand()
     {
         var channel = new MockChannel();
         var adapter = new Adapter(channel, NullLogger<Adapter>.Instance);
@@ -37,11 +37,11 @@ public class AccessoryControlAdapterTests
 
         Assert.IsTrue(result);
         Assert.HasCount(1, channel.SentData);
-        Assert.AreEqual(SetTurnoutCommand.OperationCode, channel.SentData[0][0]);
+        Assert.AreEqual(SetAccessoryCommand.OperationCode, channel.SentData[0][0]);
     }
 
     [TestMethod]
-    public async Task SetClosedAsync_SendsSetTurnoutCommand()
+    public async Task SetClosedAsync_SendsSetAccessoryCommand()
     {
         var channel = new MockChannel();
         var adapter = new Adapter(channel, NullLogger<Adapter>.Instance);
@@ -50,11 +50,11 @@ public class AccessoryControlAdapterTests
 
         Assert.IsTrue(result);
         Assert.HasCount(1, channel.SentData);
-        Assert.AreEqual(SetTurnoutCommand.OperationCode, channel.SentData[0][0]);
+        Assert.AreEqual(SetAccessoryCommand.OperationCode, channel.SentData[0][0]);
     }
 
     [TestMethod]
-    public async Task TurnOffAsync_SendsSetTurnoutCommand()
+    public async Task TurnOffAsync_SendsSetAccessoryCommand()
     {
         var channel = new MockChannel();
         var adapter = new Adapter(channel, NullLogger<Adapter>.Instance);
@@ -63,11 +63,11 @@ public class AccessoryControlAdapterTests
 
         Assert.IsTrue(result);
         Assert.HasCount(1, channel.SentData);
-        Assert.AreEqual(SetTurnoutCommand.OperationCode, channel.SentData[0][0]);
+        Assert.AreEqual(SetAccessoryCommand.OperationCode, channel.SentData[0][0]);
     }
 
     [TestMethod]
-    public async Task QueryAccessoryStateAsync_SendsRequestSwitchStateCommand()
+    public async Task QueryAccessoryStateAsync_SendsRequestAccessoryStateCommand()
     {
         var channel = new MockChannel();
         var adapter = new Adapter(channel, NullLogger<Adapter>.Instance);
@@ -77,8 +77,8 @@ public class AccessoryControlAdapterTests
         Assert.IsTrue(result);
         Assert.HasCount(1, channel.SentData);
 
-        // Verify it's a RequestSwitchState command (0xBC)
-        Assert.AreEqual(RequestSwitchStateCommand.OperationCode, channel.SentData[0][0]);
+        // Verify it's a RequestAccessoryState command (0xBC)
+        Assert.AreEqual(RequestAccessoryStateCommand.OperationCode, channel.SentData[0][0]);
     }
 
     [TestMethod]

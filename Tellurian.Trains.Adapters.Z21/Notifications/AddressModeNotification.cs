@@ -6,7 +6,7 @@ public abstract class AddressModeNotification : Notification
 {
     protected AddressModeNotification(Frame frame) : base(frame)
     {
-        if (frame is null) throw new ArgumentNullException(nameof(frame));
+        ArgumentNullException.ThrowIfNull(frame);
         Address = BitConverterExtensions.GetBigEndianInt16(frame.Data, 0);
         Mode = (AddressMode)frame.Data[2];
     }

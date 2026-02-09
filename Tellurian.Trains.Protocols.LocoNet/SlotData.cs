@@ -114,8 +114,7 @@ public sealed class SlotData
     /// <exception cref="ArgumentException">If data length is not 14 bytes or opcode is invalid</exception>
     public static SlotData FromBytes(byte[] data)
     {
-        if (data is null)
-            throw new ArgumentNullException(nameof(data));
+        ArgumentNullException.ThrowIfNull(data);
 
         if (data.Length != ExpectedMessageLength)
             throw new ArgumentException(

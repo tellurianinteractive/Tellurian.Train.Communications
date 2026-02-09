@@ -31,10 +31,10 @@ LocoNet is a peer-to-peer, multi-drop network protocol developed by Digitrax for
 - ✅ Functions F0-F8 (standard LocoNet)
 - ✅ Functions F9-F19 (extended, non-standard)
 
-#### Switch/Turnout Control
-- ✅ Throw/close switches (with and without acknowledge)
-- ✅ Switch state requests
-- ✅ Switch feedback reports (input and output status)
+#### Accessory Control
+- ✅ Throw/close accessories (with and without acknowledge)
+- ✅ Accessory state requests
+- ✅ Accessory feedback reports (input and output status)
 - ✅ User addressing 1-2048 (maps to wire addresses 0-2047)
 
 #### Sensor & Feedback
@@ -214,18 +214,18 @@ async Task ControlLocomotive(ushort address)
 
 ```csharp
 // Throw switch 100
-var throwSwitch = SetTurnoutCommand.Throw(AccessoryAddress.From(100));
+var throwSwitch = SetAccessoryCommand.Throw(AccessoryAddress.From(100));
 SendCommand(throwSwitch);
 
 // Wait for turnout motor
 await Task.Delay(1000);
 
 // Turn off output to prevent overheating
-var turnOff = SetTurnoutCommand.TurnOff(AccessoryAddress.From(100));
+var turnOff = SetAccessoryCommand.TurnOff(AccessoryAddress.From(100));
 SendCommand(turnOff);
 
 // Close switch with acknowledge
-var closeSwitch = SwitchAcknowledgeCommand.Close(AccessoryAddress.From(100));
+var closeSwitch = AccessoryAcknowledgeCommand.Close(AccessoryAddress.From(100));
 SendCommand(closeSwitch);
 
 // Wait for acknowledgment
@@ -254,7 +254,7 @@ while (true)
             OnBlockOccupied(sensor.Address);
         }
     }
-    else if (msg is SwitchReportNotification switchReport)
+    else if (msg is AccessoryReportNotification switchReport)
     {
         if (switchReport.IsOutputStatus)
         {
@@ -409,7 +409,7 @@ if (msg is UnsupportedNotification unsupported)
 - `PowerOnCommand`, `PowerOffCommand`, `ForceIdleCommand`
 - `GetLocoAddressCommand`, `RequestSlotDataCommand`, `MoveSlotCommand`
 - `SetLocoSpeedCommand`, `SetLocoDirectionAndFunctionF0toF4Command`
-- `SetTurnoutCommand`, `SwitchAcknowledgeCommand`, `RequestSwitchStateCommand`
+- `SetAccessoryCommand`, `AccessoryAcknowledgeCommand`, `RequestAccessoryStateCommand`
 - `ProgrammingCommand`
 - `LinkSlotsCommand`, `UnlinkSlotsCommand`, `ConsistFunctionCommand`
 - `WriteSlotDataCommand`, `WriteSlotStatus1Command`
@@ -417,7 +417,7 @@ if (msg is UnsupportedNotification unsupported)
 #### Notifications
 - `SlotNotification` - Slot data (14 bytes)
 - `LongAcknowledge` - Command acknowledgment
-- `SwitchReportNotification` - Switch feedback
+- `AccessoryReportNotification` - Switch feedback
 - `SensorInputNotification` - Occupancy/sensor reports
 - `MasterBusyNotification` - Network timing
 - `UnsupportedNotification` - Unknown messages
@@ -568,9 +568,9 @@ Prevent turnout motor overheating:
 
 ```csharp
 var switchAddress = AccessoryAddress.From(100);
-SendCommand(SetTurnoutCommand.Throw(switchAddress));
+SendCommand(SetAccessoryCommand.Throw(switchAddress));
 await Task.Delay(1000); // Wait for motor
-SendCommand(SetTurnoutCommand.TurnOff(switchAddress));
+SendCommand(SetAccessoryCommand.TurnOff(switchAddress));
 ```
 
 ### 4. Handle Errors

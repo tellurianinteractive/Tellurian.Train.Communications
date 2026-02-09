@@ -192,30 +192,30 @@ byte[] writeBytes = modifiedSlot.GetBytesWithChecksum();
 
 ---
 
-## Switch/Turnout Control
+## Accessory Control
 
-### Throw/Close Switch (No Acknowledge)
+### Without Acknowledge
 
 ```csharp
 using Tellurian.Trains.Protocols.LocoNet.Commands;
 
-// Throw switch 100 (Thrown/Red position)
-var throwCmd = SetTurnoutCommand.Throw(AccessoryAddress.From(100), activate: true);
+// Throw accessory 100 (Thrown/Red position)
+var throwCmd = SetAccessoryCommand.Throw(AccessoryAddress.From(100), activate: true);
 byte[] throwBytes = throwCmd.GetBytesWithChecksum();
 // Sends: [0xB0, sw1, sw2, checksum]
 
-// Close switch 100 (Closed/Green position)
-var closeCmd = SetTurnoutCommand.Close(AccessoryAddress.From(100), activate: true);
+// Close accessory 100 (Closed/Green position)
+var closeCmd = SetAccessoryCommand.Close(AccessoryAddress.From(100), activate: true);
 
-// Turn off output (after ~1 second)
-var turnOff = SetTurnoutCommand.TurnOff(AccessoryAddress.From(100));
+// Turn off output
+var turnOff = SetAccessoryCommand.TurnOff(AccessoryAddress.From(100));
 ```
 
-### Switch with Acknowledge
+### With Acknowledge
 
 ```csharp
-// Request acknowledgment from DCS100
-var switchAck = SwitchAcknowledgeCommand.Throw(AccessoryAddress.From(100));
+// Request acknowledgment
+var switchAck = AccessoryAcknowledgeCommand.Throw(AccessoryAddress.From(100));
 byte[] ackBytes = switchAck.GetBytesWithChecksum();
 // Sends: [0xBD, sw1, sw2, checksum]
 ```
@@ -235,19 +235,19 @@ if (response is LongAcknowledge ack)
 ### Request Switch State
 
 ```csharp
-var requestState = new RequestSwitchStateCommand(AccessoryAddress.From(100));
+var requestState = new RequestAccessoryStateCommand(AccessoryAddress.From(100));
 byte[] stateBytes = requestState.GetBytesWithChecksum();
 // Sends: [0xBC, sw1, sw2, checksum]
 ```
 
-**Response:** `SwitchReportNotification` (OPC_SW_REP)
+**Response:** `AccessoryReportNotification` (OPC_SW_REP)
 
 ### Parse Switch Reports
 
 ```csharp
 using Tellurian.Trains.Protocols.LocoNet.Notifications;
 
-if (msg is SwitchReportNotification switchReport)
+if (msg is AccessoryReportNotification switchReport)
 {
     ushort address = switchReport.Address.Value;
 
@@ -520,13 +520,13 @@ var switchAddr = AccessoryAddress.From(100);
 var withInput = AccessoryAddress.From(100, AccessoryInput.Port1);
 
 // Encode for commands
-var (sw1, sw2) = switchAddr.EncodeSwitchBytes(
+var (sw1, sw2) = switchAddr.EncodeAccessoryBytes(
     direction: AccessoryFunction.ClosedOrGreen,
     output: OutputState.On
 );
 
 // Decode from message
-var decoded = AccessoryAddress.DecodeSwitchBytes(
+var decoded = AccessoryAddress.DecodeAccessoryBytes(
     sw1, sw2,
     out AccessoryFunction direction,
     out OutputState output
@@ -730,13 +730,13 @@ async Task ControlLoco(ushort address, byte targetSpeed)
 async Task ThrowSwitch(AccessoryAddress address)
 {
     // Activate
-    SendCommand(SetTurnoutCommand.Throw(address));
+    SendCommand(SetAccessoryCommand.Throw(address));
 
     // Wait for motor
     await Task.Delay(1000);
 
     // Turn off
-    SendCommand(SetTurnoutCommand.TurnOff(address));
+    SendCommand(SetAccessoryCommand.TurnOff(address));
 }
 ```
 
@@ -757,7 +757,7 @@ void ProcessAllMessages()
             case SensorInputNotification sensor:
                 HandleSensor(sensor);
                 break;
-            case SwitchReportNotification switchReport:
+            case AccessoryReportNotification switchReport:
                 HandleSwitch(switchReport);
                 break;
             case LongAcknowledge ack:

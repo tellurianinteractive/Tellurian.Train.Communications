@@ -9,26 +9,26 @@ public sealed partial class Adapter : IAccessory, ISwitch
     {
         var position = command.Function;
         var output = command.Output;
-        return SendAsync(new SetTurnoutCommand(address, position, output), cancellationToken);
+        return SendAsync(new SetAccessoryCommand(address, position, output), cancellationToken);
     }
 
     public Task<bool> QueryAccessoryStateAsync(Address address, CancellationToken cancellationToken = default)
     {
-        return SendAsync(new RequestSwitchStateCommand(address), cancellationToken);
+        return SendAsync(new RequestAccessoryStateCommand(address), cancellationToken);
     }
 
     public Task<bool> SetThrownAsync(Address address, bool activate = true, CancellationToken cancellationToken = default)
     {
-        return SendAsync(SetTurnoutCommand.Throw(address, activate), cancellationToken);
+        return SendAsync(SetAccessoryCommand.Throw(address, activate), cancellationToken);
     }
 
     public Task<bool> SetClosedAsync(Address address, bool activate = true, CancellationToken cancellationToken = default)
     {
-        return SendAsync(SetTurnoutCommand.Close(address, activate), cancellationToken);
+        return SendAsync(SetAccessoryCommand.Close(address, activate), cancellationToken);
     }
 
     public Task<bool> TurnOffAsync(Address address, CancellationToken cancellationToken = default)
     {
-        return SendAsync(SetTurnoutCommand.TurnOff(address), cancellationToken);
+        return SendAsync(SetAccessoryCommand.TurnOff(address), cancellationToken);
     }
 }
