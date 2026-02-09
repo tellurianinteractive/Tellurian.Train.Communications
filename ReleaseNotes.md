@@ -5,6 +5,16 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.3.0 - Naming Improvements and LocoNet Enhancements
+Release date 2026-02-09
+
+**Breaking Changes**
+- **`ISwitch` renamed to `ITurnout`**: The `ISwitch` interface has been renamed to `ITurnout` to use proper railroad terminology. `ISwitch` is retained as an obsolete wrapper inheriting from `ITurnout` for backwards compatibility.
+
+**Improvements**
+- **Accessory naming cleanup**: Renamed LocoNet command classes from "Switch"/"Turnout" terminology to "Accessory" (e.g., `SetTurnoutCommand` → `SetAccessoryCommand`, `RequestTurnoutStateCommand` → `RequestAccessoryStateCommand`) for consistency with the LocoNet specification.
+- **Added `SetAccessoryNotification`**: New notification class for LocoNet OPCODE 0xB0 (OPC_SW_REQ). When a device on the LocoNet bus sends a `SetAccessoryCommand`, other devices now receive it as a `SetAccessoryNotification`, enabling proper bus monitoring and state tracking.
+
 ### Version 1.2.1 - Bug fix
 Release date 2026-02-09
 **Bug fix**
