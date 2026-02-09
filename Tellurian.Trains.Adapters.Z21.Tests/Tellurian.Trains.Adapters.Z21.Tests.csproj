@@ -3,7 +3,6 @@
 		<AssemblyName>Tellurian.Trains.Adapters.Z21.Tests</AssemblyName>
 		<RootNamespace>Tellurian.Trains.Adapters.Z21.Tests</RootNamespace>
 		<IsPackable>false</IsPackable>
-		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
 	</PropertyGroup>
 
 	<ItemGroup>

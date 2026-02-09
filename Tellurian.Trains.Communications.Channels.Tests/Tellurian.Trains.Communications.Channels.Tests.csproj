@@ -3,7 +3,6 @@
 		<RootNamespace>Tellurian.Trains.Communications.Channels.Tests</RootNamespace>
 		<AssemblyName>Tellurian.Trains.Communications.Channels.Tests</AssemblyName>
 		<IsPackable>false</IsPackable>
-		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
 	</PropertyGroup>
 
 
