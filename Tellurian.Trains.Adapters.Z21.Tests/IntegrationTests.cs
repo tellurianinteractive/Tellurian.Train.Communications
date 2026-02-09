@@ -73,7 +73,7 @@ public class IntegrationTests
         await Task.Delay(1000, TestContext.CancellationToken);
         Assert.IsNotEmpty(Observer.Notifications);
         var response = Observer.Notifications[0];
-        Assert.AreEqual("Hardware Z21 old -2012 1.41", response.ToString());
+        Assert.AreEqual("Hardware Z21 old -2012 1.43", response.ToString());
     }
 
     [TestMethod]

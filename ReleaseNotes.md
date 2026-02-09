@@ -5,8 +5,13 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.2.1 - Bug fix
+Release date 2026-02-09
+**Bug fix**
+- Observer<T> made thread safe.
+
 ### Version 1.2.0 - Bug Fixes and Improvements
-Release Date: 2025-01-14
+Release Date: 2026-01-14
 
 **Bug Fixes**
 - **Accessory addressing corrected**: Fixed accessory/switch addresses to use 1-based user addressing (1-2048) consistently across all protocols. Previously, addresses were incorrectly 0-based in some contexts, causing off-by-one errors when controlling turnouts. The `Address` struct now properly converts between user-facing 1-based addresses and protocol-specific wire addresses internally.
