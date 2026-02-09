@@ -40,7 +40,7 @@ The library follows a **layered architecture**:
 
 ```
 Application
-    ↓ (uses ILoco, IAccessory, ISwitch, IDecoder)
+    ↓ (uses ILoco, IAccessory, ITurnout, IDecoder)
 Adapter Layer (Z21/LocoNet)
     ↓ (translates to)
 Protocol Layer (XpressNet/LocoNet Commands)

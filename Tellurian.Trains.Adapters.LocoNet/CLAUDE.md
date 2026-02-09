@@ -4,7 +4,7 @@ This project provides the **LocoNet Adapter** - a protocol adapter for LocoNet c
 
 ## Purpose
 
-The LocoNet adapter acts as a bridge between the protocol-agnostic interfaces (`ILoco`, `IAccessory`, `ISwitch`, `IDecoder`) and LocoNet hardware. It handles the slot-based architecture of LocoNet while presenting a simple address-based API.
+The LocoNet adapter acts as a bridge between the protocol-agnostic interfaces (`ILoco`, `IAccessory`, `ITurnout`, `IDecoder`) and LocoNet hardware. It handles the slot-based architecture of LocoNet while presenting a simple address-based API.
 
 ## Implementation Status
 
@@ -14,7 +14,7 @@ The LocoNet adapter acts as a bridge between the protocol-agnostic interfaces (`
 
 ### Adapter
 Main adapter class that:
-- Implements `ILoco`, `IAccessory`, `ISwitch`, and `IDecoder` interfaces
+- Implements `ILoco`, `IAccessory`, `ITurnout`, and `IDecoder` interfaces
 - Manages LocoNet slot allocation and caching
 - Distributes notifications to multiple observers
 - Handles serial port framing via `SerialDataChannel` and `LocoNetFramer`
@@ -32,7 +32,7 @@ LocoNet uses 120 slots (0-119) for locomotive control:
 - `EmergencyStopAsync`: Emergency stop via slot
 - `SetFunctionAsync`: Function F0-F12 control
 
-#### IAccessory & ISwitch (AccessoryControlAdapter.cs)
+#### IAccessory & ITurnout (AccessoryControlAdapter.cs)
 - `SetAccessoryAsync`: Generic accessory control
 - `QueryAccessoryStateAsync`: Query switch state
 - `SetThrownAsync`/`SetClosedAsync`/`TurnOffAsync`: Convenience methods

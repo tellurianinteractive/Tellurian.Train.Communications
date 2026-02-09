@@ -14,7 +14,8 @@
       "Bash(del \"Tellurian.Trains.Protocols.LocoNet\\\\Notifications\\\\SwitchReportNotification.cs\")",
       "Bash(del \"Tellurian.Trains.Protocols.LocoNet.Tests\\\\SwitchCommandTests.cs\")",
       "Bash(del \"Tellurian.Trains.Adapters.LocoNet.Tests\\\\SwitchReportNotificationTests.cs\")",
-      "Bash(dotnet format:*)"
+      "Bash(dotnet format:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

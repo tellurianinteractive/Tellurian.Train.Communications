@@ -4,7 +4,7 @@ This project provides the **Z21 Adapter** - a protocol adapter for Z21 command s
 
 ## Purpose
 
-The Z21 adapter acts as a bridge between the protocol-agnostic interfaces (`ILoco`, `IAccessory`, `ISwitch`, `IDecoder`) and the Z21 command station hardware. It handles Z21-specific framing and protocol encapsulation while delegating actual protocol work to XpressNet implementations.
+The Z21 adapter acts as a bridge between the protocol-agnostic interfaces (`ILoco`, `IAccessory`, `ITurnout`, `IDecoder`) and the Z21 command station hardware. It handles Z21-specific framing and protocol encapsulation while delegating actual protocol work to XpressNet implementations.
 
 ## Implementation Status
 
@@ -14,7 +14,7 @@ The Z21 adapter acts as a bridge between the protocol-agnostic interfaces (`ILoc
 
 ### Adapter
 Main adapter class (split across partial classes) that:
-- Implements `ILoco`, `IAccessory`, `ISwitch`, and `IDecoder` interfaces
+- Implements `ILoco`, `IAccessory`, `ITurnout`, and `IDecoder` interfaces
 - Wraps XpressNet protocol handlers
 - Manages Z21 frame encapsulation/decapsulation
 - Distributes notifications to multiple observers
@@ -27,7 +27,7 @@ Main adapter class (split across partial classes) that:
 - `EmergencyStopAsync` - Per-locomotive emergency stop
 - `SetFunctionAsync` - Function control (F0-F28)
 
-#### IAccessory & ISwitch (AccessoryControlAdapter.cs)
+#### IAccessory & ITurnout (AccessoryControlAdapter.cs)
 - `SetAccessoryAsync` - Generic accessory control via XpressNet AccessoryFunctionCommand
 - `QueryAccessoryStateAsync` - Query accessory state via AccessoryInfoRequestCommand
 - `SetThrownAsync`/`SetClosedAsync`/`TurnOffAsync` - Convenience methods

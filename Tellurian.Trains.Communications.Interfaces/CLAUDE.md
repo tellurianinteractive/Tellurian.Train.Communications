@@ -19,11 +19,11 @@ Accessory control interface providing:
 - `SetAccessoryAsync(Address, AccessoryCommand)` - Set accessory state
 - `QueryAccessoryStateAsync(Address)` - Query current accessory state
 
-### ISwitch
-Switch control interface (convenience methods for accessories):
-- `SetThrownAsync(Address, bool)` - Set switch to thrown/diverging position
-- `SetClosedAsync(Address, bool)` - Set switch to closed/straight position
-- `TurnOffAsync(Address)` - Turn off switch motor
+### ITurnout
+Turnout control interface (convenience methods for accessories):
+- `SetThrownAsync(Address, bool)` - Set turnout to thrown/diverging position
+- `SetClosedAsync(Address, bool)` - Set turnout to closed/straight position
+- `TurnOffAsync(Address)` - Turn off turnout motor
 
 ### IDecoder
 Decoder programming interface providing:

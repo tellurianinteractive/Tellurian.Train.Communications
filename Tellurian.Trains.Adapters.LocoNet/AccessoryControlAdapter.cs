@@ -3,7 +3,7 @@ using Tellurian.Trains.Protocols.LocoNet.Commands;
 
 namespace Tellurian.Trains.Adapters.LocoNet;
 
-public sealed partial class Adapter : IAccessory, ISwitch
+public sealed partial class Adapter : IAccessory, ITurnout
 {
     public Task<bool> SetAccessoryAsync(Address address, AccessoryCommand command, CancellationToken cancellationToken = default)
     {

@@ -6,7 +6,7 @@ A .NET adapter for LocoNet-based command stations via serial port, providing a h
 
 - **Locomotive Control** (`ILoco`): Speed, direction, and function control (F0-F12)
 - **Accessory Control** (`IAccessory`): Set and query accessory states
-- **Switch Control** (`ISwitch`): Convenient throw/close/off operations for switches
+- **Turnout Control** (`ITurnout`): Convenient throw/close/off operations for turnouts
 - **Decoder Programming** (`IDecoder`): CV read/write operations on the programming track
 
 ## Usage

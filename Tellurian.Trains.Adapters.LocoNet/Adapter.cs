@@ -11,7 +11,7 @@ namespace Tellurian.Trains.Adapters.LocoNet;
 
 /// <summary>
 /// Adapter for LocoNet command stations via serial port.
-/// Implements ILoco, IAccessory, ISwitch, and IDecoder interfaces using LocoNet protocol.
+/// Implements ILoco, IAccessory, ITurnout, and IDecoder interfaces using LocoNet protocol.
 /// </summary>
 /// <remarks>
 /// LocoNet uses a slot-based architecture where each locomotive is assigned to a slot.
@@ -136,7 +136,7 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
         notification.Address, notification.CurrentDirection);
     }
 
-    private Tellurian.Trains.Communications.Interfaces.Notification? MapToInterfaceNotification(Notification notification)
+    private static Tellurian.Trains.Communications.Interfaces.Notification? MapToInterfaceNotification(Notification notification)
     {
         // Map LocoNet notifications to interface notifications
         return notification switch

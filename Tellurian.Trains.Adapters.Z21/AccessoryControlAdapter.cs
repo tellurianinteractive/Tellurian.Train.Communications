@@ -4,7 +4,7 @@ using Tellurian.Trains.Protocols.XpressNet.Commands;
 
 namespace Tellurian.Trains.Adapters.Z21;
 
-public sealed partial class Adapter : IAccessory, ISwitch
+public sealed partial class Adapter : IAccessory, ITurnout
 {
     public Task<bool> SetAccessoryAsync(Address address, AccessoryCommand command, CancellationToken cancellationToken = default)
     {
