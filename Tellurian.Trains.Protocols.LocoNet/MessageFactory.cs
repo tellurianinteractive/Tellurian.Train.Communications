@@ -27,6 +27,7 @@ public static class LocoNetMessageFactory
             PowerOffCommand.OperationCode => new PowerOffCommand(),
             PowerOnCommand.OperationCode => new PowerOnCommand(),
             ForceIdleCommand.OperationCode => new ForceIdleCommand(),
+            SetAccessoryNotification.OperationCode => new SetAccessoryNotification(data),
             AccessoryReportNotification.OperationCode => new AccessoryReportNotification(data),
             SensorInputNotification.OperationCode => new SensorInputNotification(data),
             LongAcknowledge.OperationCode => new LongAcknowledge(data),

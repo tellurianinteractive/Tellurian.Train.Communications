@@ -107,6 +107,9 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
             case SlotNotification slotNotification when slotNotification.IsLocomotiveSlot:
                 HandleSlotNotification(slotNotification);
                 break;
+            case SetAccessoryNotification setAccessory:
+                HandleSetAccessoryNotification(setAccessory);
+                break;
             case AccessoryReportNotification accessoryReport:
                 HandleAccessoryReportNotification(accessoryReport);
                 break;
@@ -129,6 +132,13 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
         slotData.SlotNumber, slotData.Address, slotData.Speed, slotData.Direction ? "FWD" : "REV");
     }
 
+    private void HandleSetAccessoryNotification(SetAccessoryNotification notification)
+    {
+        if (_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("SetAccessory {Address}: {Direction} {Output}",
+        notification.Address, notification.Direction, notification.Output);
+    }
+
     private void HandleAccessoryReportNotification(AccessoryReportNotification notification)
     {
         if (_logger.IsEnabled(LogLevel.Debug))
@@ -147,6 +157,8 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
                     : DecoderResponse.Timeout(),
             SlotNotification slot when slot.IsLocomotiveSlot =>
                 CreateLocoNotification(slot),
+            SetAccessoryNotification setAccessory =>
+                CreateAccessoryNotification(setAccessory),
             AccessoryReportNotification accessoryReport =>
                 CreateAccessoryNotification(accessoryReport),
             _ => null
@@ -159,6 +171,11 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
             Tellurian.Trains.Communications.Interfaces.Locos.Address.From(slot.Address),
             slot.Direction ? Tellurian.Trains.Communications.Interfaces.Locos.Direction.Forward : Tellurian.Trains.Communications.Interfaces.Locos.Direction.Backward,
             Tellurian.Trains.Communications.Interfaces.Locos.Speed.Set126((byte)(slot.Speed > 1 ? slot.Speed - 1 : 0)));
+    }
+
+    private static AccessoryNotification CreateAccessoryNotification(SetAccessoryNotification setAccessory)
+    {
+        return new AccessoryNotification(setAccessory.Address, setAccessory.Direction, DateTimeOffset.Now);
     }
 
     private static AccessoryNotification? CreateAccessoryNotification(AccessoryReportNotification accessoryReport)

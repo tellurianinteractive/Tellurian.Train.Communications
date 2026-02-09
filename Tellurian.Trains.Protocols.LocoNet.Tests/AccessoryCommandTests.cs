@@ -1,5 +1,6 @@
 using Tellurian.Trains.Communications.Interfaces.Accessories;
 using Tellurian.Trains.Protocols.LocoNet.Commands;
+using Tellurian.Trains.Protocols.LocoNet.Notifications;
 
 namespace Tellurian.Trains.Protocols.LocoNet.Tests;
 
@@ -235,5 +236,75 @@ public class RequestAccessoryStateCommandTests
 
         // All opcodes should be unique
         Assert.AreEqual(3, opcodes.Distinct().Count(), "All accessory command opcodes must be unique");
+    }
+}
+
+[TestClass]
+public class SetAccessoryNotificationTests
+{
+    [TestMethod]
+    public void SetAccessoryNotification_ParsesOpcode_0xB0()
+    {
+        // Verify that 0xB0 bytes are parsed as SetAccessoryNotification
+        var command = SetAccessoryCommand.Throw(Address.From(1));
+        var bytes = command.GetBytesWithChecksum();
+
+        Assert.AreEqual(0xB0, bytes[0]);
+        Assert.IsInstanceOfType<SetAccessoryNotification>(LocoNetMessageFactory.Create(bytes));
+    }
+
+    [TestMethod]
+    public void SetAccessoryNotification_RoundTrips_ThrownOn()
+    {
+        var command = SetAccessoryCommand.Throw(Address.From(100));
+        var bytes = command.GetBytesWithChecksum();
+
+        var notification = (SetAccessoryNotification)LocoNetMessageFactory.Create(bytes);
+
+        Assert.AreEqual(100, notification.Address.Number);
+        Assert.AreEqual(Position.ThrownOrRed, notification.Direction);
+        Assert.AreEqual(MotorState.On, notification.Output);
+    }
+
+    [TestMethod]
+    public void SetAccessoryNotification_RoundTrips_ClosedOn()
+    {
+        var command = SetAccessoryCommand.Close(Address.From(500));
+        var bytes = command.GetBytesWithChecksum();
+
+        var notification = (SetAccessoryNotification)LocoNetMessageFactory.Create(bytes);
+
+        Assert.AreEqual(500, notification.Address.Number);
+        Assert.AreEqual(Position.ClosedOrGreen, notification.Direction);
+        Assert.AreEqual(MotorState.On, notification.Output);
+    }
+
+    [TestMethod]
+    public void SetAccessoryNotification_RoundTrips_TurnOff()
+    {
+        var command = SetAccessoryCommand.TurnOff(Address.From(1));
+        var bytes = command.GetBytesWithChecksum();
+
+        var notification = (SetAccessoryNotification)LocoNetMessageFactory.Create(bytes);
+
+        Assert.AreEqual(1, notification.Address.Number);
+        Assert.AreEqual(MotorState.Off, notification.Output);
+    }
+
+    [TestMethod]
+    public void SetAccessoryNotification_RoundTrips_MaxAddress()
+    {
+        var command = SetAccessoryCommand.Throw(Address.From(2047));
+        var bytes = command.GetBytesWithChecksum();
+
+        var notification = (SetAccessoryNotification)LocoNetMessageFactory.Create(bytes);
+
+        Assert.AreEqual(2047, notification.Address.Number);
+    }
+
+    [TestMethod]
+    public void SetAccessoryNotification_ThrowsOnInvalidLength()
+    {
+        Assert.Throws<ArgumentException>(() => LocoNetMessageFactory.Create([0xB0, 0x00]));
     }
 }
