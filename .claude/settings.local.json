@@ -34,7 +34,10 @@
       "WebFetch(domain:home.pcisys.net)",
       "Bash(xxd:*)",
       "Bash(git status:*)",
-      "Bash(del \"C:\\\\Entwicklung\\\\Github\\\\Tellurian.Trains\\\\Tellurian.Trains.Communications\\\\Tellurian.Trains.Communications.Channels\\\\MockUdpLocoNetAdapter.cs\")"
+      "Bash(del \"C:\\\\Entwicklung\\\\Github\\\\Tellurian.Trains\\\\Tellurian.Trains.Communications\\\\Tellurian.Trains.Communications.Channels\\\\MockUdpLocoNetAdapter.cs\")",
+      "Bash(dotnet nuget search:*)",
+      "WebFetch(domain:api.nuget.org)",
+      "Bash(gh api:*)"
     ],
     "deny": [],
     "ask": []
