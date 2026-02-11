@@ -82,7 +82,7 @@ dotnet add package Tellurian.Trains.Protocols.XpressNet
 Or add to your `.csproj`:
 
 ```xml
-<PackageReference Include="Tellurian.Trains.Protocols.XpressNet" Version="1.1.0" />
+<PackageReference Include="Tellurian.Trains.Protocols.XpressNet" />
 ```
 
 ## Quick Start

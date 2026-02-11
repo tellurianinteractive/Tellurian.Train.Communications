@@ -71,7 +71,7 @@ dotnet add package Tellurian.Trains.Protocols.LocoNet
 Or add to your `.csproj`:
 
 ```xml
-<PackageReference Include="Tellurian.Trains.Protocols.LocoNet" Version="1.1.0" />
+<PackageReference Include="Tellurian.Trains.Protocols.LocoNet" />
 ```
 
 ## Quick Start
