@@ -480,6 +480,22 @@ var adapter = new Adapter(serialChannel, adapterLogger);
 // TCP — LoconetOverTcp (LbServer, JMRI, Rocrail, etc.)
 var tcpChannel = new TcpLocoNetChannel(new TcpStreamAdapter("192.168.1.100", 1234), logger);
 var adapter = new Adapter(tcpChannel, adapterLogger);
+
+// UDP — loconetd (Glenn Butcher, multicast 225.0.0.2)
+var udpAdapter = new UdpLocoNetAdapter(
+    multicastGroup: IPAddress.Parse("225.0.0.2"),
+    listenPort: 4501,
+    sendEndpoint: new IPEndPoint(IPAddress.Parse("192.168.1.50"), 4500));
+var udpChannel = new UdpLocoNetChannel(udpAdapter, logger);
+var adapter = new Adapter(udpChannel, adapterLogger);
+
+// UDP — GCA101 / Rocrail LocoBuffer-UDP (multicast 224.0.0.1)
+var gca101Adapter = new UdpLocoNetAdapter(
+    multicastGroup: IPAddress.Parse("224.0.0.1"),
+    listenPort: 1235,
+    sendEndpoint: new IPEndPoint(IPAddress.Parse("192.168.0.200"), 1235));
+var gca101Channel = new UdpLocoNetChannel(gca101Adapter, logger);
+var adapter = new Adapter(gca101Channel, adapterLogger);
 ```
 
 ### Key Classes
@@ -693,6 +709,7 @@ This library is compatible with:
 - **Command Stations**: Digitrax DCS100, DCS200, DCS210, DCS240
 - **Interfaces**: PR3, PR4, LNWI, RR-CirKits LCC-Buffer
 - **TCP Servers**: LbServer, JMRI, Rocrail (via LoconetOverTcp protocol on port 1234)
+- **UDP Gateways**: loconetd (Glenn Butcher), GCA101 LocoBuffer-UDP (Rocrail/Peter Giling)
 - **Boosters**: DB150, DB200, DB210, DB220
 - **Throttles**: DT400, DT500, UT4
 - **Decoders**: Any NMRA DCC-compliant decoder

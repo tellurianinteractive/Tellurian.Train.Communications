@@ -5,6 +5,12 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.5.0 - LocoNet over UDP Transport
+Release date 2026-02-11
+
+**New Features**
+- **LocoNet over UDP transport** (`UdpLocoNetChannel`): New multicast UDP channel for raw binary LocoNet communication. Supports both **loconetd** (Glenn Butcher, multicast group 225.0.0.2, ports 4500/4501) and **GCA101 LocoBuffer-UDP** (Rocrail/Peter Giling, multicast group 224.0.0.1, port 1235). Includes optional LocoNet checksum validation. Uses `IUdpLocoNetAdapter` abstraction for testability.
+
 ### Version 1.4.0 - LNCV Programming Support
 Release date 2026-02-11
 

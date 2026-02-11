@@ -25,6 +25,13 @@ Provides protocol-agnostic communication infrastructure for UDP, TCP, and serial
 - Handles protocol tokens: `VERSION`, `SENT OK/ERROR`, `TIMESTAMP`, `BREAK`, `ERROR`
 - Uses `ITcpStreamAdapter` abstraction for testability (with `MockTcpStreamAdapter` for tests)
 
+### UdpLocoNetChannel
+- **LocoNet over multicast UDP** — raw binary LocoNet messages as UDP datagrams (no text framing)
+- Supports both **loconetd** (Glenn Butcher, multicast 225.0.0.2:4501) and **GCA101** (Rocrail/Peter Giling, multicast 224.0.0.1:1235)
+- Optional LocoNet checksum validation (opcode MSB=1, XOR of all bytes == 0xFF)
+- Uses `IUdpLocoNetAdapter` abstraction for testability (with `MockUdpLocoNetAdapter` for tests)
+- Auto-joins multicast group on first send or receive
+
 ### SerialDataChannel
 - **Serial port implementation** with protocol-specific message framing
 - Uses `ISerialPortAdapter` and `IByteStreamFramer` abstractions
@@ -45,6 +52,7 @@ Provides protocol-agnostic communication infrastructure for UDP, TCP, and serial
 
 The `Tellurian.Communications.Channels.Tests` project validates:
 - UDP send/receive operations
+- UDP LocoNet multicast channel with checksum validation
 - TCP LoconetOverTcp protocol parsing and lifecycle
 - Observer notification delivery
 - Error handling and edge cases

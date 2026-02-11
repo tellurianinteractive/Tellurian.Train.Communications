@@ -1,6 +1,6 @@
 # Tellurian.Trains.Communications.Channels
 
-A protocol-agnostic transport layer library for model train control systems. Provides UDP and serial port communication with async/await patterns and observer-based notifications.
+A protocol-agnostic transport layer library for model train control systems. Provides UDP, serial port, TCP, and UDP multicast communication with async/await patterns and observer-based notifications.
 
 ## Features
 
@@ -63,6 +63,42 @@ var cts = new CancellationTokenSource();
 await channel.StartReceiveAsync(cts.Token);
 
 // Send LocoNet message
+await channel.SendAsync(new byte[] { 0xB5, 0x01, 0x02, 0xF2 }, cts.Token);
+```
+
+### TCP Channel (LoconetOverTcp)
+
+```csharp
+using Tellurian.Trains.Communications.Channels;
+
+// Connect to a LoconetOverTcp server (LbServer, JMRI, Rocrail)
+var stream = new TcpStreamAdapter("192.168.1.100", 1234);
+var logger = loggerFactory.CreateLogger<TcpLocoNetChannel>();
+await using var channel = new TcpLocoNetChannel(stream, logger);
+
+var subscription = channel.Subscribe(new MyObserver());
+var cts = new CancellationTokenSource();
+await channel.StartReceiveAsync(cts.Token);
+await channel.SendAsync(new byte[] { 0xB5, 0x01, 0x02, 0xF2 }, cts.Token);
+```
+
+### UDP Multicast Channel (LocoNet over UDP)
+
+```csharp
+using System.Net;
+using Tellurian.Trains.Communications.Channels;
+
+// loconetd (Glenn Butcher): multicast 225.0.0.2, listen 4501, send to gateway on 4500
+var adapter = new UdpLocoNetAdapter(
+    multicastGroup: IPAddress.Parse("225.0.0.2"),
+    listenPort: 4501,
+    sendEndpoint: new IPEndPoint(IPAddress.Parse("192.168.1.50"), 4500));
+var logger = loggerFactory.CreateLogger<UdpLocoNetChannel>();
+await using var channel = new UdpLocoNetChannel(adapter, logger);
+
+var subscription = channel.Subscribe(new MyObserver());
+var cts = new CancellationTokenSource();
+await channel.StartReceiveAsync(cts.Token);
 await channel.SendAsync(new byte[] { 0xB5, 0x01, 0x02, 0xF2 }, cts.Token);
 ```
 

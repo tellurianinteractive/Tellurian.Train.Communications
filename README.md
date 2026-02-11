@@ -13,7 +13,7 @@ protocol-specific communication.
 ├────────────────────────────────────────────────────────────────────────────┤
 │        Tellurian.Trains.Communications.Interfaces (ILoco, IDecoder...)     │
 ├────────────────────────┬───────────────────────────────────────────────────┤
-│  Adapters.Z21 (UDP)    │   Adapters.LocoNet (Serial/TCP)                   │
+│  Adapters.Z21 (UDP)    │   Adapters.LocoNet (Serial/TCP/UDP Multicast)      │
 ├────────────────────────┼───────────────────────────────────────────────────┤
 │  Protocols.XpressNet   │   Protocols.LocoNet                               │
 ├────────────────────────┴───────────────────────────────────────────────────┤
@@ -26,11 +26,11 @@ protocol-specific communication.
 | Project | Description | Status |
 |---------|-------------|--------|
 | **Tellurian.Trains.Communications.Interfaces** | Protocol-agnostic interfaces (`ILoco`, `IAccessory`, `ITurnout`, `IDecoder`) and data types | ✅ Complete |
-| **Tellurian.Trains.Communications.Channels** | UDP, serial, and TCP (LoconetOverTcp) transport layer with async operations and observer pattern | ✅ Complete |
+| **Tellurian.Trains.Communications.Channels** | UDP, serial, TCP (LoconetOverTcp), and UDP multicast (LocoNet over UDP) transport layer with async operations and observer pattern | ✅ Complete |
 | **Tellurian.Trains.Protocols.XpressNet** | XpressNet protocol encoding/decoding (Lenz, Z21) | ✅ Complete |
 | **Tellurian.Trains.Protocols.LocoNet** | LocoNet protocol encoding/decoding (Digitrax) | ✅ ~75% |
 | **Tellurian.Trains.Adapters.Z21** | Z21 command station adapter via UDP | ✅ Complete |
-| **Tellurian.Trains.Adapters.LocoNet** | LocoNet command station adapter via serial port or TCP | ✅ Core features |
+| **Tellurian.Trains.Adapters.LocoNet** | LocoNet command station adapter via serial port, TCP, or UDP multicast | ✅ Core features |
 
 ## Key Features
 
