@@ -1,42 +1,43 @@
 # Tellurian.Trains.Communications
 
-A .NET 10 library for communication with model train layouts using 
-TOCO Z21, Digitrax LocoNet, and LENZ XpressNet protocols. 
-Program against protocol-agnostic interfaces while the library handles 
+A .NET 10 library for communication with model train layouts using
+TOCO Z21, Digitrax LocoNet, and LENZ XpressNet protocols.
+Program against protocol-agnostic interfaces while the library handles
 protocol-specific communication.
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Your Application                         │
-├─────────────────────────────────────────────────────────────┤
+┌────────────────────────────────────────────────────────────────────────────┐
+│                    Your Application                                        │
+├────────────────────────────────────────────────────────────────────────────┤
 │        Tellurian.Trains.Communications.Interfaces (ILoco, IDecoder...)     │
-├────────────────────────┬────────────────────────────────────┤
-│  Adapters.Z21 (UDP)    │   Adapters.LocoNet (Serial)        │
-├────────────────────────┼────────────────────────────────────┤
-│  Protocols.XpressNet   │   Protocols.LocoNet                │
-├────────────────────────┴────────────────────────────────────┤
-│             Communications.Channels (UDP/Serial)            │
-└─────────────────────────────────────────────────────────────┘
+├────────────────────────┬───────────────────────────────────────────────────┤
+│  Adapters.Z21 (UDP)    │   Adapters.LocoNet (Serial/TCP)                   │
+├────────────────────────┼───────────────────────────────────────────────────┤
+│  Protocols.XpressNet   │   Protocols.LocoNet                               │
+├────────────────────────┴───────────────────────────────────────────────────┤
+│             Communications.Channels (UDP/Serial/TCP)                       │
+└────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Projects
 
 | Project | Description | Status |
 |---------|-------------|--------|
-| **Tellurian.Trains.Communications.Interfaces** | Protocol-agnostic interfaces (`ILoco`, `IAccessory`, `ITurnout`, `IDecoder`) and data types | ✅ Complete |
-| **Tellurian.Trains.Communications.Channels** | UDP and serial port transport layer with async operations and observer pattern | ✅ Complete |
-| **Tellurian.Trains.Protocols.XpressNet** | XpressNet protocol encoding/decoding (Lenz, Z21) | ✅ Complete |
-| **Tellurian.Trains.Protocols.LocoNet** | LocoNet protocol encoding/decoding (Digitrax) | ✅ ~75% |
-| **Tellurian.Trains.Adapters.Z21** | Z21 command station adapter via UDP | ✅ Complete |
-| **Tellurian.Trains.Adapters.LocoNet** | LocoNet command station adapter via serial port | ✅ Core features |
+| **Tellurian.Trains.Communications.Interfaces** | Protocol-agnostic interfaces (`ILoco`, `IAccessory`, `ITurnout`, `IDecoder`) and data types | ✅ Complete |
+| **Tellurian.Trains.Communications.Channels** | UDP, serial, and TCP (LoconetOverTcp) transport layer with async operations and observer pattern | ✅ Complete |
+| **Tellurian.Trains.Protocols.XpressNet** | XpressNet protocol encoding/decoding (Lenz, Z21) | ✅ Complete |
+| **Tellurian.Trains.Protocols.LocoNet** | LocoNet protocol encoding/decoding (Digitrax) | ✅ ~75% |
+| **Tellurian.Trains.Adapters.Z21** | Z21 command station adapter via UDP | ✅ Complete |
+| **Tellurian.Trains.Adapters.LocoNet** | LocoNet command station adapter via serial port or TCP | ✅ Core features |
 
 ## Key Features
 
 - **Locomotive control**: Speed (14/27/28/126 steps), direction, functions F0-F28
 - **Accessory/turnout control**: Addresses 1-1024 with state queries
 - **Decoder programming**: Service mode and operations mode (POM), CVs 1-1024
+- **LNCV programming**: Read/write LocoNet Configuration Variables for stationary decoders (Uhlenbrock, Digikeijs, etc.)
 - **Consisting**: Multi-unit operations (LocoNet) and double headers (XpressNet)
 - **Async-first**: All operations are non-blocking
 - **Multiple observers**: Thread-safe notification distribution
@@ -50,7 +51,6 @@ Release builds of the NuGet packages should be copied to `C:/Nugets` after a suc
 
 - Fast clock synchronization (slot 123)
 - Raw DCC packet operations (OPC_IMM_PACKET)
-- Advanced peer transfer operations
 
 ## Release Notes
 

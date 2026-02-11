@@ -10,7 +10,7 @@ LocoNet is a peer-to-peer, multi-drop network protocol developed by Digitrax for
 
 ## Features
 
-### ✅ Implemented (75% Coverage)
+### ✅ Implemented (~80% Coverage)
 
 #### Core Infrastructure
 - ✅ Message length calculation from opcode
@@ -56,11 +56,17 @@ LocoNet is a peer-to-peer, multi-drop network protocol developed by Digitrax for
 - ✅ Individual consist member control
 - ✅ Consist status tracking
 
+#### LNCV Programming (Uhlenbrock Extension)
+- ✅ Start/end programming sessions
+- ✅ Read 16-bit CVs (0-65535) with 16-bit values (0-65535)
+- ✅ Write 16-bit CVs with error reporting (unsupported CV, read-only, out of range)
+- ✅ Broadcast device discovery
+- ✅ PXCT1 high-bit encoding/decoding for peer transfer messages
+
 ### ⏳ Not Implemented
 
 - ⏳ Fast Clock (slot 123) - specialized feature
 - ⏳ OPC_IMM_PACKET (raw DCC packets) - advanced feature
-- ⏳ OPC_PEER_XFER (peer-to-peer transfer) - rarely used
 
 ## Installation
 
@@ -340,6 +346,65 @@ foreach (var cmd in unlinkCommands)
 }
 ```
 
+### LNCV Programming (Stationary Decoder Configuration)
+
+LNCV (LocoNet Configuration Variables) is an Uhlenbrock extension for configuring stationary LocoNet devices such as accessory decoders, feedback modules, and signal decoders from manufacturers like Uhlenbrock, Digikeijs, etc.
+
+Unlike DCC CV programming (8-bit, targets locomotive decoders on the track), LNCV uses 16-bit CV numbers and values, and communicates over the LocoNet bus.
+
+```csharp
+using Tellurian.Trains.Protocols.LocoNet.Commands;
+using Tellurian.Trains.Protocols.LocoNet.Lncv;
+using Tellurian.Trains.Protocols.LocoNet.Notifications;
+
+// Devices are identified by article number (product code) + module address.
+// Article number is the manufacturer's product code (e.g. 6341 for Uhlenbrock 63410).
+// Module address is stored in LNCV 0 and defaults to 1.
+
+// 1. Start a programming session (required before read/write)
+var startSession = LncvCommand.StartSession(articleNumber: 6341, moduleAddress: 1);
+SendCommand(startSession);
+// Wait for session acknowledgment (LncvNotification with SessionAcknowledgment type)
+
+// 2. Read an LNCV
+var readCmd = LncvCommand.Read(articleNumber: 6341, cvNumber: 5, moduleAddress: 1);
+SendCommand(readCmd);
+// Wait for LncvNotification with ReadReply type
+// notification.CvNumber and notification.CvValue contain the result
+
+// 3. Write an LNCV
+var writeCmd = LncvCommand.Write(articleNumber: 6341, cvNumber: 5, value: 42);
+SendCommand(writeCmd);
+// Wait for LongAcknowledge (0xB4) with ForOperationCode 0xED
+// ack.IsSuccess indicates if the write was accepted
+
+// 4. End the programming session
+var endSession = new LncvEndSessionCommand(articleNumber: 6341, moduleAddress: 1);
+SendCommand(endSession);
+
+// Device discovery: find all devices of a specific type
+var discover = LncvCommand.StartSession(articleNumber: 6341, moduleAddress: 0xFFFF);
+SendCommand(discover);
+// Collect multiple SessionAcknowledgment notifications over a timeout period
+// Each response contains the article number and module address of a found device
+```
+
+When using the adapter layer (`Tellurian.Trains.Adapters.LocoNet` or `Tellurian.Trains.Adapters.Z21`), the async request/response correlation is handled automatically:
+
+```csharp
+// Using the adapter (LocoNet or Z21)
+var device = await adapter.StartLncvSessionAsync(6341, moduleAddress: 1);
+var lncv = await adapter.ReadLncvAsync(6341, cvNumber: 5, moduleAddress: 1);
+Console.WriteLine(lncv); // "LNCV5=42"
+var success = await adapter.WriteLncvAsync(6341, cvNumber: 5, value: 100);
+await adapter.EndLncvSessionAsync(6341, moduleAddress: 1);
+
+// Discover all devices of a specific type
+var devices = await adapter.DiscoverLncvDevicesAsync(6341);
+foreach (var d in devices)
+    Console.WriteLine(d); // "Article 6341, Module 1"
+```
+
 ### Error Handling
 
 ```csharp
@@ -398,9 +463,23 @@ if (msg is UnsupportedNotification unsupported)
              │
 ┌────────────▼────────────────────┐
 │   Transport Layer               │
-│  (UDP, Serial, etc.)            │
+│  (Serial, TCP, UDP)             │
 │  Tellurian.Communications.*     │
 └─────────────────────────────────┘
+```
+
+### Transport Options
+
+The LocoNet adapter works with any `ICommunicationsChannel` implementation:
+
+```csharp
+// Serial — direct connection via LocoBuffer-USB
+var serialChannel = new SerialDataChannel(new SerialPortAdapter("COM3"), new LocoNetFramer(), logger);
+var adapter = new Adapter(serialChannel, adapterLogger);
+
+// TCP — LoconetOverTcp (LbServer, JMRI, Rocrail, etc.)
+var tcpChannel = new TcpLocoNetChannel(new TcpStreamAdapter("192.168.1.100", 1234), logger);
+var adapter = new Adapter(tcpChannel, adapterLogger);
 ```
 
 ### Key Classes
@@ -413,6 +492,8 @@ if (msg is UnsupportedNotification unsupported)
 - `ProgrammingCommand`
 - `LinkSlotsCommand`, `UnlinkSlotsCommand`, `ConsistFunctionCommand`
 - `WriteSlotDataCommand`, `WriteSlotStatus1Command`
+- `LncvCommand` - LNCV read/write/start session (static factory methods)
+- `LncvEndSessionCommand` - End LNCV programming session
 
 #### Notifications
 - `SlotNotification` - Slot data (14 bytes)
@@ -420,6 +501,7 @@ if (msg is UnsupportedNotification unsupported)
 - `AccessoryReportNotification` - Switch feedback
 - `SensorInputNotification` - Occupancy/sensor reports
 - `MasterBusyNotification` - Network timing
+- `LncvNotification` - LNCV read replies and session acknowledgments
 - `UnsupportedNotification` - Unknown messages
 
 #### Data Types
@@ -430,6 +512,9 @@ if (msg is UnsupportedNotification unsupported)
 - `SlotStatus`, `ConsistStatus`, `DecoderType`, `TrackStatus` - Enums
 - `ProgrammingMode`, `ProgrammingOperation`, `ProgrammingStatus` - Programming types
 - `ProgrammingResult` - Programming response parser
+- `Lncv` - LNCV number (0-65535) and value (0-65535)
+- `LncvDeviceInfo` - Discovered device article number and module address
+- `LncvMessageType` - Enum: `ReadReply`, `SessionAcknowledgment`
 
 #### Utilities
 - `LocoNetMessageFactory` - Parse byte arrays into messages
@@ -497,7 +582,7 @@ SendCommand(new SetLocoSpeedCommand(slot.SlotNumber, speed));
 | 2 bytes | 00 | 0x82 (POWER OFF), 0x83 (POWER ON), 0x85 (IDLE) |
 | 4 bytes | 01 | 0xA0 (SPEED), 0xB0 (SWITCH), 0xB4 (LACK) |
 | 6 bytes | 10 | (Reserved) |
-| Variable | 11 | 0xE7 (SLOT READ - 14 bytes), 0xEF (SLOT WRITE - 14 bytes) |
+| Variable | 11 | 0xE5 (LNCV reply - 15 bytes), 0xE7 (SLOT READ - 14 bytes), 0xED (LNCV cmd - 15 bytes), 0xEF (SLOT WRITE - 14 bytes) |
 
 ### Opcode Quick Reference
 
@@ -523,7 +608,9 @@ SendCommand(new SetLocoSpeedCommand(slot.SlotNumber, speed));
 | 0xBC | OPC_SW_STATE | Command | Request switch state |
 | 0xBD | OPC_SW_ACK | Command | Switch with acknowledge |
 | 0xBF | OPC_LOCO_ADR | Command | Request loco address |
+| 0xE5 | OPC_PEER_XFER | Notification | Peer transfer / LNCV reply (15 bytes) |
 | 0xE7 | OPC_SL_RD_DATA | Notification | Slot data (14 bytes) |
+| 0xED | OPC_IMM_PACKET | Command | LNCV command (15 bytes) |
 | 0xEF | OPC_WR_SL_DATA | Command | Write slot data (14 bytes) |
 
 ## Testing
@@ -605,6 +692,7 @@ while (true)
 This library is compatible with:
 - **Command Stations**: Digitrax DCS100, DCS200, DCS210, DCS240
 - **Interfaces**: PR3, PR4, LNWI, RR-CirKits LCC-Buffer
+- **TCP Servers**: LbServer, JMRI, Rocrail (via LoconetOverTcp protocol on port 1234)
 - **Boosters**: DB150, DB200, DB210, DB220
 - **Throttles**: DT400, DT500, UT4
 - **Decoders**: Any NMRA DCC-compliant decoder

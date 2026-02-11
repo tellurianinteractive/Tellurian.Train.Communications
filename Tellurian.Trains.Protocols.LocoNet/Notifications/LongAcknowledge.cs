@@ -53,6 +53,13 @@ public class LongAcknowledge : Notification
             (0x7F, 0x01) => (true, "Accepted, will send response"),
             (0x7F, 0x40) => (true, "Accepted, blind operation"),
 
+            // LNCV write responses (OPC_IMM_PACKET acknowledged)
+            (LncvCommand.OperationCode, 0x7F) => (true, "LNCV write accepted"),
+            (LncvCommand.OperationCode, 0x00) => (false, "LNCV error: generic"),
+            (LncvCommand.OperationCode, 0x01) => (false, "LNCV error: unsupported CV"),
+            (LncvCommand.OperationCode, 0x02) => (false, "LNCV error: read-only CV"),
+            (LncvCommand.OperationCode, 0x03) => (false, "LNCV error: value out of range"),
+
             // Default case
             _ => ((bool?)null, Resources.Strings.Undecided)
         };

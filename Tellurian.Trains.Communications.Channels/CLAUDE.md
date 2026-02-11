@@ -4,7 +4,7 @@ This project provides the **Transport Layer** for the Tellurian Trains Control l
 
 ## Purpose
 
-Provides protocol-agnostic communication infrastructure for UDP-based communication with model train control hardware.
+Provides protocol-agnostic communication infrastructure for UDP, TCP, and serial communication with model train control hardware.
 
 ## Key Components
 
@@ -18,6 +18,17 @@ Provides protocol-agnostic communication infrastructure for UDP-based communicat
 - Non-blocking operations using `async`/`await`
 - Configurable endpoints (IP address and port)
 - Automatic buffer management
+
+### TcpLocoNetChannel
+- **LoconetOverTcp implementation** (Stefan Bormann protocol) over TCP
+- Exchanges ASCII-encoded hex lines: `RECEIVE`/`SEND` with hex-encoded LocoNet bytes
+- Handles protocol tokens: `VERSION`, `SENT OK/ERROR`, `TIMESTAMP`, `BREAK`, `ERROR`
+- Uses `ITcpStreamAdapter` abstraction for testability (with `MockTcpStreamAdapter` for tests)
+
+### SerialDataChannel
+- **Serial port implementation** with protocol-specific message framing
+- Uses `ISerialPortAdapter` and `IByteStreamFramer` abstractions
+- Suitable for direct LocoBuffer-USB connections
 
 ### CommunicationResult
 - **Result type** representing success, failure, or no-operation outcomes
@@ -34,6 +45,7 @@ Provides protocol-agnostic communication infrastructure for UDP-based communicat
 
 The `Tellurian.Communications.Channels.Tests` project validates:
 - UDP send/receive operations
+- TCP LoconetOverTcp protocol parsing and lifecycle
 - Observer notification delivery
 - Error handling and edge cases
 - Thread safety of observer management

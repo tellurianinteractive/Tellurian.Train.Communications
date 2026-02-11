@@ -42,9 +42,22 @@ public class NotificationMapperTests
     }
 
     [TestMethod]
-    public void MapLocoNetNotificationWithNullMessage()
+    public void MapLocoNetNotificationWithUnknownOpcodeReturnsUnmapped()
     {
         var frame = new Frame(FrameHeader.LocoNetReceive, new byte[] { 0x00 });
+        var notification = new LocoNetNotification(frame);
+
+        var result = notification.Map();
+
+        Assert.IsNotNull(result);
+        Assert.HasCount(1, result);
+        Assert.IsInstanceOfType<Communications.Interfaces.MessageNotification>(result[0]);
+    }
+
+    [TestMethod]
+    public void MapLocoNetNotificationWithEmptyDataReturnsEmpty()
+    {
+        var frame = new Frame(FrameHeader.LocoNetReceive, Array.Empty<byte>());
         var notification = new LocoNetNotification(frame);
 
         var result = notification.Map();

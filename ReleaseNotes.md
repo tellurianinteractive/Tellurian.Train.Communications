@@ -5,6 +5,22 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.4.0 - LNCV Programming Support
+Release date 2026-02-11
+
+**New Features**
+- **LNCV programming**: Full support for LocoNet Configuration Variables (LNCV), the Uhlenbrock proprietary extension for configuring stationary LocoNet devices (accessory decoders, feedback modules, signal decoders) from manufacturers like Uhlenbrock, Digikeijs, etc.
+  - Session-based programming: start/end programming sessions with specific devices
+  - Read and write 16-bit CVs (0-65535) with 16-bit values (0-65535)
+  - Device discovery: broadcast scan to find all connected LNCV devices of a given type
+  - Available on both LocoNet (serial) and Z21 (UDP) adapters
+- **PXCT1 encoding**: Internal helper for LocoNet 7-bit data byte encoding/decoding used by peer transfer messages
+- **LNCV error reporting**: `LongAcknowledge` now reports LNCV-specific write errors (unsupported CV, read-only CV, value out of range)
+- **LoconetOverTcp transport** (`TcpLocoNetChannel`): New TCP channel implementing the LoconetOverTcp protocol (Stefan Bormann), enabling LocoNet communication over IP networks via servers such as LbServer, JMRI, or Rocrail on port 1234. The existing LocoNet adapter works unchanged with this new channel — just swap `SerialDataChannel` for `TcpLocoNetChannel`.
+
+**Bug Fixes**
+- **Z21 LocoNet notification parsing**: Fixed `LocoNetNotification.Message` property which was always null. LocoNet messages received through Z21 are now properly parsed, enabling LocoNet notification mapping to work correctly.
+
 ### Version 1.3.0 - Naming Improvements and LocoNet Enhancements
 Release date 2026-02-09
 

@@ -78,6 +78,13 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
             try
             {
                 var n = frame.Notification();
+
+                // Intercept LocoNet notifications for LNCV handling
+                if (n is LocoNetNotification locoNetNotification)
+                {
+                    ProcessLocoNetMessage(locoNetNotification);
+                }
+
                 var notification = n.Map();
                 if (notification.Length == 1 && notification[0] is DecoderResponse decoderResponse)
                 {
@@ -91,6 +98,19 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
                 Logger.LogError(new EventId(2104, nameof(ReceiveData)), ex, "Failed to process received data.");
                 throw;
             }
+        }
+    }
+
+    private void ProcessLocoNetMessage(LocoNetNotification locoNetNotification)
+    {
+        switch (locoNetNotification.Message)
+        {
+            case Protocols.LocoNet.Notifications.LncvNotification lncvNotification:
+                HandleLncvNotification(lncvNotification);
+                break;
+            case Protocols.LocoNet.Notifications.LongAcknowledge ack when ack.ForOperationCode == Protocols.LocoNet.Commands.LncvCommand.OperationCode:
+                HandleLncvWriteAcknowledge(ack);
+                break;
         }
     }
 
@@ -116,6 +136,7 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
         {
             if (disposing)
             {
+                _lncvSemaphore.Dispose();
                 Close();
             }
             disposedValue = true;

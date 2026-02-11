@@ -113,6 +113,12 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
             case AccessoryReportNotification accessoryReport:
                 HandleAccessoryReportNotification(accessoryReport);
                 break;
+            case LncvNotification lncvNotification:
+                HandleLncvNotification(lncvNotification);
+                break;
+            case LongAcknowledge ack when ack.ForOperationCode == LncvCommand.OperationCode:
+                HandleLncvWriteAcknowledge(ack);
+                break;
         }
     }
 
@@ -203,6 +209,7 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
         if (_disposed) return;
         _slotRequestSemaphore.Dispose();
         _programmingSemaphore.Dispose();
+        _lncvSemaphore.Dispose();
         (_channel as IDisposable)?.Dispose();
         _disposed = true;
     }
@@ -212,6 +219,7 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
         if (_disposed) return;
         _slotRequestSemaphore.Dispose();
         _programmingSemaphore.Dispose();
+        _lncvSemaphore.Dispose();
         if (_channel is IAsyncDisposable asyncDisposable)
             await asyncDisposable.DisposeAsync().ConfigureAwait(false);
         else

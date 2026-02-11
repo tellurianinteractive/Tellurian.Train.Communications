@@ -7,6 +7,8 @@ public sealed class LocoNetNotification : Notification
     internal LocoNetNotification(Frame frame) : base(frame)
     {
         Data = frame.Data;
+        try { Message = LocoNet.LocoNetMessageFactory.Create(Data); }
+        catch { Message = null; }
     }
     private readonly byte[] Data;
     public LocoNet.Message? Message { get; }

@@ -32,6 +32,8 @@ public static class LocoNetMessageFactory
             SensorInputNotification.OperationCode => new SensorInputNotification(data),
             LongAcknowledge.OperationCode => new LongAcknowledge(data),
             SlotNotification.OperationCode => new SlotNotification(data),
+            LncvNotification.OperationCode when LncvNotification.IsLncvMessage(data) => new LncvNotification(data),
+            LncvNotification.OperationCode => new UnsupportedNotification(data),
             _ => new UnsupportedNotification(data)
         };
     }
