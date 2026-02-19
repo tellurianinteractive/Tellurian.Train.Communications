@@ -48,6 +48,10 @@ public enum BroadcastSubjects
     /// </summary>
     OccupiedStretch = 0x08000000,
     /// <summary>
+    /// Subscribes on CAN detector change notifications (Z21 FW 1.30+).
+    /// </summary>
+    CanDetectorChanges = 0x00080000,
+    /// <summary>
     /// Subscribes on all notifications from Z21.
     /// </summary>
     All =
@@ -55,6 +59,7 @@ public enum BroadcastSubjects
         RbusFeedback |
         SystemStateChanges |
         ChangedLocomotiveInfo |
+        CanDetectorChanges |
         LocoNetExceptLocomotivesAndSwitches |
         LocoNetLocomotiveSpecific |
         LocoNetTurnouts |

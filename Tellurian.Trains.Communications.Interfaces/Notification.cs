@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Tellurian.Trains.Communications.Interfaces.Accessories;
+using Tellurian.Trains.Communications.Interfaces.Detectors;
 using Tellurian.Trains.Communications.Interfaces.Locos;
 
 namespace Tellurian.Trains.Communications.Interfaces;
@@ -13,6 +14,9 @@ namespace Tellurian.Trains.Communications.Interfaces;
 [JsonDerivedType(typeof(LocoMovementNotification), "LocoMovementNotification")]
 [JsonDerivedType(typeof(LocoFunctionsNotification), "LocoFunctionsNotification")]
 [JsonDerivedType(typeof(AccessoryNotification), "AccessoryNotification")]
+[JsonDerivedType(typeof(OccupancyNotification), "OccupancyNotification")]
+[JsonDerivedType(typeof(TransponderNotification), "TransponderNotification")]
+[JsonDerivedType(typeof(RailComLocomotiveNotification), "RailComLocomotiveNotification")]
 public abstract class Notification(DateTimeOffset timestamp)
 {
     protected Notification() : this(DateTimeOffset.Now) { }

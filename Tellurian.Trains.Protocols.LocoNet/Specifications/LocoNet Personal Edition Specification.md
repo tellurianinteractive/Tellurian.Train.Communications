@@ -292,24 +292,28 @@ Validation: 0xBF ^ 0x00 ^ 0x03 ^ 0x43 = 0xFF ✓
 | 0xB8 | OPC_UNLINK_SLOTS | 4 | Yes | Unlink consist slots |
 | 0xA0 | OPC_LOCO_SPD | 4 | No | Set locomotive speed |
 | 0xA1 | OPC_LOCO_DIRF | 4 | No | Set direction and F0-F4 |
-| 0xA2 | OPC_LOCO_SND | 4 | No | Set sound/functions F5-F8 |
+| 0xA2 | OPC_LOCO_SND | 4 | No | Set functions F5-F8 |
 | 0xB6 | OPC_CONSIST_FUNC | 4 | No | Set functions in consist |
 | 0xB5 | OPC_SLOT_STAT1 | 4 | No | Write slot status1 byte |
 | 0xE7 | OPC_SL_RD_DATA | 14 | No | Slot data read (response) |
 | 0xEF | OPC_WR_SL_DATA | 14 | Yes | Write slot data |
-| **Switches/Turnouts** |
+| **Switches** |
 | 0xB0 | OPC_SW_REQ | 4 | No | Request switch function (no ack) |
 | 0xBD | OPC_SW_ACK | 4 | Yes | Request switch with acknowledge |
 | 0xBC | OPC_SW_STATE | 4 | Yes | Request switch state |
-| 0xB1 | OPC_SW_REP | 4 | No | Turnout sensor state report |
-| **Sensors/Input** |
+| 0xB1 | OPC_SW_REP | 4 | No | Switch sensor state report |
+| **Sensors Input** |
 | 0xB2 | OPC_INPUT_REP | 4 | No | General sensor input report |
+| **Transponding & Detection** |
+| 0xD0 | OPC_MULTI_SENSE | 6 | No | Transponding, power manager, BDL16x status |
+| 0xE0 | OPC_MULTI_SENSE_LONG | Variable | No | Extended transponding with RailCom data |
+| 0xE4 | OPC_LISSY_UPDATE | Variable | No | LISSY/Uhlenbrock detection report |
 | **Programming** |
 | 0xED | OPC_IMM_PACKET | Variable | Yes | Send immediate DCC packet |
 | 0xEF | OPC_WR_SL_DATA | 14 | Yes | Write slot 124 = program |
 | 0xE7 | OPC_SL_RD_DATA | 14 | No | Read slot 124 = prog result |
 | **Acknowledgment** |
-| 0xB4 | OPC_LONG_ACK | 4 | No | Long acknowledgment (response) |
+| 0xB4 | OPC_LONG_ACK | 4 | No | Long acknowledgment  |
 | **Advanced** |
 | 0xE5 | OPC_PEER_XFER | Variable | No | Peer-to-peer transfer (8 bytes) |
 
@@ -936,6 +940,328 @@ void ParseSensorReport(byte[] msg)
 - **Block occupancy:** Sensor goes HIGH when train enters, LOW when exits
 - **Switch position confirmation:** Feedback from turnout actuators
 - **Button presses:** Panel buttons for manual control
+
+---
+
+### OPC_MULTI_SENSE (0xD0) - Transponding & Power Management
+
+> **Note:** This opcode is not in the original Digitrax Personal Use Edition specification.
+> It was reverse-engineered by Al Silverstein with corrections by B. Milhaupt, and is
+> documented in JMRI and other open-source projects. Used by BDL168/RX4 transponding,
+> PM4x power management, and RailCom-capable detectors (e.g. Digikeijs DR5088RC,
+> Blücher GBM16XN).
+
+**Purpose:** Report transponding events (locomotive detected entering/exiting a block),
+power manager status, and device identification.
+
+**Format:** 6 bytes (opcode bits 6-5 = 10)
+```
+Byte 0: 0xD0           Opcode
+Byte 1: <type>         Message type and upper address bits
+Byte 2: <zone>         Zone/section information
+Byte 3: <adr1>         Address high or command byte
+Byte 4: <adr2>         Address low or status byte
+Byte 5: <checksum>     Checksum
+```
+
+**Message Sub-Types (determined by Byte 1 & 0x60):**
+
+| Byte 1 & 0x60 | Constant | Description |
+|----------------|----------|-------------|
+| 0x00 | OPC_MULTI_SENSE_ABSENT | Transponder exited block |
+| 0x20 | OPC_MULTI_SENSE_PRESENT | Transponder entered block |
+| 0x40 | OPC_MULTI_SENSE_RAILCOM_AD | RailCom application dynamics |
+| 0x60 | OPC_MULTI_SENSE_POWER | Power manager / device info |
+
+#### Transponding Messages (Byte 1 & 0x60 = 0x00 or 0x20)
+
+Reports which locomotive is in which detection zone. Used by Digitrax BDL168 + RX4
+transponding receivers, and by RailCom-capable detectors.
+
+**Byte 1 (Type):**
+```
+Bit 7: Always 0
+Bit 6-5: Sub-type (00=absent, 01=present)
+Bit 4-0: Detection section address bits A7-A3
+```
+
+**Byte 2 (Zone):**
+```
+Bit 7: Always 0
+Bit 6-4: Detection section address bits A2-A0
+Bit 3-0: Zone within section (even values: A=0x00, B=0x02, C=0x04, D=0x06, E=0x08, F=0x0A, G=0x0C, H=0x0E)
+```
+
+**Detection Section Address:**
+```csharp
+int section = ((msg[1] & 0x1F) << 3) | ((msg[2] & 0x70) >> 4);
+int sectionAddress = section + 1; // 1-based
+```
+
+**Zone Letter:**
+```csharp
+char zone = (char)('A' + ((msg[2] & 0x0E) >> 1)); // A-H
+```
+
+**Locomotive Address (Bytes 3-4):**
+```csharp
+// Short address (1-127): Byte 3 = 0x7D
+if (msg[3] == 0x7D)
+{
+    int address = msg[4]; // 7-bit short address
+}
+// Long address (128-10239): 14-bit encoding
+else
+{
+    int address = (msg[3] * 128) + msg[4];
+}
+```
+
+**Presence Status:**
+```csharp
+bool isPresent = (msg[1] & 0x20) != 0; // true=entered, false=exited
+```
+
+**Example - Loco 4711 enters section 5, zone C:**
+```csharp
+// Address 4711 = 36 * 128 + 103 → adr1=0x24, adr2=0x67
+// Section 5 (0-based=4): bits A7-A3=0, A2-A0=4 → type=0x20, zone=0x44
+byte[] msg = { 0xD0, 0x20, 0x44, 0x24, 0x67, 0xXX };
+```
+
+**Example - Parsing transponding report:**
+```csharp
+void ParseTranspondingReport(byte[] msg)
+{
+    bool isPresent = (msg[1] & 0x20) != 0;
+    int section = ((msg[1] & 0x1F) << 3) | ((msg[2] & 0x70) >> 4) + 1;
+    char zone = (char)('A' + ((msg[2] & 0x0E) >> 1));
+
+    int locoAddress;
+    if (msg[3] == 0x7D)
+        locoAddress = msg[4];
+    else
+        locoAddress = (msg[3] * 128) + msg[4];
+
+    Console.WriteLine($"Loco {locoAddress} {(isPresent ? "entered" : "exited")} section {section} zone {zone}");
+}
+```
+
+**Hardware:**
+- **Digitrax BDL168/BDL162:** Block detector with 16 detection sections, supports up to 2 RX4 receivers (8 transponding zones)
+- **Digitrax BXP88:** 8-zone combined block detector and transponding receiver
+- **Digikeijs DR5088RC:** RailCom detector that translates RailCom data to OPC_MULTI_SENSE format
+- **Blücher GBM16XN:** RailCom-capable detector (via Z21 CAN-to-LocoNet emulation)
+
+#### Power Management Messages (Byte 1 & 0x60 = 0x60)
+
+Reports power manager status (circuit breaker trips, auto-reverse events) and device identification.
+
+**Board Address:**
+```csharp
+int boardAddress = (msg[2] + 1) + ((msg[1] & 0x01) != 0 ? 128 : 0);
+```
+
+**Command Types (Byte 3 upper nibble):**
+
+| Byte 3 & 0x70 | Description |
+|----------------|-------------|
+| 0x10 or 0x30 | Auto-reverse / circuit breaker event |
+| 0x70 | Device configuration bit read/write |
+| 0x00 | Device type identification |
+
+**Device Type (when Byte 3 & 0x70 = 0x00):**
+
+| Byte 3 & 0x07 | Device |
+|----------------|--------|
+| 0x00 | PM4x (Power Manager) |
+| 0x01 | BDL16x (Block Detector) |
+| 0x02 | SE8 (Signal Controller) |
+| 0x03 | DS64 (Stationary Decoder) |
+
+---
+
+### OPC_MULTI_SENSE_LONG (0xE0) - Extended Transponding
+
+> **Note:** This opcode is not in the original Digitrax Personal Use Edition specification.
+> It was reverse-engineered by the JMRI community. Used by RailCom-capable detectors
+> (e.g. Digikeijs DR5088RC) to provide additional feedback data beyond what
+> OPC_MULTI_SENSE carries.
+
+**Purpose:** Extended transponding report with RailCom data including speed, direction,
+quality of service, and motion state.
+
+**Format:** Variable length (opcode bits 6-5 = 11)
+```
+Byte 0: 0xE0           Opcode
+Byte 1: <length>       Total message length in bytes
+Byte 2+: <data>        Message-specific data
+Last:   <checksum>     Checksum
+```
+
+**Additional Data vs OPC_MULTI_SENSE:**
+
+| Field | OPC_MULTI_SENSE (0xD0) | OPC_MULTI_SENSE_LONG (0xE0) |
+|-------|------------------------|------------------------------|
+| Locomotive address | Yes (14-bit) | Yes |
+| Section/zone | Yes | Yes |
+| Present/absent | Yes | Yes |
+| Speed | No | Yes |
+| Direction | No | Yes (forward/backward) |
+| Orientation | No | Yes (east/west based on wiring) |
+| Quality of service | No | Yes (good/poor) |
+| Motion state | No | Yes (moving/stationary) |
+
+**Hardware:**
+- **Digikeijs DR5088RC:** Primary source of OPC_MULTI_SENSE_LONG messages
+- Requires RailCom-capable DCC decoders in locomotives
+
+> **Implementation Note:** The exact byte-level format of this message has not been
+> fully documented in public sources. JMRI's `interpretOpcMultiSenseLong()` method
+> is the reference implementation. For Z21 users, the simplified
+> `LAN_LOCONET_DETECTOR` API (0xA4) is recommended over parsing raw 0xE0 messages.
+
+---
+
+### OPC_LISSY_UPDATE (0xE4) - LISSY Detection Report
+
+> **Note:** This opcode is not in the original Digitrax Personal Use Edition specification.
+> It is an Uhlenbrock-specific extension for the LISSY (Locomotive Individual Steering
+> System) infrared detection system. Documented in JMRI and used by Uhlenbrock LISSY
+> receivers (68610) and compatible RFID readers.
+
+**Purpose:** Report locomotive identification, direction, speed, and block status from
+LISSY infrared transponder receivers or compatible RFID readers.
+
+**Format:** Variable length (opcode bits 6-5 = 11)
+```
+Byte 0: 0xE4           Opcode
+Byte 1: <length>       Message length (bytes following opcode, excluding checksum)
+Byte 2+: <data>        Format-specific data
+Last:   <checksum>     Checksum
+```
+
+#### Traditional LISSY Format (Byte 1 = 0x08)
+
+Reports locomotive address, direction, and category from LISSY infrared transponders.
+
+**Format:**
+```
+Byte 0:  0xE4           Opcode
+Byte 1:  0x08           Message sub-type (traditional LISSY)
+Byte 2:  <category>     Train category (0-based, display as category+1)
+Byte 3:  <flags>        Status flags
+Byte 4:  <section>      Section/block address (7-bit)
+Byte 5:  <adr_h>        Locomotive address high (7 bits)
+Byte 6:  <adr_l>        Locomotive address low (7 bits)
+Byte 7:  <checksum>     Checksum
+```
+
+**Flags Byte (Byte 3):**
+```
+Bit 7: Always 0
+Bit 6: Valid message flag (1=valid data, 0=invalid/ignore)
+Bit 5: Direction (0=north/forward, 1=south/backward)
+Bit 4-0: Reserved
+```
+
+**Locomotive Address:**
+```csharp
+int locoAddress = (msg[5] & 0x7F) * 128 + (msg[6] & 0x7F);
+// Range: 1-9999 = locomotives, 10000-16382 = wagons
+```
+
+**Direction:**
+```csharp
+bool isValid = (msg[3] & 0x40) != 0;
+bool isForward = (msg[3] & 0x20) == 0; // 0=forward, 1=backward
+```
+
+**Category:**
+```csharp
+int category = msg[2] + 1; // 1-based for display (K0-K3 from LISSY sender)
+```
+
+**Example - Parsing LISSY report:**
+```csharp
+void ParseLissyReport(byte[] msg)
+{
+    if (msg[1] != 0x08) return; // Not traditional LISSY format
+    if ((msg[3] & 0x40) == 0) return; // Invalid message
+
+    int locoAddress = (msg[5] & 0x7F) * 128 + (msg[6] & 0x7F);
+    bool isForward = (msg[3] & 0x20) == 0;
+    int category = msg[2] + 1;
+
+    Console.WriteLine($"LISSY: Loco {locoAddress}, direction={( isForward ? "forward" : "backward")}, category={category}");
+}
+```
+
+#### LISSY RFID Format (Byte 1 = 0x0E, Byte 2 = 0x41)
+
+Reports RFID tag detection from Arduino-based RFID readers (GCA51, rfid2ln).
+
+**Format:**
+```
+Byte 0:  0xE4           Opcode
+Byte 1:  0x0E           Message length
+Byte 2:  0x41           RFID message identifier
+Byte 3:  <addr_h>       Sensor address high (7 bits)
+Byte 4:  <addr_l>       Sensor address low (7 bits)
+Byte 5:  <uid0>         UID byte 0, bits 6-0
+Byte 6:  <uid1>         UID byte 1, bits 6-0
+Byte 7:  <uid2>         UID byte 2, bits 6-0
+Byte 8:  <uid3>         UID byte 3, bits 6-0
+Byte 9:  <uid4>         UID byte 4, bits 6-0
+Byte 10: <uid5>         UID byte 5, bits 6-0
+Byte 11: <uid6>         UID byte 6, bits 6-0
+Byte 12: <uid_msbs>     MSBs of uid0-uid6 (bit 7 of each, packed in bits 0-6)
+Byte 13: <checksum>     Checksum
+```
+
+**Sensor Address:**
+```csharp
+int sensorAddress = (msg[3] & 0x7F) * 128 + (msg[4] & 0x7F); // 1-4095
+```
+
+**UID Reconstruction:**
+```csharp
+byte[] uid = new byte[7];
+byte msbs = msg[12];
+for (int i = 0; i < 7; i++)
+{
+    uid[i] = (byte)((msg[5 + i] & 0x7F) | (((msbs >> i) & 0x01) << 7));
+}
+```
+
+**Hardware:**
+- **Uhlenbrock LISSY sender (68100):** Infrared transmitter mounted under locomotive
+- **Uhlenbrock LISSY receiver (68610):** Infrared receiver installed in track, connects to LocoNet
+- **Arduino RFID readers (GCA51, rfid2ln):** RC522-based RFID to LocoNet bridges
+
+**LISSY System Overview:**
+```
+┌──────────────┐      IR Signal      ┌──────────────┐
+│ LISSY Sender │  ────────────────→  │LISSY Receiver│
+│   (68100)    │                     │   (68610)    │
+│ Under loco   │                     │ In track bed │
+└──────────────┘                     └──────┬───────┘
+                                            │ LocoNet
+                                            ↓
+                                     OPC_LISSY_UPDATE (0xE4)
+```
+
+**Configuration (LNCV programming of receiver 68610):**
+
+| LNCV | Value | Description |
+|------|-------|-------------|
+| 2 | 0 | Basic function: read loco + direction (double sensor) |
+| 2 | 22 | Automation: time-controlled waiting station |
+| 3 | 2 | Active in both directions |
+| 10 | 2 | Block status "free" after 2 seconds |
+| 14 | 15660 | Velocity scaling: 1566 (H0) × 10mm sensor distance |
+| 15 | 1 | Transfer format: Uhlenbrock (required for Z21 compatibility) |
+| 17 | 1017 | Report address (default) |
 
 ---
 

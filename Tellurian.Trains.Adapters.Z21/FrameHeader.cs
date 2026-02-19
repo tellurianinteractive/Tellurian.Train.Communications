@@ -20,5 +20,7 @@ public enum FrameHeader : ushort
     LocoNetTransmit = 0xA1,
     LocoNetCommand = 0xA2,
     LocoNetDispatch = 0xA3,
+    LocoNetDetector = 0xA4,
+    CanDetector = 0xC4,
     Test = 0xFF
 }

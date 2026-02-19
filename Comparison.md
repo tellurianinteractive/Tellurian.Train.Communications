@@ -82,13 +82,18 @@ This means a single Tellurian.Trains application can connect to a LocoNet layout
 | 0xED (OPC_IMM_PACKET) | Immediate packet | `LncvCommand` (LNCV only) | Not supported | Yes (full raw DCC) |
 | 0xEF (OPC_WR_SL_DATA) | Write slot data | `WriteSlotDataCommand` / `ProgrammingCommand` | Unknown | Yes |
 
+### Opcodes Specified but Not Yet Implemented
+
+| Opcode | Description |
+|--------|-------------|
+| OPC_MULTI_SENSE (0xD0) | Transponding, power manager, BDL16x status |
+| OPC_MULTI_SENSE_LONG (0xE0) | Extended multi-sense messages (RailCom) |
+| OPC_LISSY_UPDATE (0xE4) | LISSY/Uhlenbrock detection system |
+
 ### Opcodes Only in JMRI
 
 | Opcode | Description |
 |--------|-------------|
-| OPC_MULTI_SENSE | Transponding, power manager, BDL16x status |
-| OPC_MULTI_SENSE_LONG | Extended multi-sense messages |
-| OPC_LISSY_UPDATE | LISSY detection system |
 | OPC_PANEL_QUERY/RESPONSE | Panel information exchange |
 | OPC_ALM_READ/WRITE | Alarm memory operations |
 | OPC_EXP_* (expanded slots) | Newer command stations (DCS210+) |

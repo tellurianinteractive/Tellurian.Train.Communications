@@ -77,6 +77,24 @@ public class CommandTests
     }
 
     [TestMethod]
+    public void CreatesLocoNetDetectorRequestCommand()
+    {
+        var command = new LocoNetDetectorRequestCommand(DetectorRequestType.StationaryInterrogate, 5);
+        var frame = Act(command);
+        Assert.AreEqual(FrameHeader.LocoNetDetector, frame.Header);
+        AssertCorrectFrameData(7, new byte[] { 0x80, 0x05, 0x00 }, frame);
+    }
+
+    [TestMethod]
+    public void CreatesCanDetectorRequestCommand()
+    {
+        var command = new CanDetectorRequestCommand(0xD000);
+        var frame = Act(command);
+        Assert.AreEqual(FrameHeader.CanDetector, frame.Header);
+        AssertCorrectFrameData(7, new byte[] { 0x00, 0x00, 0xD0 }, frame);
+    }
+
+    [TestMethod]
     public void CreatesSetTurnoutAddressModeCommand()
     {
         const short address = 1;

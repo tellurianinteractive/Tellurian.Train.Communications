@@ -37,7 +37,9 @@
       "Bash(del \"C:\\\\Entwicklung\\\\Github\\\\Tellurian.Trains\\\\Tellurian.Trains.Communications\\\\Tellurian.Trains.Communications.Channels\\\\MockUdpLocoNetAdapter.cs\")",
       "Bash(dotnet nuget search:*)",
       "WebFetch(domain:api.nuget.org)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "WebFetch(domain:www.digitrax.com)",
+      "WebFetch(domain:traintastic.org)"
     ],
     "deny": [],
     "ask": []

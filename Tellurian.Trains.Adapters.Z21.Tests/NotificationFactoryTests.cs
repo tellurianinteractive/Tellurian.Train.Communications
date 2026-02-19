@@ -45,6 +45,23 @@ public class NotificationFactoryTests
     }
 
     [TestMethod]
+    public void Notification_CreatesLocoNetDetectorNotification()
+    {
+        var frame = new Frame(FrameHeader.LocoNetDetector, new byte[] { 0x01, 0x05, 0x00, 0x01 });
+        AssertCreatedCorrectNotification(frame, typeof(LocoNetDetectorNotification));
+    }
+
+    [TestMethod]
+    public void Notification_CreatesCanDetectorNotification()
+    {
+        var data = new byte[10];
+        BitConverter.GetBytes((ushort)0xD000).CopyTo(data, 0);
+        data[5] = 0x01; // occupancy type
+        var frame = new Frame(FrameHeader.CanDetector, data);
+        AssertCreatedCorrectNotification(frame, typeof(CanDetectorNotification));
+    }
+
+    [TestMethod]
     public void Notification_CreatesBroadcastSubjectsNotification()
     {
         const BroadcastSubjects subjects = BroadcastSubjects.All;

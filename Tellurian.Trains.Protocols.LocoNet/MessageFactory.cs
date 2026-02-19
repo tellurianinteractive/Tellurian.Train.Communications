@@ -30,8 +30,11 @@ public static class LocoNetMessageFactory
             SetAccessoryNotification.OperationCode => new SetAccessoryNotification(data),
             AccessoryReportNotification.OperationCode => new AccessoryReportNotification(data),
             SensorInputNotification.OperationCode => new SensorInputNotification(data),
+            MultiSenseNotification.OperationCode => new MultiSenseNotification(data),
             LongAcknowledge.OperationCode => new LongAcknowledge(data),
             SlotNotification.OperationCode => new SlotNotification(data),
+            LissyNotification.OperationCode when LissyNotification.IsLissyMessage(data) => new LissyNotification(data),
+            LissyNotification.OperationCode => new UnsupportedNotification(data),
             LncvNotification.OperationCode when LncvNotification.IsLncvMessage(data) => new LncvNotification(data),
             LncvNotification.OperationCode => new UnsupportedNotification(data),
             _ => new UnsupportedNotification(data)

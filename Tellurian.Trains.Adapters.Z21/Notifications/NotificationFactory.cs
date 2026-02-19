@@ -17,6 +17,8 @@ public static class NotificationFactory
             FrameHeader.SystemStateChanged => new SystemStateChangeNotification(sourceFrame),
             FrameHeader.TurnoutAddressMode => new TurnoutAddressModeNotification(sourceFrame),
             FrameHeader.Xbus => new XpressNetNotification(sourceFrame),
+            FrameHeader.LocoNetDetector => new LocoNetDetectorNotification(sourceFrame),
+            FrameHeader.CanDetector => new CanDetectorNotification(sourceFrame),
             _ => new UnsupportedNotification(sourceFrame),
         };
     }

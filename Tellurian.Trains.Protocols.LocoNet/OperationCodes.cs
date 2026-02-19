@@ -16,6 +16,8 @@ internal enum OperationCodes : byte
     SetLocoSoundCommand = 0xA2,
     AccessoryRequestCommand = 0xB0,
     AccessoryReportNotification = 0xB1,
+    MultiSenseNotification = 0xD0,
+    LissyUpdateNotification = 0xE4,
     SensorInputNotification = 0xB2,
     LongAcknowledgeNotification = 0xB4,
     WriteSlotStatCommand = 0xB5,
