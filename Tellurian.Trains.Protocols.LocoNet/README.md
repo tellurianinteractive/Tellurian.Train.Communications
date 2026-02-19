@@ -42,6 +42,8 @@ LocoNet is a peer-to-peer, multi-drop network protocol developed by Digitrax for
 - ✅ Occupancy detection
 - ✅ Block detection
 - ✅ 11-bit sensor addressing
+- ✅ Transponding reports (OPC_MULTI_SENSE) - present/absent events with locomotive address
+- ✅ LISSY/RailCom identification (OPC_LISSY_UPDATE) - locomotive address, direction, category
 
 #### Programming Track
 - ✅ Service mode CV read/write (paged, direct, register)
@@ -259,6 +261,16 @@ while (true)
         {
             OnBlockOccupied(sensor.Address);
         }
+    }
+    else if (msg is MultiSenseNotification multiSense && multiSense.IsTransponding)
+    {
+        Console.WriteLine($"Section {multiSense.Section} Zone {multiSense.Zone}: " +
+            $"Loco {multiSense.LocoAddress} {(multiSense.IsPresent ? "PRESENT" : "ABSENT")}");
+    }
+    else if (msg is LissyNotification lissy && lissy.IsValid)
+    {
+        Console.WriteLine($"LISSY Section {lissy.SectionAddress}: " +
+            $"Loco {lissy.LocoAddress} {(lissy.IsForward ? "Fwd" : "Rev")} Cat {lissy.Category}");
     }
     else if (msg is AccessoryReportNotification switchReport)
     {
@@ -516,6 +528,8 @@ var adapter = new Adapter(gca101Channel, adapterLogger);
 - `LongAcknowledge` - Command acknowledgment
 - `AccessoryReportNotification` - Switch feedback
 - `SensorInputNotification` - Occupancy/sensor reports
+- `MultiSenseNotification` - Transponding present/absent events
+- `LissyNotification` - LISSY/RailCom locomotive identification
 - `MasterBusyNotification` - Network timing
 - `LncvNotification` - LNCV read replies and session acknowledgments
 - `UnsupportedNotification` - Unknown messages
@@ -597,7 +611,7 @@ SendCommand(new SetLocoSpeedCommand(slot.SlotNumber, speed));
 |--------|----------|-----------------|
 | 2 bytes | 00 | 0x82 (POWER OFF), 0x83 (POWER ON), 0x85 (IDLE) |
 | 4 bytes | 01 | 0xA0 (SPEED), 0xB0 (SWITCH), 0xB4 (LACK) |
-| 6 bytes | 10 | (Reserved) |
+| 6 bytes | 10 | 0xD0 (MULTI_SENSE) |
 | Variable | 11 | 0xE5 (LNCV reply - 15 bytes), 0xE7 (SLOT READ - 14 bytes), 0xED (LNCV cmd - 15 bytes), 0xEF (SLOT WRITE - 14 bytes) |
 
 ### Opcode Quick Reference
@@ -624,6 +638,8 @@ SendCommand(new SetLocoSpeedCommand(slot.SlotNumber, speed));
 | 0xBC | OPC_SW_STATE | Command | Request switch state |
 | 0xBD | OPC_SW_ACK | Command | Switch with acknowledge |
 | 0xBF | OPC_LOCO_ADR | Command | Request loco address |
+| 0xD0 | OPC_MULTI_SENSE | Notification | Transponding present/absent, power management |
+| 0xE4 | OPC_LISSY_UPDATE | Notification | LISSY/RailCom loco identification |
 | 0xE5 | OPC_PEER_XFER | Notification | Peer transfer / LNCV reply (15 bytes) |
 | 0xE7 | OPC_SL_RD_DATA | Notification | Slot data (14 bytes) |
 | 0xED | OPC_IMM_PACKET | Command | LNCV command (15 bytes) |

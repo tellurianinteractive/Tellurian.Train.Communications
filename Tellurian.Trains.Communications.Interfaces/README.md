@@ -65,6 +65,10 @@ await locoControl.SetFunctionAsync(address, new LocoFunction(0, true)); // Light
 Subscribe to state changes via `IObservable<Notification>`:
 
 - `LocoNotification` - Locomotive state updates
+- `AccessoryNotification` - Accessory/turnout state changes
+- `OccupancyNotification` - Track section occupancy (occupied/free)
+- `TransponderNotification` - Transponder/RailCom locomotive presence detection (entering/leaving)
+- `RailComLocomotiveNotification` - RailCom/LISSY locomotive identification with direction and classification
 - `ShortCircuitNotification` - Track short circuit detected
 - `MessageNotification` - General system messages
 

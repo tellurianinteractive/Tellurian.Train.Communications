@@ -5,6 +5,21 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.6.0 - Track Detector Support
+Release date 2026-02-19
+
+**New Features**
+- **Protocol-agnostic detector notifications**: Three new interface notification types for consuming detector events regardless of protocol:
+  - `OccupancyNotification` - Track section occupied/free state
+  - `TransponderNotification` - Transponder/RailCom locomotive presence (entering/leaving with loco address)
+  - `RailComLocomotiveNotification` - RailCom/LISSY locomotive identification with direction and classification
+- **LocoNet transponding** (`OPC_MULTI_SENSE` 0xD0): Reports transponder present/absent events with locomotive address, section, and zone (A-H). Supports both short (0x7D marker) and long 14-bit address decoding.
+- **LocoNet LISSY/RailCom** (`OPC_LISSY_UPDATE` 0xE4): Reports locomotive address, direction, and category from LISSY and RailCom-enabled detectors.
+- **Z21 LocoNet detector API** (`LAN_LOCONET_DETECTOR` 0xA4): Native Z21 API for querying LocoNet-based detectors. Supports occupancy (type 0x01), transponder entering/leaving (types 0x02/0x03), LISSY loco identification (type 0x10), LISSY block status (type 0x11), and LISSY speed (type 0x12). Includes `LocoNetDetectorRequestCommand` with `DetectorRequestType` enum for SIC, Uhlenbrock, and LISSY detectors.
+- **Z21 CAN detector API** (`LAN_CAN_DETECTOR` 0xC4): Native CAN bus detector support for Z21 10808 eight-track occupancy detectors with RailCom. Parses occupancy status with detailed state (free/occupied/voltage/overload levels), and RailCom address reports (types 0x11-0x1F) with dual locomotive addresses and direction information. Includes `CanDetectorRequestCommand` and `CanOccupancyStatus` enum.
+- **CAN detector broadcast subscription** (`CanDetectorChanges` 0x00080000): New broadcast subject for receiving CAN detector change notifications (requires Z21 FW 1.30+).
+- **LocoNet notification mapping**: `SensorInputNotification`, `MultiSenseNotification`, and `LissyNotification` are now mapped to the protocol-agnostic detector notification types when received through Z21 or the LocoNet adapter.
+
 ### Version 1.5.0 - LocoNet over UDP Transport
 Release date 2026-02-11
 

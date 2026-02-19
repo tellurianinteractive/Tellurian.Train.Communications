@@ -21,6 +21,8 @@ See `API-REFERENCE.md` in this folder for detailed API usage examples.
 - Slot management (request, activate, dispatch, keep-alive)
 - Switch/turnout control with feedback
 - Sensor and occupancy detection
+- Transponding (OPC_MULTI_SENSE 0xD0) - present/absent events with locomotive address
+- LISSY/RailCom identification (OPC_LISSY_UPDATE 0xE4) - locomotive address, direction, category
 - Programming track operations (all modes: paged, direct byte/bit, register, POM)
 - Multi-locomotive consisting (link/unlink, member control)
 

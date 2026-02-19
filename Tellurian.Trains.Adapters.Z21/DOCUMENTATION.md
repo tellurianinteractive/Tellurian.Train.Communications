@@ -295,6 +295,8 @@ The Z21 protocol uses a simple frame structure for all messages:
 | `LocoNetTransmit` | 0xA1 | LocoNet message transmitted |
 | `LocoNetCommand` | 0xA2 | LocoNet command |
 | `LocoNetDispatch` | 0xA3 | LocoNet dispatch |
+| `LocoNetDetector` | 0xA4 | LocoNet detector request/notification |
+| `CanDetector` | 0xC4 | CAN detector request/notification (Z21 10808) |
 
 ### Frame Examples
 
@@ -335,6 +337,13 @@ await adapter.SendAsync(new GetSubscribedNotificationsCommand());
 
 // Disconnect from Z21
 await adapter.SendAsync(new LogOffCommand());
+
+// Request LocoNet detector state (Digitrax/Blücher SIC, Uhlenbrock, LISSY)
+await adapter.SendAsync(new LocoNetDetectorRequestCommand(DetectorRequestType.StationaryInterrogate, reportAddress: 5));
+await adapter.SendAsync(new LocoNetDetectorRequestCommand(DetectorRequestType.Lissy, reportAddress: 1));
+
+// Request CAN detector state (Z21 10808)
+await adapter.SendAsync(new CanDetectorRequestCommand(networkId: 0xD000)); // All detectors
 ```
 
 ### Locomotive Control Commands
@@ -413,9 +422,24 @@ Feedback and occupancy from LocoNet protocol:
 
 | Notification Type | Description |
 |-------------------|-------------|
-| `SensorNotification` | Track sensor state change |
-| `TurnoutNotification` | Turnout position feedback |
-| `OccupancyNotification` | Block occupancy change |
+| `SensorInputNotification` | Track sensor state change |
+| `AccessoryReportNotification` | Turnout position feedback |
+| `MultiSenseNotification` | Transponding present/absent events |
+| `LissyNotification` | LISSY/RailCom loco identification |
+
+### Z21 Detector Notifications
+
+Detector notifications via Z21 native APIs:
+
+| Notification Type | Description |
+|-------------------|-------------|
+| `LocoNetDetectorNotification` | Z21 LocoNet detector API (0xA4): occupancy, transponder, LISSY |
+| `CanDetectorNotification` | Z21 CAN detector API (0xC4): occupancy and RailCom from 10808 modules |
+
+All detector notifications are mapped to protocol-agnostic types:
+- `OccupancyNotification` - Track section occupied/free
+- `TransponderNotification` - Locomotive entering/leaving a section
+- `RailComLocomotiveNotification` - RailCom identification with direction
 
 ## Broadcast Subscriptions
 
@@ -447,6 +471,7 @@ await adapter.SendAsync(new SubscribeNotificationsCommand(BroadcastSubjects.None
 | `LocoNetLocomotiveSpecific` | LocoNet locomotive messages |
 | `LocoNetTurnouts` | LocoNet turnout messages |
 | `OccupiedStretch` | Block occupancy |
+| `CanDetectorChanges` | CAN detector changes (Z21 FW 1.30+) |
 | `All` | All of the above |
 
 ## Observer Pattern

@@ -289,6 +289,45 @@ if (msg is SensorInputNotification sensor)
 }
 ```
 
+### Parse Transponding Reports
+
+```csharp
+using Tellurian.Trains.Protocols.LocoNet.Notifications;
+
+if (msg is MultiSenseNotification multiSense)
+{
+    if (multiSense.IsTransponding)
+    {
+        ushort section = multiSense.Section;
+        char zone = multiSense.Zone;           // A-H
+        ushort locoAddress = multiSense.LocoAddress;
+        bool isPresent = multiSense.IsPresent; // true=entering, false=leaving
+
+        Console.WriteLine($"Section {section} Zone {zone}: Loco {locoAddress} {(isPresent ? "PRESENT" : "ABSENT")}");
+    }
+    else if (multiSense.IsPowerMessage)
+    {
+        Console.WriteLine($"Section {multiSense.Section}: Power management event");
+    }
+}
+```
+
+### Parse LISSY/RailCom Reports
+
+```csharp
+using Tellurian.Trains.Protocols.LocoNet.Notifications;
+
+if (msg is LissyNotification lissy && lissy.IsValid)
+{
+    byte sectionAddress = lissy.SectionAddress;
+    ushort locoAddress = lissy.LocoAddress;
+    bool isForward = lissy.IsForward;
+    byte category = lissy.Category;
+
+    Console.WriteLine($"LISSY Section {sectionAddress}: Loco {locoAddress} {(isForward ? "Fwd" : "Rev")} Category {category}");
+}
+```
+
 ---
 
 ## Programming
@@ -759,6 +798,12 @@ void ProcessAllMessages()
                 break;
             case AccessoryReportNotification switchReport:
                 HandleSwitch(switchReport);
+                break;
+            case MultiSenseNotification multiSense when multiSense.IsTransponding:
+                HandleTransponding(multiSense);
+                break;
+            case LissyNotification lissy when lissy.IsValid:
+                HandleLissy(lissy);
                 break;
             case LongAcknowledge ack:
                 HandleAck(ack);

@@ -38,6 +38,7 @@ protocol-specific communication.
 - **Accessory/turnout control**: Addresses 1-1024 with state queries
 - **Decoder programming**: Service mode and operations mode (POM), CVs 1-1024
 - **LNCV programming**: Read/write LocoNet Configuration Variables for stationary decoders (Uhlenbrock, Digikeijs, etc.)
+- **Detector/occupancy support**: Occupancy, transponder, and RailCom notifications from LocoNet, Z21 LocoNet detector API, and Z21 CAN detectors (10808)
 - **Consisting**: Multi-unit operations (LocoNet) and double headers (XpressNet)
 - **Async-first**: All operations are non-blocking
 - **Multiple observers**: Thread-safe notification distribution

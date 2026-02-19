@@ -55,6 +55,8 @@ Maps Z21 frames to protocol-agnostic notifications:
 - Locomotive information → `LocoMovementNotification` / `LocoFunctionsNotification`
 - Programming results → `DecoderResponse`
 - Accessory changes → `AccessoryNotification`
+- LocoNet detector (0xA4) → `OccupancyNotification` / `TransponderNotification` / `RailComLocomotiveNotification`
+- CAN detector (0xC4) → `OccupancyNotification` / `TransponderNotification`
 
 ### Z21-Specific Commands
 Beyond protocol passthrough, provides Z21-specific functionality:
@@ -62,6 +64,7 @@ Beyond protocol passthrough, provides Z21-specific functionality:
 - **System state**: Voltage, current, temperature monitoring
 - **Broadcast subscriptions**: Configurable event filtering via `BroadcastSubjects`
 - **Hardware detection**: Identifies Z21 variant (old/new, SmartRail, z21, smart/start)
+- **Detector commands**: `LocoNetDetectorRequestCommand` (0xA4) and `CanDetectorRequestCommand` (0xC4) for querying detector state
 
 ## Z21 Frame Structure Details
 

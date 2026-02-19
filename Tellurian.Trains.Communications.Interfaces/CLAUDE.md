@@ -62,6 +62,11 @@ Abstract notification types for broadcasting state changes:
 - **`AccessoryNotification`**: Accessory/switch state changes
 - **`DecoderResponse`**: Programming operation results
 
+### Detector Types (Detectors namespace)
+- **`OccupancyNotification`**: Track section occupied/free (from LocoNet sensors, Z21 LocoNet detectors, Z21 CAN detectors)
+- **`TransponderNotification`**: Transponder/RailCom locomotive presence detection with entering/leaving state
+- **`RailComLocomotiveNotification`**: RailCom/LISSY locomotive identification with direction and classification
+
 ## Design Philosophy
 
 - **Protocol independence**: No protocol-specific details leak into interfaces
