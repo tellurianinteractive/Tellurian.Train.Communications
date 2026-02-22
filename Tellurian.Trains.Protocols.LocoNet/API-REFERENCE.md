@@ -242,6 +242,18 @@ byte[] stateBytes = requestState.GetBytesWithChecksum();
 
 **Response:** `AccessoryReportNotification` (OPC_SW_REP)
 
+### Send Output Status Report
+
+```csharp
+// Report switch 100 as closed
+var closedStatus = AccessoryOutputStatusCommand.Closed(AccessoryAddress.From(100));
+SendCommand(closedStatus);
+
+// Report switch 100 as thrown
+var thrownStatus = AccessoryOutputStatusCommand.Thrown(AccessoryAddress.From(100));
+SendCommand(thrownStatus);
+```
+
 ### Parse Switch Reports
 
 ```csharp

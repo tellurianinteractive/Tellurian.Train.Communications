@@ -51,7 +51,7 @@ Release builds of the NuGet packages should be copied to `C:/Nugets` after a suc
 ## Not Implemented (LocoNet)
 
 - Fast clock synchronization (slot 123)
-- Raw DCC packet operations (OPC_IMM_PACKET)
+- Raw DCC packet operations (OPC_IMM_PACKET is used for LNCV programming, but not for general raw DCC packets)
 
 ## Release Notes
 

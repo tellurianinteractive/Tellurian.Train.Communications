@@ -308,3 +308,143 @@ public class SetAccessoryNotificationTests
         Assert.Throws<ArgumentException>(() => LocoNetMessageFactory.Create([0xB0, 0x00]));
     }
 }
+
+[TestClass]
+public class AccessoryOutputStatusCommandTests
+{
+    [TestMethod]
+    public void AccessoryOutputStatusCommand_GeneratesCorrectOpcode_InBytes()
+    {
+        var command = new AccessoryOutputStatusCommand(
+            Address.From(1), closedOutputOn: false, thrownOutputOn: false);
+
+        var bytes = command.GetBytesWithChecksum();
+
+        Assert.AreEqual(0xB1, bytes[0]);
+    }
+
+    // ===== Factory Method Tests =====
+
+    [TestMethod]
+    public void Closed_CreatesCommand_WithClosedOutputOn()
+    {
+        var command = AccessoryOutputStatusCommand.Closed(Address.From(100));
+
+        Assert.IsTrue(command.ClosedOutputOn);
+        Assert.IsFalse(command.ThrownOutputOn);
+    }
+
+    [TestMethod]
+    public void Thrown_CreatesCommand_WithThrownOutputOn()
+    {
+        var command = AccessoryOutputStatusCommand.Thrown(Address.From(100));
+
+        Assert.IsFalse(command.ClosedOutputOn);
+        Assert.IsTrue(command.ThrownOutputOn);
+    }
+
+    // ===== Address Encoding Tests =====
+
+    [TestMethod]
+    public void AccessoryOutputStatusCommand_EncodesAddress1_Correctly()
+    {
+        var command = AccessoryOutputStatusCommand.Thrown(Address.From(1));
+        var bytes = command.GetBytesWithChecksum();
+
+        Assert.AreEqual(0x00, bytes[1] & 0x7F, "SW1 - address low bits");
+        Assert.AreEqual(0x00, bytes[2] & 0x0F, "SW2 - address high bits");
+    }
+
+    [TestMethod]
+    public void AccessoryOutputStatusCommand_EncodesAddress129_Correctly()
+    {
+        var command = AccessoryOutputStatusCommand.Thrown(Address.From(129));
+        var bytes = command.GetBytesWithChecksum();
+
+        Assert.AreEqual(0x00, bytes[1] & 0x7F, "SW1 - address low bits");
+        Assert.AreEqual(0x01, bytes[2] & 0x0F, "SW2 - address high bits");
+    }
+
+    [TestMethod]
+    public void AccessoryOutputStatusCommand_EncodesAddress2047_Correctly()
+    {
+        var command = AccessoryOutputStatusCommand.Thrown(Address.From(2047));
+        var bytes = command.GetBytesWithChecksum();
+
+        Assert.AreEqual(0x7E, bytes[1] & 0x7F, "SW1 - address low bits");
+        Assert.AreEqual(0x0F, bytes[2] & 0x0F, "SW2 - address high bits");
+    }
+
+    // ===== Output Status Bit Tests =====
+
+    [TestMethod]
+    public void AccessoryOutputStatusCommand_Bit6_IsAlwaysClear()
+    {
+        var command = new AccessoryOutputStatusCommand(
+            Address.From(1), closedOutputOn: true, thrownOutputOn: true);
+        var bytes = command.GetBytesWithChecksum();
+
+        Assert.AreEqual(0, bytes[2] & 0x40, "Bit 6 should be clear for output status");
+    }
+
+    [TestMethod]
+    public void AccessoryOutputStatusCommand_EncodesClosedBit_WhenOn()
+    {
+        var command = AccessoryOutputStatusCommand.Closed(Address.From(1));
+        var bytes = command.GetBytesWithChecksum();
+
+        Assert.AreNotEqual(0, bytes[2] & 0x20, "Closed bit (bit 5) should be set");
+        Assert.AreEqual(0, bytes[2] & 0x10, "Thrown bit (bit 4) should be clear");
+    }
+
+    [TestMethod]
+    public void AccessoryOutputStatusCommand_EncodesThrownBit_WhenOn()
+    {
+        var command = AccessoryOutputStatusCommand.Thrown(Address.From(1));
+        var bytes = command.GetBytesWithChecksum();
+
+        Assert.AreEqual(0, bytes[2] & 0x20, "Closed bit (bit 5) should be clear");
+        Assert.AreNotEqual(0, bytes[2] & 0x10, "Thrown bit (bit 4) should be set");
+    }
+
+    [TestMethod]
+    public void AccessoryOutputStatusCommand_EncodesBothBits_WhenBothOn()
+    {
+        var command = new AccessoryOutputStatusCommand(
+            Address.From(1), closedOutputOn: true, thrownOutputOn: true);
+        var bytes = command.GetBytesWithChecksum();
+
+        Assert.AreNotEqual(0, bytes[2] & 0x20, "Closed bit (bit 5) should be set");
+        Assert.AreNotEqual(0, bytes[2] & 0x10, "Thrown bit (bit 4) should be set");
+    }
+
+    // ===== Round-trip with AccessoryReportNotification =====
+
+    [TestMethod]
+    public void AccessoryOutputStatusCommand_RoundTrips_AsOutputStatus()
+    {
+        var command = AccessoryOutputStatusCommand.Closed(Address.From(100));
+        var bytes = command.GetBytesWithChecksum();
+
+        var notification = (AccessoryReportNotification)LocoNetMessageFactory.Create(bytes);
+
+        Assert.AreEqual(100, notification.Address.Number);
+        Assert.IsTrue(notification.IsOutputStatus);
+        Assert.IsTrue(notification.ClosedOutputOn);
+        Assert.IsFalse(notification.ThrownOutputOn);
+    }
+
+    [TestMethod]
+    public void AccessoryOutputStatusCommand_RoundTrips_Thrown()
+    {
+        var command = AccessoryOutputStatusCommand.Thrown(Address.From(500));
+        var bytes = command.GetBytesWithChecksum();
+
+        var notification = (AccessoryReportNotification)LocoNetMessageFactory.Create(bytes);
+
+        Assert.AreEqual(500, notification.Address.Number);
+        Assert.IsTrue(notification.IsOutputStatus);
+        Assert.IsFalse(notification.ClosedOutputOn);
+        Assert.IsTrue(notification.ThrownOutputOn);
+    }
+}

@@ -1,3 +1,4 @@
+using Tellurian.Trains.Communications.Interfaces.Accessories;
 using Tellurian.Trains.Communications.Interfaces.Detectors;
 using Tellurian.Trains.Communications.Interfaces.Extensions;
 using Tellurian.Trains.Protocols.LocoNet.Notifications;
@@ -11,6 +12,10 @@ public static class MessageExtensions
         public Tellurian.Trains.Communications.Interfaces.Notification[] Map =>
                 message switch
                 {
+                    SetAccessoryNotification setAccessory =>
+                        [new AccessoryNotification(setAccessory.Address, setAccessory.Direction, DateTimeOffset.Now)],
+                    AccessoryReportNotification { IsOutputStatus: true, CurrentDirection: not null } report =>
+                        [new AccessoryNotification(report.Address, report.CurrentDirection.Value, DateTimeOffset.Now)],
                     SensorInputNotification sensor => [new OccupancyNotification(sensor.Address, sensor.IsOccupied)],
                     MultiSenseNotification ms when ms.IsTransponding => [new TransponderNotification(ms.Section, ms.LocoAddress, ms.IsPresent)],
                     LissyNotification lissy when lissy.IsValid => [new RailComLocomotiveNotification(lissy.SectionAddress, lissy.LocoAddress, true, lissy.IsForward, lissy.Category)],

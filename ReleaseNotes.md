@@ -5,6 +5,13 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.6.1 - Accessory Output Status Command
+Release date 2026-02-22
+
+**New Features**
+- **Accessory output status command** (`OPC_SW_REP` 0xB1): New `AccessoryOutputStatusCommand` for sending accessory output status reports. Encodes address the same way as `SetAccessoryCommand` but with output status bits (bit 6=0 for output, bit 5=Closed, bit 4=Thrown) instead of Direction and MotorState. Includes `Closed` and `Thrown` factory methods.
+- **Z21 accessory notification mapping**: `SetAccessoryNotification` (0xB0) and `AccessoryReportNotification` (0xB1 output status) received through the Z21 adapter are now mapped to protocol-agnostic `AccessoryNotification`, matching the standalone LocoNet adapter behavior.
+
 ### Version 1.6.0 - Track Detector Support
 Release date 2026-02-19
 

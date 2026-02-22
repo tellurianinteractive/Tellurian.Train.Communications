@@ -68,7 +68,7 @@ LocoNet is a peer-to-peer, multi-drop network protocol developed by Digitrax for
 ### ⏳ Not Implemented
 
 - ⏳ Fast Clock (slot 123) - specialized feature
-- ⏳ OPC_IMM_PACKET (raw DCC packets) - advanced feature
+- ⏳ OPC_IMM_PACKET for raw DCC packets (opcode 0xED is used for LNCV programming, but not for general raw DCC packets)
 
 ## Installation
 
@@ -516,7 +516,7 @@ var adapter = new Adapter(gca101Channel, adapterLogger);
 - `PowerOnCommand`, `PowerOffCommand`, `ForceIdleCommand`
 - `GetLocoAddressCommand`, `RequestSlotDataCommand`, `MoveSlotCommand`
 - `SetLocoSpeedCommand`, `SetLocoDirectionAndFunctionF0toF4Command`
-- `SetAccessoryCommand`, `AccessoryAcknowledgeCommand`, `RequestAccessoryStateCommand`
+- `SetAccessoryCommand`, `AccessoryAcknowledgeCommand`, `AccessoryOutputStatusCommand`, `RequestAccessoryStateCommand`
 - `ProgrammingCommand`
 - `LinkSlotsCommand`, `UnlinkSlotsCommand`, `ConsistFunctionCommand`
 - `WriteSlotDataCommand`, `WriteSlotStatus1Command`
@@ -626,7 +626,7 @@ SendCommand(new SetLocoSpeedCommand(slot.SlotNumber, speed));
 | 0xA1 | OPC_LOCO_DIRF | Command | Set direction/F0-F4 |
 | 0xA2 | OPC_LOCO_SND | Command | Set functions F5-F8 |
 | 0xB0 | OPC_SW_REQ | Command | Switch request |
-| 0xB1 | OPC_SW_REP | Notification | Switch report |
+| 0xB1 | OPC_SW_REP | Command/Notification | Switch output status / report |
 | 0xB2 | OPC_INPUT_REP | Notification | Sensor input |
 | 0xB4 | OPC_LONG_ACK | Notification | Long acknowledge |
 | 0xB5 | OPC_SLOT_STAT1 | Command | Write slot status |

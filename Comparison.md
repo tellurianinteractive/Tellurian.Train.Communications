@@ -64,7 +64,7 @@ This means a single Tellurian.Trains application can connect to a LocoNet layout
 | 0xA2 (OPC_LOCO_SND) | Functions F5–F8 | `SetLocoFunctionF5toF8Command` | Unknown | Yes |
 | 0xA3 | Functions F9–F12 | `SetLocoFunctionF9toF12` | Unknown | Yes |
 | 0xB0 (OPC_SW_REQ) | Set accessory | `SetAccessoryCommand` / `SetAccessoryNotification` | Unknown | Yes |
-| 0xB1 (OPC_SW_REP) | Accessory feedback | `AccessoryReportNotification` | Unknown | Yes |
+| 0xB1 (OPC_SW_REP) | Accessory feedback | `AccessoryOutputStatusCommand` / `AccessoryReportNotification` | Unknown | Yes |
 | 0xB2 (OPC_INPUT_REP) | Sensor input | `SensorInputNotification` | Unknown | Yes |
 | 0xB4 (OPC_LONG_ACK) | Long acknowledge | `LongAcknowledge` (incl. LNCV errors) | Unknown | Yes |
 | 0xB5 (OPC_SLOT_STAT1) | Slot status write | `WriteSlotStatus1Command` | Unknown | Yes |
