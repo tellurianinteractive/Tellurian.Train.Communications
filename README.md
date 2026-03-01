@@ -44,10 +44,6 @@ protocol-specific communication.
 - **Multiple observers**: Thread-safe notification distribution
 - **JSON serializable data types**: Easy integration with web API, storage and custom protocols
 
-## Building
-
-Release builds of the NuGet packages should be copied to `C:/Nugets` after a successful build.
-
 ## Not Implemented (LocoNet)
 
 - Fast clock synchronization (slot 123)
