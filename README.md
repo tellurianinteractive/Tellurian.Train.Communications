@@ -55,7 +55,7 @@ Any command station, interface, or software that speaks **XpressNet**, **LocoNet
 |----------|--------|---------|
 | **XpressNet** | Lenz Elektronik | Lenz, Roco/Fleischmann, Atlas, YaMoRC, TAMS, ZTC, OpenDCC, and others |
 | **LocoNet** | Digitrax | Digitrax, Uhlenbrock, Fleischmann, TAMS, YaMoRC, and others |
-| **Z21 UDP** | Roco/Fleischmann | Roco Z21 family (Z21, z21, Z21 XL), TAMS mc², YaMoRC DR5000 (Z21-compatible mode) |
+| **Z21 UDP** | Roco/Fleischmann | Roco Z21 family (Z21, z21, Z21 XL), TAMS mc², YaMoRC YD7010/YD7001 (Z21-compatible mode) |
 
 ### Command Stations
 
@@ -68,7 +68,7 @@ The following are examples of command stations that use protocols supported by t
 | **Digitrax** | DCS100, DCS200, DCS210, DCS240 | LocoNet | Serial (LocoBuffer-USB, PR3, PR4) or TCP/UDP |
 | **Uhlenbrock** | Intellibox, Intellibox II, IB-Com | LocoNet | Serial, USB, or LocoNet network |
 | **TAMS** | MasterControl (mc²) | LocoNet, XpressNet, Z21-compatible | Ethernet (UDP), LocoNet, or XpressNet bus |
-| **YaMoRC** | DR5000 | LocoNet, XpressNet, Z21-compatible | Ethernet, USB, WiFi |
+| **YaMoRC** | YD7010, YD7001 | LocoNet, XpressNet, Z21-compatible | Ethernet, USB, WiFi |
 
 This list is not exhaustive. Any command station with a LocoNet or XpressNet bus may work.
 

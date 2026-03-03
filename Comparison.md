@@ -13,7 +13,7 @@ A technical comparison of .NET and Java libraries for LocoNet communication in m
 | Type | Embeddable NuGet library | Embeddable NuGet library | Full application framework |
 | Origin | Original implementation based on availabe specifications | Port of LocoNet Toolbox (Chris Sharp / Modelspoorgroep Venlo / Ewout Prangsma) | Community project (est. 2000) |
 | Scope | LocoNet + XpressNet + Z21 (serial, TCP, UDP multicast) | LocoNet only | 20+ hardware systems |
-| Compatible with | LocoBuffer-USB, PR3/PR4, LbServer, JMRI, Rocrail, loconetd, GCA101, Roco Z21 | YaMoRC DR5000, serial LocoNet interfaces | Extensive hardware list |
+| Compatible with | LocoBuffer-USB, PR3/PR4, LbServer, JMRI, Rocrail, loconetd, GCA101, Roco Z21 | YaMoRC YD7010/YD7001, serial LocoNet interfaces | Extensive hardware list |
 | Latest update | 2026-02-11 (v1.5.0) | 2024-06-22 (v8.0.0) | 2026-01-21 (v5.15.3) |
 | License | MIT | Not stated | GPL v2 |
 
@@ -23,14 +23,14 @@ A technical comparison of .NET and Java libraries for LocoNet communication in m
 |-----------|----------------------|------------------|----------|
 | Serial (COM port) | `SerialDataChannel` + `LocoNetFramer` | `SerialPortLocoBuffer` | Yes (LocoBuffer, PR3/PR4, DCS52, DCS240) |
 | TCP | `TcpLocoNetChannel` (LoconetOverTcp ASCII) | `TcpLocoBuffer` (binary) | Yes (LoconetOverTcp, also acts as server) |
-| UDP unicast | `UdpDataChannel` (Z21) | `UdpLocoBuffer` (binary) | Yes (binary, YaMoRC DR5000-style) |
+| UDP unicast | `UdpDataChannel` (Z21) | `UdpLocoBuffer` (binary) | Yes (binary, YaMoRC YD7010-style) |
 | UDP multicast | `UdpLocoNetChannel` (loconetd + GCA101) | Not supported | Not supported |
 | HexFile simulator | No | No | Yes |
 | Abstraction | `ICommunicationsChannel` + adapter interfaces | `LocoBuffer` base class | `LnPortController` / `LnNetworkPortController` |
 | Testability | Mock adapters for all transports | Not documented | Limited |
 
 **Notes:**
-- LocoNetSharp uses a binary TCP/UDP protocol (compatible with YaMoRC DR5000 and similar).
+- LocoNetSharp uses a binary TCP/UDP protocol (compatible with YaMoRC YD7010/YD7001 and similar).
 
 ### Tellurian.Trains Compatible Software and Hardware
 
@@ -156,7 +156,7 @@ This means a single Tellurian.Trains application can connect to a LocoNet layout
 
 **Tellurian.Trains** is designed as an embeddable .NET library with modern async patterns, covering ~75–80% of LocoNet opcodes (the production-critical ones). It adds unique value with UDP multicast transport and multi-protocol support (LocoNet + XpressNet + Z21 behind the same `ILoco`/`IAccessory`/`ITurnout`/`IDecoder` interfaces).
 
-**LocoNetSharp** is a simpler transport-focused library — suitable for raw LocoNet bus access with basic message decode and YaMoRC DR5000-style binary TCP/UDP. Its closed source makes exact opcode coverage difficult to determine.
+**LocoNetSharp** is a simpler transport-focused library — suitable for raw LocoNet bus access with basic message decode and YaMoRC YD7010-style binary TCP/UDP. Its closed source makes exact opcode coverage difficult to determine.
 
 ### Choosing a Library
 
