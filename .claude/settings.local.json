@@ -39,7 +39,8 @@
       "WebFetch(domain:api.nuget.org)",
       "Bash(gh api:*)",
       "WebFetch(domain:www.digitrax.com)",
-      "WebFetch(domain:traintastic.org)"
+      "WebFetch(domain:traintastic.org)",
+      "WebFetch(domain:yamorc.de)"
     ],
     "deny": [],
     "ask": []

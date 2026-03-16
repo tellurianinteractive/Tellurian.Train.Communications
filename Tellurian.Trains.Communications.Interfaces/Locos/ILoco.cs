@@ -12,4 +12,5 @@ public interface ILoco
     Task<bool> DriveAsync(Address address, Drive drive, CancellationToken cancellationToken = default);
     Task<bool> EmergencyStopAsync(Address address, CancellationToken cancellationToken = default);
     Task<bool> SetFunctionAsync(Address address, Function locoFunction, CancellationToken cancellationToken = default);
+    Task<LocoInfo?> GetLocoInfoAsync(Address address, CancellationToken cancellationToken = default);
 }

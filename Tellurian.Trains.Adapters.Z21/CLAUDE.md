@@ -26,6 +26,7 @@ Main adapter class (split across partial classes) that:
 - `DriveAsync` - Speed and direction control
 - `EmergencyStopAsync` - Per-locomotive emergency stop
 - `SetFunctionAsync` - Function control (F0-F28)
+- `GetLocoInfoAsync` - Query current locomotive state (speed, direction, F0-F28) from the Z21 via XpressNet `GetLocoInfoCommand`
 
 #### IAccessory & ITurnout (AccessoryControlAdapter.cs)
 - `SetAccessoryAsync` - Generic accessory control via XpressNet AccessoryFunctionCommand

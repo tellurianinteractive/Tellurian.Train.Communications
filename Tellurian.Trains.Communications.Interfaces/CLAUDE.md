@@ -9,10 +9,11 @@ Defines common interfaces and data types that are independent of any specific pr
 ## Key Interfaces
 
 ### ILoco
-Locomotive control interface providing:
+Locomotive control and query interface providing:
 - `DriveAsync(Address, Drive)` - Speed and direction control
 - `EmergencyStopAsync(Address)` - Per-locomotive emergency stop
 - `SetFunctionAsync(Address, Function)` - Function control (lights, sound, etc.)
+- `GetLocoInfoAsync(Address)` - Query current locomotive state from the command station
 
 ### IAccessory
 Accessory control interface providing:
@@ -39,6 +40,7 @@ Decoder programming interface providing:
 - **`Direction`**: Forward/Backward
 - **`Function`**: Function number (F0-F28) with on/off state
 - **`Functions`**: Enum of function numbers
+- **`LocoInfo`**: Current locomotive state (speed, direction, function states) as reported by the command station
 
 ### Accessory Types (Accessories namespace)
 - **`Address`**: Accessory address (1-2048, user-facing 1-based addressing)

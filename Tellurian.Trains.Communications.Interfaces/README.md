@@ -4,16 +4,17 @@ Protocol-agnostic interfaces and types for model train control applications. Pro
 
 ## Interfaces
 
-### ILocoControl
+### ILoco
 
-Control locomotives with speed, direction, and functions:
+Control locomotives and query their state:
 
 ```csharp
-public interface ILocoControl
+public interface ILoco
 {
-    Task<bool> DriveAsync(LocoAddress address, LocoDrive drive, CancellationToken cancellationToken = default);
-    Task<bool> EmergencyStopAsync(LocoAddress address, CancellationToken cancellationToken = default);
-    Task<bool> SetFunctionAsync(LocoAddress address, LocoFunction locoFunction, CancellationToken cancellationToken = default);
+    Task<bool> DriveAsync(Address address, Drive drive, CancellationToken cancellationToken = default);
+    Task<bool> EmergencyStopAsync(Address address, CancellationToken cancellationToken = default);
+    Task<bool> SetFunctionAsync(Address address, Function locoFunction, CancellationToken cancellationToken = default);
+    Task<LocoInfo?> GetLocoInfoAsync(Address address, CancellationToken cancellationToken = default);
 }
 ```
 
@@ -33,12 +34,12 @@ public interface ILocoDecoder
 
 | Type | Description |
 |------|-------------|
-| `LocoAddress` | DCC address (short 1-127, long 128-9999) |
-| `LocoDrive` | Speed and direction combined |
-| `LocoSpeed` | Speed value with step mode (14/27/28/126 steps) |
-| `LocoDirection` | Forward, Backward, or Unchanged |
-| `LocoFunction` | Function number (F0-F28) with on/off state |
-| `CV` | Configuration variable (number 1-1024, value 0-255) |
+| `Address` | DCC address (short 1-127, long 128-9999) |
+| `Drive` | Speed and direction combined |
+| `Speed` | Speed value with step mode (14/27/28/126 steps) |
+| `Direction` | Forward or Backward |
+| `Function` | Function number (F0-F28) with on/off state |
+| `LocoInfo` | Current locomotive state (speed, direction, function states) as reported by the command station |
 
 ## Usage Example
 
@@ -46,18 +47,26 @@ public interface ILocoDecoder
 using Tellurian.Trains.Communications.Interfaces.Locos;
 
 // Create address and drive command
-var address = LocoAddress.From(3);
-var drive = new LocoDrive
+var address = Address.From(3);
+var drive = new Drive
 {
-    Speed = new LocoSpeed(64, SpeedSteps.S128),
-    Direction = LocoDirection.Forward
+    Speed = Speed.Set126(64),
+    Direction = Direction.Forward
 };
 
-// Use any ILocoControl implementation
-await locoControl.DriveAsync(address, drive);
+// Use any ILoco implementation
+await loco.DriveAsync(address, drive);
 
 // Control functions
-await locoControl.SetFunctionAsync(address, new LocoFunction(0, true)); // Lights on
+await loco.SetFunctionAsync(address, Function.On(Functions.F0)); // Lights on
+
+// Query current state from the command station
+var info = await loco.GetLocoInfoAsync(address);
+if (info is not null)
+{
+    Console.WriteLine($"Speed: {info.Speed.CurrentStep}, Direction: {info.Direction}");
+    Console.WriteLine($"Lights: {info.FunctionStates[0]}");
+}
 ```
 
 ## Notifications

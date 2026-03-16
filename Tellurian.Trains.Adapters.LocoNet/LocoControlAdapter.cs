@@ -86,6 +86,32 @@ public sealed partial class Adapter : ILoco
             slot.SlotNumber, f9, f10, f11, f12), cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task<LocoInfo?> GetLocoInfoAsync(Address address, CancellationToken cancellationToken = default)
+    {
+        var slot = await GetOrRequestSlotAsync(address, cancellationToken).ConfigureAwait(false);
+        if (slot is null) return null;
+
+        var speed = (byte)(slot.Speed > 1 ? slot.Speed - 1 : 0);
+        var functionStates = new bool[29];
+        functionStates[0] = slot.F0;
+        functionStates[1] = slot.F1;
+        functionStates[2] = slot.F2;
+        functionStates[3] = slot.F3;
+        functionStates[4] = slot.F4;
+        functionStates[5] = slot.F5;
+        functionStates[6] = slot.F6;
+        functionStates[7] = slot.F7;
+        functionStates[8] = slot.F8;
+
+        return new LocoInfo
+        {
+            Address = address,
+            Direction = slot.Direction ? Direction.Forward : Direction.Backward,
+            Speed = Speed.Set126(speed),
+            FunctionStates = functionStates
+        };
+    }
+
     private async Task<SlotData?> GetOrRequestSlotAsync(Address address, CancellationToken cancellationToken)
     {
         if (_addressToSlotCache.TryGetValue((ushort)address.Number, out var slotNumber) &&

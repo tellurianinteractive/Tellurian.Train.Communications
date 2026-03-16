@@ -79,6 +79,13 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
             {
                 var n = frame.Notification();
 
+                // Intercept XpressNet loco info notifications for request/response correlation
+                if (n is XpressNetNotification xpressNetNotification &&
+                    xpressNetNotification.Notification is Protocols.XpressNet.Notifications.LocoInfoNotification locoInfo)
+                {
+                    HandleLocoInfoNotification(locoInfo);
+                }
+
                 // Intercept LocoNet notifications for LNCV handling
                 if (n is LocoNetNotification locoNetNotification)
                 {

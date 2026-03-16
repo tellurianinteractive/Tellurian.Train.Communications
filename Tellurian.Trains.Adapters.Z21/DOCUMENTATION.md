@@ -25,12 +25,12 @@ The Z21 adapter serves as a bridge between the protocol-agnostic interfaces defi
 │                     Application Layer                           │
 │                 (Your application code)                         │
 └──────────────────────────┬──────────────────────────────────────┘
-                           │ ILocoControl, IObservable<Notification>
+                           │ ILoco, IObservable<Notification>
                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                        Adapter                                  │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │  • Implements ILocoControl                              │   │
+│  │  • Implements ILoco                              │   │
 │  │  • Implements IObservable<Notification>                 │   │
 │  │  • Manages notification distribution                     │   │
 │  │  • Coordinates XpressNet and LocoNet protocols          │   │
@@ -129,8 +129,8 @@ public static IHostBuilder CreateHostBuilder(string[] args) =>
             // Register adapter
             services.AddSingleton<Adapter>();
 
-            // Expose ILocoControl interface
-            services.AddSingleton<ILocoControl>(sp =>
+            // Expose ILoco interface
+            services.AddSingleton<ILoco>(sp =>
                 sp.GetRequiredService<Adapter>());
 
             // Register background service for receiving notifications
@@ -246,7 +246,7 @@ private void ReceiveData(CommunicationResult result)
 
 | Class | Responsibility |
 |-------|----------------|
-| `Adapter` | Main entry point; implements `ILocoControl`, coordinates sending/receiving |
+| `Adapter` | Main entry point; implements `ILoco`, coordinates sending/receiving |
 | `Frame` | Z21 frame structure; handles serialization/deserialization |
 | `Command` | Base class for all commands; provides frame conversion |
 | `Notification` | Base class for all notifications; wraps frame data |
@@ -348,21 +348,29 @@ await adapter.SendAsync(new CanDetectorRequestCommand(networkId: 0xD000)); // Al
 
 ### Locomotive Control Commands
 
-These are exposed via the `ILocoControl` interface:
+These are exposed via the `ILoco` interface:
 
 ```csharp
 // Drive a locomotive
-var address = new LocoAddress(3);
-var drive = new LocoDrive(new LocoSpeed(64, SpeedSteps.S128), LocoDirection.Forward);
+var address = Address.From(3);
+var drive = new Drive { Speed = Speed.Set126(64), Direction = Direction.Forward };
 await adapter.DriveAsync(address, drive);
 
 // Emergency stop a specific locomotive
 await adapter.EmergencyStopAsync(address);
 
 // Control functions (F0-F28)
-await adapter.SetFunctionAsync(address, new LocoFunction(0, true));  // Lights on
-await adapter.SetFunctionAsync(address, new LocoFunction(1, true));  // Sound on
-await adapter.SetFunctionAsync(address, new LocoFunction(1, false)); // Sound off
+await adapter.SetFunctionAsync(address, Function.On(Functions.F0));  // Lights on
+await adapter.SetFunctionAsync(address, Function.On(Functions.F1));  // Sound on
+await adapter.SetFunctionAsync(address, Function.Off(Functions.F1)); // Sound off
+
+// Query current locomotive state from the Z21
+var info = await ((ILoco)adapter).GetLocoInfoAsync(address);
+if (info is not null)
+{
+    // Returns speed, direction, and all 29 function states (F0-F28)
+    Console.WriteLine($"Speed: {info.Speed.CurrentStep}, Direction: {info.Direction}");
+}
 ```
 
 ### XpressNet Commands via Adapter

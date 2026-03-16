@@ -5,6 +5,15 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.0 - Locomotive State Query
+Release date 2026-03-16
+
+**New Features**
+- **`ILoco.GetLocoInfoAsync`**: New method on the `ILoco` interface to query the current state of a locomotive from the command station. Returns a `LocoInfo` object with speed, direction, and function states (F0-F28).
+- **`LocoInfo` type**: New class in `Tellurian.Trains.Communications.Interfaces.Locos` representing locomotive state as reported by the command station.
+- **Z21 adapter**: Implements `GetLocoInfoAsync` using the XpressNet `GetLocoInfoCommand` (`LAN_X_GET_LOCO_INFO`). Returns all 29 function states (F0-F28), speed, and direction.
+- **LocoNet adapter**: Implements `GetLocoInfoAsync` using LocoNet slot data. Returns speed, direction, and function states F0-F8 (F9-F28 are not available via LocoNet slot data).
+
 ### Version 1.6.1 - Accessory Output Status Command
 Release date 2026-02-22
 

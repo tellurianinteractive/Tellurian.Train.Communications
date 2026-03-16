@@ -4,7 +4,7 @@ A .NET adapter for the **Roco/Fleischmann Z21** digital command station, providi
 
 ## Features
 
-- **Locomotive Control**: Drive, emergency stop, and function control via `ILocoControl`
+- **Locomotive Control**: Drive, emergency stop, function control, and state query via `ILoco`
 - **Protocol Support**: Encapsulates both XpressNet and LocoNet protocols
 - **Real-time Notifications**: Observer-based notification system for state changes
 - **System Monitoring**: Track voltage, current, temperature, and status
@@ -43,8 +43,8 @@ services.AddSingleton<ICommunicationsChannel>(sp =>
 // Register the Z21 adapter
 services.AddSingleton<Adapter>();
 
-// Register ILocoControl interface (the Adapter implements it)
-services.AddSingleton<ILocoControl>(sp => sp.GetRequiredService<Adapter>());
+// Register ILoco interface (the Adapter implements it)
+services.AddSingleton<ILoco>(sp => sp.GetRequiredService<Adapter>());
 
 var provider = services.BuildServiceProvider();
 ```

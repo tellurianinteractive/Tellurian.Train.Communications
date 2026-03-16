@@ -35,7 +35,7 @@ See `Tellurian.Trains.Adapters.Z21/CLAUDE.md` for details.
 
 ```
 Application
-    ↓ (uses ILocoControl, ILocoDecoder)
+    ↓ (uses ILoco, IDecoder)
 Adapter (Z21/LocoNet)
     ↓ (translates to)
 Protocol Layer (XpressNet/LocoNet Commands)

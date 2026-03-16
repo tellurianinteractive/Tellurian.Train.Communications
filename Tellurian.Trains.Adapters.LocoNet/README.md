@@ -4,7 +4,7 @@ A .NET adapter for LocoNet-based command stations via serial port, TCP (LoconetO
 
 ## Features
 
-- **Locomotive Control** (`ILoco`): Speed, direction, and function control (F0-F12)
+- **Locomotive Control** (`ILoco`): Speed, direction, function control (F0-F12), and state query
 - **Accessory Control** (`IAccessory`): Set and query accessory states
 - **Turnout Control** (`ITurnout`): Convenient throw/close/off operations for turnouts
 - **Decoder Programming** (`IDecoder`): CV read/write operations on the programming track
@@ -35,6 +35,15 @@ var drive = new Drive
     Speed = Speed.Set126(50)
 };
 await adapter.DriveAsync(address, drive);
+
+// Query current locomotive state from the command station
+var info = await adapter.GetLocoInfoAsync(address);
+if (info is not null)
+{
+    // Returns speed, direction, and function states F0-F8
+    // (F9-F28 are not available via LocoNet slot data)
+    Console.WriteLine($"Speed: {info.Speed.CurrentStep}, Direction: {info.Direction}");
+}
 
 // Control a switch
 var switchAddress = Accessories.Address.From(1);

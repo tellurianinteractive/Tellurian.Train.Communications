@@ -31,6 +31,7 @@ LocoNet uses 120 slots (0-119) for locomotive control:
 - `DriveAsync`: Sets speed and direction (requires slot)
 - `EmergencyStopAsync`: Emergency stop via slot
 - `SetFunctionAsync`: Function F0-F12 control
+- `GetLocoInfoAsync`: Query current locomotive state (speed, direction, F0-F8) from slot data
 
 #### IAccessory & ITurnout (AccessoryControlAdapter.cs)
 - `SetAccessoryAsync`: Generic accessory control
