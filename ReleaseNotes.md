@@ -5,6 +5,12 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.1 - LocoNet Function Key Fix
+Release date 2026-03-27
+
+**Bug Fixes**
+- **LocoNet DIRF function bit order corrected**: Fixed `SetLocoDirectionAndFunctionF0toF4Command` (OPC_LOCO_DIRF 0xA1) where F1-F4 bit positions were reversed. F1 was mapped to bit 3 (F4's position) and F4 to bit 0 (F1's position), causing F1↔F4 and F2↔F3 to be swapped when controlling locomotives via LocoNet serial, TCP, or UDP.
+
 ### Version 1.7.0 - Locomotive State Query
 Release date 2026-03-16
 

@@ -41,7 +41,7 @@ public class SetLocoDirectionAndFunctionF0toF4Command : Command
         Data = new byte[3];
         Data[0] = OperationCode;
         Data[1] = slot;
-        Data[2] = (byte)((forward ? 0x20 : 0x00) + (F0 ? 0x10 : 0x00) + (F1 ? 0x08 : 0x00) + (F2 ? 0x04 : 0x00) + (F3 ? 0x02 : 0x00) + (F4 ? 0x01 : 0x00));
+        Data[2] = (byte)((forward ? 0x20 : 0x00) | (F0 ? 0x10 : 0x00) | (F4 ? 0x08 : 0x00) | (F3 ? 0x04 : 0x00) | (F2 ? 0x02 : 0x00) | (F1 ? 0x01 : 0x00));
     }
 
     public SetLocoDirectionAndFunctionF0toF4Command(byte[] data)
