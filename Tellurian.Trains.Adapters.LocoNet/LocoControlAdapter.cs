@@ -19,10 +19,12 @@ public sealed partial class Adapter : ILoco
         var sent = await SendAsync(new SetLocoSpeedCommand(slot.SlotNumber, speedStep), cancellationToken).ConfigureAwait(false);
         if (!sent) return false;
 
+        var forward = drive.Direction == Direction.Forward;
         sent = await SendAsync(new SetLocoDirectionAndFunctionF0toF4Command(
-            slot.SlotNumber,
-            drive.Direction == Direction.Forward,
+            slot.SlotNumber, forward,
             slot.F0, slot.F1, slot.F2, slot.F3, slot.F4), cancellationToken).ConfigureAwait(false);
+        if (sent)
+            _slotDataCache[slot.SlotNumber] = slot.WithDirectionAndF0toF4(forward, slot.F0, slot.F1, slot.F2, slot.F3, slot.F4);
 
         return sent;
     }
@@ -60,8 +62,11 @@ public sealed partial class Adapter : ILoco
         var f3 = function == 3 ? isOn : slot.F3;
         var f4 = function == 4 ? isOn : slot.F4;
 
-        return await SendAsync(new SetLocoDirectionAndFunctionF0toF4Command(
+        var sent = await SendAsync(new SetLocoDirectionAndFunctionF0toF4Command(
             slot.SlotNumber, slot.Direction, f0, f1, f2, f3, f4), cancellationToken).ConfigureAwait(false);
+        if (sent)
+            _slotDataCache[slot.SlotNumber] = slot.WithDirectionAndF0toF4(slot.Direction, f0, f1, f2, f3, f4);
+        return sent;
     }
 
     private async Task<bool> SetFunctionF5toF8Async(SlotData slot, int function, bool isOn, CancellationToken cancellationToken)
@@ -71,8 +76,11 @@ public sealed partial class Adapter : ILoco
         var f7 = function == 7 ? isOn : slot.F7;
         var f8 = function == 8 ? isOn : slot.F8;
 
-        return await SendAsync(new SetLocoFunctionF5toF8Command(
+        var sent = await SendAsync(new SetLocoFunctionF5toF8Command(
             slot.SlotNumber, f5, f6, f7, f8), cancellationToken).ConfigureAwait(false);
+        if (sent)
+            _slotDataCache[slot.SlotNumber] = slot.WithF5toF8(f5, f6, f7, f8);
+        return sent;
     }
 
     private async Task<bool> SetFunctionF9toF12Async(SlotData slot, int function, bool isOn, CancellationToken cancellationToken)

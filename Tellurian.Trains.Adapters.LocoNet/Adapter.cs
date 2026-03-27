@@ -107,6 +107,15 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
             case SlotNotification slotNotification when slotNotification.IsLocomotiveSlot:
                 HandleSlotNotification(slotNotification);
                 break;
+            case LocoSpeedNotification speedNotification:
+                HandleLocoSpeedNotification(speedNotification);
+                break;
+            case LocoDirfNotification dirfNotification:
+                HandleLocoDirfNotification(dirfNotification);
+                break;
+            case LocoSndNotification sndNotification:
+                HandleLocoSndNotification(sndNotification);
+                break;
             case SetAccessoryNotification setAccessory:
                 HandleSetAccessoryNotification(setAccessory);
                 break;
@@ -136,6 +145,42 @@ public sealed partial class Adapter : IDisposable, IAsyncDisposable, IObservable
         if (_logger.IsEnabled(LogLevel.Debug))
             _logger.LogDebug("Slot {Slot} updated: Address={Address}, Speed={Speed}, Direction={Direction}",
         slotData.SlotNumber, slotData.Address, slotData.Speed, slotData.Direction ? "FWD" : "REV");
+    }
+
+    private void HandleLocoSpeedNotification(LocoSpeedNotification notification)
+    {
+        if (_slotDataCache.TryGetValue(notification.Slot, out var slot))
+        {
+            _slotDataCache[notification.Slot] = slot.WithSpeed(notification.Speed);
+            if (_logger.IsEnabled(LogLevel.Debug))
+                _logger.LogDebug("Slot {Slot} speed updated from bus: Speed={Speed}",
+                    notification.Slot, notification.Speed);
+        }
+    }
+
+    private void HandleLocoDirfNotification(LocoDirfNotification notification)
+    {
+        if (_slotDataCache.TryGetValue(notification.Slot, out var slot))
+        {
+            _slotDataCache[notification.Slot] = slot.WithDirectionAndF0toF4(
+                notification.Direction, notification.F0, notification.F1,
+                notification.F2, notification.F3, notification.F4);
+            if (_logger.IsEnabled(LogLevel.Debug))
+                _logger.LogDebug("Slot {Slot} DIRF updated from bus: Dir={Direction}, F0={F0}",
+                    notification.Slot, notification.Direction ? "FWD" : "REV", notification.F0);
+        }
+    }
+
+    private void HandleLocoSndNotification(LocoSndNotification notification)
+    {
+        if (_slotDataCache.TryGetValue(notification.Slot, out var slot))
+        {
+            _slotDataCache[notification.Slot] = slot.WithF5toF8(
+                notification.F5, notification.F6, notification.F7, notification.F8);
+            if (_logger.IsEnabled(LogLevel.Debug))
+                _logger.LogDebug("Slot {Slot} SND updated from bus: F5={F5}, F6={F6}, F7={F7}, F8={F8}",
+                    notification.Slot, notification.F5, notification.F6, notification.F7, notification.F8);
+        }
     }
 
     private void HandleSetAccessoryNotification(SetAccessoryNotification notification)

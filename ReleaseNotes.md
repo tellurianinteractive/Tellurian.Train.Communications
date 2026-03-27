@@ -5,6 +5,13 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.2 - LocoNet Slot Cache Fix
+Release date 2026-03-27
+
+**Bug Fixes**
+- **LocoNet slot cache kept in sync**: The LocoNet adapter now updates its cached slot data after sending speed, direction, and function commands, preventing stale state from overwriting previously set function bits. Since LocoNet packs multiple functions into a single byte (DIRF for F0-F4, SND for F5-F8), stale cache data caused toggling one function to reset others.
+- **LocoNet bus state monitoring**: Added notifications for `OPC_LOCO_SPD` (0xA0), `OPC_LOCO_DIRF` (0xA1), and `OPC_LOCO_SND` (0xA2) so that loco state changes from other throttles on the LocoNet bus are reflected in the slot cache, keeping it in sync even when multiple throttles control the same locomotive.
+
 ### Version 1.7.1 - LocoNet Function Key Fix
 Release date 2026-03-27
 

@@ -256,6 +256,42 @@ public sealed class SlotData
     }
 
     /// <summary>
+    /// Creates a copy of this SlotData with updated speed.
+    /// </summary>
+    public SlotData WithSpeed(byte speed) => new()
+    {
+        SlotNumber = SlotNumber, Address = Address, Speed = speed, Status = Status,
+        Consist = Consist, DecoderType = DecoderType, TrackStatus = TrackStatus,
+        DeviceId = DeviceId, Status2 = Status2,
+        Direction = Direction, F0 = F0, F1 = F1, F2 = F2, F3 = F3, F4 = F4,
+        F5 = F5, F6 = F6, F7 = F7, F8 = F8
+    };
+
+    /// <summary>
+    /// Creates a copy of this SlotData with updated direction and function F0-F4 states.
+    /// </summary>
+    public SlotData WithDirectionAndF0toF4(bool direction, bool f0, bool f1, bool f2, bool f3, bool f4) => new()
+    {
+        SlotNumber = SlotNumber, Address = Address, Speed = Speed, Status = Status,
+        Consist = Consist, DecoderType = DecoderType, TrackStatus = TrackStatus,
+        DeviceId = DeviceId, Status2 = Status2,
+        Direction = direction, F0 = f0, F1 = f1, F2 = f2, F3 = f3, F4 = f4,
+        F5 = F5, F6 = F6, F7 = F7, F8 = F8
+    };
+
+    /// <summary>
+    /// Creates a copy of this SlotData with updated function F5-F8 states.
+    /// </summary>
+    public SlotData WithF5toF8(bool f5, bool f6, bool f7, bool f8) => new()
+    {
+        SlotNumber = SlotNumber, Address = Address, Speed = Speed, Status = Status,
+        Consist = Consist, DecoderType = DecoderType, TrackStatus = TrackStatus,
+        DeviceId = DeviceId, Status2 = Status2,
+        Direction = Direction, F0 = F0, F1 = F1, F2 = F2, F3 = F3, F4 = F4,
+        F5 = f5, F6 = f6, F7 = f7, F8 = f8
+    };
+
+    /// <summary>
     /// Gets a formatted string representation of this slot data.
     /// </summary>
     public override string ToString()
