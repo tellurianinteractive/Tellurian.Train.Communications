@@ -5,8 +5,8 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
-### Version 1.7.2 - LocoNet Slot Cache Fix
-Release date 2026-03-27
+### Version 1.7.3 - LocoNet Slot Cache Fix
+Release date 2026-03-28
 
 **Bug Fixes**
 - **LocoNet slot cache kept in sync**: The LocoNet adapter now updates its cached slot data after sending speed, direction, and function commands, preventing stale state from overwriting previously set function bits. Since LocoNet packs multiple functions into a single byte (DIRF for F0-F4, SND for F5-F8), stale cache data caused toggling one function to reset others.

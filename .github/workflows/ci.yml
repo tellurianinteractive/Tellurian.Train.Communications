@@ -24,9 +24,6 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: Apply code analysis fixes
-        run: dotnet format analyzers --severity info --no-restore
-
       - name: Test
         run: dotnet test --configuration Release --no-build --verbosity normal
 
