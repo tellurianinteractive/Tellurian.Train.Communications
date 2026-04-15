@@ -5,6 +5,14 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.5 - Z21 Accessories via Wrapped LocoNet
+Release date 2026-04-15
+
+**New Features**
+- **Z21 adapter routes accessory commands through the LocoNet gateway by default.** `IAccessory.SetAccessoryAsync` / `ITurnout.SetThrownAsync` / `SetClosedAsync` / `QueryAccessoryStateAsync` now wrap LocoNet `OPC_SW_REQ` / `OPC_SW_STATE` bytes in `LAN_LOCONET_FROM_LAN` (0xA2) instead of sending native XpressNet `LAN_X_SET_TURNOUT`. Feedback then arrives on the already-mapped LocoNet stream (subscribe `BroadcastSubjects.LocoNetTurnouts`), which is decoded into the protocol-agnostic `AccessoryNotification` — so applications get accessory state change events out of the box without relying on the currently-unmapped XpressNet `LAN_X_TURNOUT_INFO` path.
+- **Opt out for DCC-only decoders.** New `Adapter` constructor parameter `useLocoNetForAccessories` (defaults to `true`) and public read-only property `UseLocoNetForAccessories`. Set it to `false` if your accessory decoders are DCC-only and not reachable via the Z21's LocoNet bus — XpressNet `LAN_X_SET_TURNOUT` will be used as before. A future release will add XpressNet → `AccessoryNotification` mapping so feedback works in that mode too.
+- **Backward compatibility.** All existing `Adapter` constructor overloads still work; the new `useLocoNetForAccessories` parameter is added via a new constructor, while the 2- and 3-argument overloads pass-through with the new default.
+
 ### Version 1.7.4 - Z21 Dynamic Broadcast Subscription
 Release date 2026-04-15
 

@@ -10,6 +10,7 @@ A .NET adapter for the **Roco/Fleischmann Z21** digital command station, providi
 - **System Monitoring**: Track voltage, current, temperature, and status
 - **Detector Support**: Occupancy, transponder, and RailCom notifications via Z21 LocoNet detector API (LAN_LOCONET_DETECTOR 0xA4) and CAN detector API (LAN_CAN_DETECTOR 0xC4) for Z21 10808 modules
 - **Broadcast Filtering**: Configurable subscription to specific event types
+- **Accessory Gateway Mode**: Accessory commands (`IAccessory`, `ITurnout`) are sent as wrapped LocoNet via `LAN_LOCONET_FROM_LAN` by default so that state-change feedback flows through the Z21's LocoNet forwarding (subscribe `BroadcastSubjects.LocoNetTurnouts`) and is decoded into protocol-agnostic `AccessoryNotification`. Opt out to plain XpressNet for DCC-only decoders by passing `useLocoNetForAccessories: false` to the constructor.
 
 ## Quick Start
 

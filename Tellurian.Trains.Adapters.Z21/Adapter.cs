@@ -23,8 +23,28 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
     /// </summary>
     public BroadcastSubjects CurrentSubscriptions { get; private set; }
 
+    /// <summary>
+    /// When true, the <see cref="Communications.Interfaces.Accessories.IAccessory"/> and
+    /// <see cref="Communications.Interfaces.Accessories.ITurnout"/> implementations send their
+    /// commands as wrapped LocoNet messages via <c>LAN_LOCONET_FROM_LAN</c> (0xA2) instead of
+    /// native XpressNet. Feedback then arrives through the Z21's LocoNet-forwarding stream
+    /// (subscribe <see cref="BroadcastSubjects.LocoNetTurnouts"/>), which is already mapped to
+    /// the protocol-agnostic <see cref="Communications.Interfaces.Accessories.AccessoryNotification"/>.
+    /// <para>
+    /// Defaults to <c>true</c>. This path reaches accessory decoders on the Z21's LocoNet bus —
+    /// the common case in the Tellurian ecosystem. Set to <c>false</c> if your accessory decoders
+    /// are DCC-only (not on a LocoNet bus); XpressNet <c>LAN_X_SET_TURNOUT</c> will be used instead,
+    /// at the cost of currently-unmapped feedback (a future release will map XpressNet
+    /// <c>LAN_X_TURNOUT_INFO</c> to <see cref="Communications.Interfaces.Accessories.AccessoryNotification"/>).
+    /// </para>
+    /// </summary>
+    public bool UseLocoNetForAccessories { get; }
+
     public Adapter(ICommunicationsChannel? channel, ILogger<Adapter> logger)
-        : this(channel, logger, BroadcastSubjects.None) { }
+        : this(channel, logger, BroadcastSubjects.None, useLocoNetForAccessories: true) { }
+
+    public Adapter(ICommunicationsChannel? channel, ILogger<Adapter> logger, BroadcastSubjects subscriptions)
+        : this(channel, logger, subscriptions, useLocoNetForAccessories: true) { }
 
     /// <summary>
     /// Creates a new Z21 adapter.
@@ -33,16 +53,25 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
     /// <param name="logger">Logger instance.</param>
     /// <param name="subscriptions">
     /// Initial broadcast subjects to subscribe to when <see cref="StartReceiveAsync"/> is called.
-    /// Use <see cref="BroadcastSubjects.None"/> to skip subscription (default). For accessory/turnout
-    /// feedback via wrapped LocoNet notifications, include <see cref="BroadcastSubjects.LocoNetTurnouts"/>.
-    /// Can be changed at runtime via <see cref="SubscribeAsync"/>.
+    /// Use <see cref="BroadcastSubjects.None"/> to skip subscription. For accessory/turnout feedback
+    /// via wrapped LocoNet notifications (the default accessory path, see <paramref name="useLocoNetForAccessories"/>),
+    /// include <see cref="BroadcastSubjects.LocoNetTurnouts"/>. Can be changed at runtime via
+    /// <see cref="SubscribeAsync"/>.
     /// </param>
-    public Adapter(ICommunicationsChannel? channel, ILogger<Adapter> logger, BroadcastSubjects subscriptions)
+    /// <param name="useLocoNetForAccessories">
+    /// See <see cref="UseLocoNetForAccessories"/>. Defaults to <c>true</c>.
+    /// </param>
+    public Adapter(
+        ICommunicationsChannel? channel,
+        ILogger<Adapter> logger,
+        BroadcastSubjects subscriptions,
+        bool useLocoNetForAccessories)
     {
         Channel = channel ?? throw new ArgumentNullException(nameof(channel));
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         ReceivingObserver = new ActionObserver<CommunicationResult>(ReceiveData, ReceiveError, ReceiveCompleted);
         CurrentSubscriptions = subscriptions;
+        UseLocoNetForAccessories = useLocoNetForAccessories;
     }
 
     public IDisposable Subscribe(IObserver<Tellurian.Trains.Communications.Interfaces.Notification> observer)
