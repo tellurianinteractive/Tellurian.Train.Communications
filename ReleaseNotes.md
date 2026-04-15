@@ -5,6 +5,12 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.8 - XpressNet Turnout Info Length Fix
+Release date 2026-04-15
+
+**Bug Fixes**
+- **Factory disambiguation for 0x43 now accounts for the XOR-trailing production wire format.** 1.7.7 only routed 4-byte 0x43 buffers (test-style, no checksum) to `TurnoutInfoNotification`; real frames coming through `Packet` include the trailing XOR byte and are 5 bytes long, so they fell through to `FeedbackBroadcast` and were then silently dropped by the unmapped-notification fallback. Added a Packet-level end-to-end test so this regression path is covered.
+
 ### Version 1.7.7 - Z21 XpressNet Turnout Feedback
 Release date 2026-04-15
 

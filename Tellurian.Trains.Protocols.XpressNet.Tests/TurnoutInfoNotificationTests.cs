@@ -16,6 +16,17 @@ public class TurnoutInfoNotificationTests
     }
 
     [TestMethod]
+    public void CreatedByFactory_For0x43With5Bytes_ProductionWireFormatIncludingXor()
+    {
+        // Production wire format after Frame.Data strips DataLen+Header:
+        // X-Header, FAdr_MSB, FAdr_LSB, ZZ, XOR — 5 bytes.
+        var buffer = new byte[] { 0x43, 0x00, 0x05, 0x02, 0x44 };
+        var notification = NotificationFactory.Create(buffer);
+
+        Assert.IsInstanceOfType<TurnoutInfoNotification>(notification);
+    }
+
+    [TestMethod]
     public void FactoryStillReturnsFeedbackBroadcast_For0x43WithMoreBytes()
     {
         var buffer = new byte[] { 0x43, 0x05, 0x25, 0x06, 0x30, 0x07, 0x35 };
@@ -83,6 +94,26 @@ public class TurnoutInfoNotificationTests
 
         Assert.HasCount(1, mapped);
         Assert.IsInstanceOfType<Communications.Interfaces.MessageNotification>(mapped[0]);
+    }
+
+    [TestMethod]
+    public void EndToEndThroughPacket_ProducesAccessoryNotification()
+    {
+        // Simulates the production receive path: the Z21 adapter builds a Packet from the
+        // XpressNet sub-frame bytes (including the trailing XOR), then calls Notification,
+        // then Map. A regression here means turnout feedback from XpressNet clients
+        // (Z21 App, WLANMaus) is silently dropped — exactly what 1.7.7 shipped with.
+        var wireBytes = new byte[] { 0x43, 0x00, 0x29, 0x02, 0x68 }; // XOR of first 4 bytes
+        var packet = new Packet(wireBytes);
+
+        var notification = packet.Notification;
+        Assert.IsInstanceOfType<TurnoutInfoNotification>(notification);
+
+        var mapped = notification.Map();
+        Assert.HasCount(1, mapped);
+        var accessory = (AccessoryNotification)mapped[0];
+        Assert.AreEqual((short)42, accessory.Address.Number);
+        Assert.AreEqual(Position.ThrownOrRed, accessory.Function);
     }
 
     [TestMethod]
