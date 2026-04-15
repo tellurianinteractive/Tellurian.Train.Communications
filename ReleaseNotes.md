@@ -5,6 +5,13 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.6 - Z21 Accessory Send Self-Echo
+Release date 2026-04-15
+
+**Bug Fixes**
+- **Z21 adapter now emits a local `AccessoryNotification` after a successful wrapped-LocoNet accessory send.** The Z21 filters the original sender out of `LAN_LOCONET_FROM_LAN` echoes (spec §9.3), so a client sending a turnout command via the LocoNet gateway never hears its own write back — unlike serial LocoNet, where the sender naturally hears its write via bus loopback. This left accessory UIs without commanded-state feedback whenever no decoder responded (for example during bench testing without hardware, or when the decoder doesn't report state). The Z21 adapter now synthesizes the matching `AccessoryNotification` locally after a successful send, mirroring the serial-LocoNet behaviour. Real decoder replies (`OPC_SW_REP` via `LAN_LOCONET_Z21_RX`) still arrive as independent `AccessoryNotification` events and override/confirm the commanded value.
+- Only applies when `UseLocoNetForAccessories` is `true` (the default, introduced in 1.7.5). The XpressNet path is unaffected.
+
 ### Version 1.7.5 - Z21 Accessories via Wrapped LocoNet
 Release date 2026-04-15
 
