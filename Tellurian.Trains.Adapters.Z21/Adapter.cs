@@ -40,11 +40,22 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
     /// </summary>
     public bool UseLocoNetForAccessories { get; }
 
+    /// <summary>
+    /// Time in milliseconds the native-XpressNet accessory path holds the activate between
+    /// sending <c>A=1</c> and the paired <c>A=0</c> deactivate. Applies only when
+    /// <see cref="UseLocoNetForAccessories"/> is <c>false</c>. Pick based on decoder type:
+    /// twin-coil turnouts move in ~100–300 ms; stall motors (e.g. Möllehem) need the full
+    /// travel time, typically 500–2000 ms. Defaults to 200 ms (twin-coil-friendly). A zero or
+    /// negative value skips the deactivate — use only if the decoder self-deactivates AND you
+    /// don't mind the Z21 suppressing further broadcasts for that address.
+    /// </summary>
+    public int AccessoryActivationDurationMs { get; }
+
     public Adapter(ICommunicationsChannel? channel, ILogger<Adapter> logger)
-        : this(channel, logger, BroadcastSubjects.None, useLocoNetForAccessories: true) { }
+        : this(channel, logger, BroadcastSubjects.None, useLocoNetForAccessories: true, accessoryActivationDurationMs: 200) { }
 
     public Adapter(ICommunicationsChannel? channel, ILogger<Adapter> logger, BroadcastSubjects subscriptions)
-        : this(channel, logger, subscriptions, useLocoNetForAccessories: true) { }
+        : this(channel, logger, subscriptions, useLocoNetForAccessories: true, accessoryActivationDurationMs: 200) { }
 
     /// <summary>
     /// Creates a new Z21 adapter.
@@ -61,17 +72,22 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
     /// <param name="useLocoNetForAccessories">
     /// See <see cref="UseLocoNetForAccessories"/>. Defaults to <c>true</c>.
     /// </param>
+    /// <param name="accessoryActivationDurationMs">
+    /// See <see cref="AccessoryActivationDurationMs"/>. Defaults to 200.
+    /// </param>
     public Adapter(
         ICommunicationsChannel? channel,
         ILogger<Adapter> logger,
         BroadcastSubjects subscriptions,
-        bool useLocoNetForAccessories)
+        bool useLocoNetForAccessories,
+        int accessoryActivationDurationMs = 200)
     {
         Channel = channel ?? throw new ArgumentNullException(nameof(channel));
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         ReceivingObserver = new ActionObserver<CommunicationResult>(ReceiveData, ReceiveError, ReceiveCompleted);
         CurrentSubscriptions = subscriptions;
         UseLocoNetForAccessories = useLocoNetForAccessories;
+        AccessoryActivationDurationMs = accessoryActivationDurationMs;
     }
 
     public IDisposable Subscribe(IObserver<Tellurian.Trains.Communications.Interfaces.Notification> observer)

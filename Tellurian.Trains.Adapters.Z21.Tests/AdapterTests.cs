@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Tellurian.Trains.Communications.Channels;
+using Tellurian.Trains.Communications.Interfaces.Accessories;
 using Tellurian.Trains.Communications.Interfaces.Decoder;
 using Tellurian.Trains.Communications.Interfaces.Extensions;
 
@@ -101,6 +102,51 @@ public class AdapterTests
         Assert.AreEqual(1, observer1.NotificationCount);
         Assert.AreEqual(1, observer2.NotificationCount);
         Assert.AreEqual(1, observer3.NotificationCount);
+    }
+
+    [TestMethod]
+    public async Task XpressNetAccessorySendPairsActivateAndDeactivate()
+    {
+        // DCC accessory protocol requires an activate → delay → deactivate pair. The adapter
+        // auto-pairs them on the native-XpressNet path so callers don't have to.
+        var channel = new MockChannel();
+        var adapter = new Adapter(channel, NullLogger<Adapter>.Instance, BroadcastSubjects.None, useLocoNetForAccessories: false, accessoryActivationDurationMs: 10);
+
+        var sent = await adapter.SetAccessoryAsync(Address.From(802), AccessoryCommand.Throw(), TestContext.CancellationToken);
+
+        Assert.IsTrue(sent);
+        Assert.HasCount(2, channel.SentData);
+        // First: activate (A=1, bit 3 set).
+        Assert.AreEqual(0x89, channel.SentData[0][7], "first send must be activate (DB2 bit 3 set)");
+        // Second: deactivate on same P bit (A=0).
+        Assert.AreEqual(0x81, channel.SentData[1][7], "second send must be deactivate with same P bit");
+    }
+
+    [TestMethod]
+    public async Task XpressNetAccessorySendOnlySendsDeactivateWhenExplicitOff()
+    {
+        var channel = new MockChannel();
+        var adapter = new Adapter(channel, NullLogger<Adapter>.Instance, BroadcastSubjects.None, useLocoNetForAccessories: false);
+
+        var sent = await adapter.SetAccessoryAsync(Address.From(802), AccessoryCommand.Throw(activate: false), TestContext.CancellationToken);
+
+        Assert.IsTrue(sent);
+        Assert.HasCount(1, channel.SentData);
+        Assert.AreEqual(0x81, channel.SentData[0][7], "only deactivate should be sent (DB2 bit 3 clear)");
+    }
+
+    [TestMethod]
+    public async Task XpressNetAccessorySendSkipsDeactivateWhenDurationNonPositive()
+    {
+        // Duration <= 0 opts out of auto-pairing — caller takes responsibility for deactivate.
+        var channel = new MockChannel();
+        var adapter = new Adapter(channel, NullLogger<Adapter>.Instance, BroadcastSubjects.None, useLocoNetForAccessories: false, accessoryActivationDurationMs: 0);
+
+        var sent = await adapter.SetAccessoryAsync(Address.From(802), AccessoryCommand.Throw(), TestContext.CancellationToken);
+
+        Assert.IsTrue(sent);
+        Assert.HasCount(1, channel.SentData);
+        Assert.AreEqual(0x89, channel.SentData[0][7], "only activate should be sent when duration <= 0");
     }
 
     [TestMethod]

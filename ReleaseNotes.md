@@ -5,6 +5,13 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.10 - Z21 XpressNet Accessory Activate/Deactivate Pairing
+Release date 2026-04-15
+
+**Bug Fixes**
+- **Z21 adapter now auto-pairs activate + deactivate for native-XpressNet accessory commands.** DCC accessory decoders require an `A=1` activate → wait → `A=0` deactivate sequence, but the XpressNet branch of `SetAccessoryAsync` was sending only the activate. Two consequences: decoder coils stayed energised (motor-burnout risk for twin-coil turnouts), and the Z21 tracked the outstanding activate as in-flight, suppressing further `LAN_X_TURNOUT_INFO` broadcasts for the same address — so after a single command the UI would stop getting state feedback on that turnout. The adapter now sends activate → delay → deactivate when the caller passes `MotorState.On`; an explicit `MotorState.Off` still sends a single deactivate. Applies only to the native-XpressNet path (`useLocoNetForAccessories: false`); the wrapped-LocoNet path is unchanged.
+- **New `AccessoryActivationDurationMs` constructor parameter / property** controls the hold time (default 200 ms). Tune to match decoder type: twin-coil turnouts 100–300 ms; stall-motor drives (e.g. Möllehem) 500–2000 ms. Set to 0 or negative to opt out of auto-pairing (useful for self-deactivating decoders, at the cost of suppressed Z21 broadcasts).
+
 ### Version 1.7.9 - Tighten XpressNet 0x43 Disambiguation
 Release date 2026-04-15
 

@@ -26,8 +26,26 @@ public sealed partial class Adapter : IAccessory, ITurnout
         }
 
         var output = command.Function == Position.ClosedOrGreen ? AccessoryOutput.Port1 : AccessoryOutput.Port2;
-        var state = command.Output == MotorState.On ? AccessoryOutputState.On : AccessoryOutputState.Off;
-        return await SendAsync(new AccessoryFunctionCommand(address, output, state, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
+
+        // DCC accessory protocol requires an activate → delay → deactivate pair: without the
+        // deactivate the decoder coil stays energised (risking motor burnout on twin-coil drives)
+        // and the Z21 treats the command as still in-flight, suppressing LAN_X_TURNOUT_INFO
+        // broadcasts for the same address until it's cleared — so UIs would miss subsequent
+        // state changes. The adapter pairs the two sends itself so callers don't have to reason
+        // about it. Hold time is governed by AccessoryActivationDurationMs; set it to a value
+        // ≥ decoder travel time (≈200 ms twin-coil, 500–2000 ms stall-motor) or ≤ 0 to opt out
+        // of pairing when the decoder self-deactivates.
+        if (command.Output == MotorState.On)
+        {
+            var activated = await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.On, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
+            if (!activated) return false;
+            if (AccessoryActivationDurationMs <= 0) return true;
+            await Task.Delay(AccessoryActivationDurationMs, cancellationToken).ConfigureAwait(false);
+            return await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.Off, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
+        }
+
+        // Caller explicitly requested deactivate only (TurnOffAsync or AccessoryCommand.*(activate: false)).
+        return await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.Off, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
     }
 
     public Task<bool> QueryAccessoryStateAsync(Address address, CancellationToken cancellationToken = default)
