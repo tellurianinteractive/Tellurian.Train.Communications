@@ -103,13 +103,14 @@ public static class NotificationFactory
     /// </summary>
     /// <remarks>
     /// Header 0x43 can be either:
-    /// - LAN_X_TURNOUT_INFO (Z21 turnout status broadcast): 4 bytes without XOR checksum
-    ///   (header + FAdr_MSB + FAdr_LSB + ZZ) or 5 bytes when the production wire format
-    ///   including the trailing XOR byte is passed through (as happens via <c>Packet</c>).
-    /// - FeedbackBroadcast with 3 decoder-info pairs: 7 bytes without XOR, 8 bytes with.
+    /// - LAN_X_TURNOUT_INFO (Z21 turnout status broadcast): 5 bytes on the wire —
+    ///   header + FAdr_MSB + FAdr_LSB + ZZ + XOR. This is always the shape reaching the
+    ///   factory, since production receives go through <c>Packet</c> which validates
+    ///   and retains the trailing XOR byte.
+    /// - FeedbackBroadcast with 3 decoder-info pairs: 8 bytes on the wire.
     /// </remarks>
     private static Notification CreateTurnoutOrFeedback(byte[] buffer) =>
-        buffer.Length is 4 or 5
+        buffer.Length == 5
             ? new TurnoutInfoNotification(buffer)
             : new FeedbackBroadcast(buffer);
 

@@ -3,23 +3,15 @@ using Tellurian.Trains.Protocols.XpressNet.Notifications;
 
 namespace Tellurian.Trains.Protocols.XpressNet.Tests;
 
+// Test buffers throughout use the production wire shape: X-Header, FAdr_MSB, FAdr_LSB, ZZ, XOR.
+// The XOR byte is not parsed by TurnoutInfoNotification itself, but including it keeps these
+// buffers consistent with what the factory actually receives from Packet in production.
 [TestClass]
 public class TurnoutInfoNotificationTests
 {
     [TestMethod]
-    public void CreatedByFactory_For0x43With4Bytes()
+    public void CreatedByFactory_For5ByteWireFormat()
     {
-        var buffer = new byte[] { 0x43, 0x00, 0x05, 0x02 };
-        var notification = NotificationFactory.Create(buffer);
-
-        Assert.IsInstanceOfType<TurnoutInfoNotification>(notification);
-    }
-
-    [TestMethod]
-    public void CreatedByFactory_For0x43With5Bytes_ProductionWireFormatIncludingXor()
-    {
-        // Production wire format after Frame.Data strips DataLen+Header:
-        // X-Header, FAdr_MSB, FAdr_LSB, ZZ, XOR — 5 bytes.
         var buffer = new byte[] { 0x43, 0x00, 0x05, 0x02, 0x44 };
         var notification = NotificationFactory.Create(buffer);
 
@@ -39,8 +31,7 @@ public class TurnoutInfoNotificationTests
     public void ParsesWireAddressAndPosition()
     {
         // FAdr_MSB=0x00, FAdr_LSB=0x05 → wire address 5 (user address 6), position = Output2 (thrown)
-        var buffer = new byte[] { 0x43, 0x00, 0x05, 0x02 };
-        var notification = new TurnoutInfoNotification(buffer);
+        var notification = new TurnoutInfoNotification([0x43, 0x00, 0x05, 0x02, 0x44]);
 
         Assert.AreEqual(5, notification.WireAddress);
         Assert.AreEqual(TurnoutPosition.Output2, notification.Position);
@@ -50,7 +41,7 @@ public class TurnoutInfoNotificationTests
     public void MapsOutput1ToClosed()
     {
         // wire address 0 → user address 1, Output1 → ClosedOrGreen
-        var notification = new TurnoutInfoNotification([0x43, 0x00, 0x00, 0x01]);
+        var notification = new TurnoutInfoNotification([0x43, 0x00, 0x00, 0x01, 0x42]);
 
         var mapped = notification.Map();
 
@@ -64,7 +55,7 @@ public class TurnoutInfoNotificationTests
     public void MapsOutput2ToThrown()
     {
         // wire address 41 → user address 42, Output2 → ThrownOrRed
-        var notification = new TurnoutInfoNotification([0x43, 0x00, 0x29, 0x02]);
+        var notification = new TurnoutInfoNotification([0x43, 0x00, 0x29, 0x02, 0x68]);
 
         var mapped = notification.Map();
 
@@ -77,7 +68,7 @@ public class TurnoutInfoNotificationTests
     [TestMethod]
     public void MapsNotSwitchedToUnmapped()
     {
-        var notification = new TurnoutInfoNotification([0x43, 0x00, 0x00, 0x00]);
+        var notification = new TurnoutInfoNotification([0x43, 0x00, 0x00, 0x00, 0x43]);
 
         var mapped = notification.Map();
 
@@ -88,7 +79,7 @@ public class TurnoutInfoNotificationTests
     [TestMethod]
     public void MapsInvalidToUnmapped()
     {
-        var notification = new TurnoutInfoNotification([0x43, 0x00, 0x00, 0x03]);
+        var notification = new TurnoutInfoNotification([0x43, 0x00, 0x00, 0x03, 0x40]);
 
         var mapped = notification.Map();
 
@@ -103,7 +94,7 @@ public class TurnoutInfoNotificationTests
         // XpressNet sub-frame bytes (including the trailing XOR), then calls Notification,
         // then Map. A regression here means turnout feedback from XpressNet clients
         // (Z21 App, WLANMaus) is silently dropped — exactly what 1.7.7 shipped with.
-        var wireBytes = new byte[] { 0x43, 0x00, 0x29, 0x02, 0x68 }; // XOR of first 4 bytes
+        var wireBytes = new byte[] { 0x43, 0x00, 0x29, 0x02, 0x68 };
         var packet = new Packet(wireBytes);
 
         var notification = packet.Notification;
@@ -120,7 +111,7 @@ public class TurnoutInfoNotificationTests
     public void TwelveBitAddressParsedFromBothBytes()
     {
         // FAdr_MSB=0x07, FAdr_LSB=0xFF → wire 0x07FF = 2047 → user 2048 (max)
-        var notification = new TurnoutInfoNotification([0x43, 0x07, 0xFF, 0x01]);
+        var notification = new TurnoutInfoNotification([0x43, 0x07, 0xFF, 0x01, 0xBA]);
 
         Assert.AreEqual(0x07FF, notification.WireAddress);
         var mapped = notification.Map();

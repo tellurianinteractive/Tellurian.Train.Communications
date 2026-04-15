@@ -5,6 +5,12 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.9 - Tighten XpressNet 0x43 Disambiguation
+Release date 2026-04-15
+
+**Internal**
+- Factory disambiguation for `LAN_X_TURNOUT_INFO` now accepts only the 5-byte production wire shape (header + address + status + XOR). The 4-byte no-checksum path was only reachable from tests that bypass `Packet` and masked the real 1.7.7 bug — tightening it prevents similar regressions. All test buffers updated to include the trailing XOR byte so they mirror what the factory sees in production.
+
 ### Version 1.7.8 - XpressNet Turnout Info Length Fix
 Release date 2026-04-15
 
