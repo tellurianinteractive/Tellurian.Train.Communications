@@ -13,12 +13,36 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
     private readonly ICommunicationsChannel Channel;
     private readonly ActionObserver<CommunicationResult> ReceivingObserver;
     private readonly Observers<Tellurian.Trains.Communications.Interfaces.Notification> Observers = new();
+    private volatile bool IsReceiving;
+
+    /// <summary>
+    /// The broadcast subjects currently subscribed on the Z21 (as far as this adapter knows).
+    /// Updated by <see cref="SubscribeAsync"/>, <see cref="AddSubscriptionsAsync"/>, and
+    /// <see cref="RemoveSubscriptionsAsync"/>. Re-applied automatically on every
+    /// <see cref="StartReceiveAsync"/> call (Z21 forgets broadcast flags across reconnects).
+    /// </summary>
+    public BroadcastSubjects CurrentSubscriptions { get; private set; }
 
     public Adapter(ICommunicationsChannel? channel, ILogger<Adapter> logger)
+        : this(channel, logger, BroadcastSubjects.None) { }
+
+    /// <summary>
+    /// Creates a new Z21 adapter.
+    /// </summary>
+    /// <param name="channel">The UDP communication channel to the Z21.</param>
+    /// <param name="logger">Logger instance.</param>
+    /// <param name="subscriptions">
+    /// Initial broadcast subjects to subscribe to when <see cref="StartReceiveAsync"/> is called.
+    /// Use <see cref="BroadcastSubjects.None"/> to skip subscription (default). For accessory/turnout
+    /// feedback via wrapped LocoNet notifications, include <see cref="BroadcastSubjects.LocoNetTurnouts"/>.
+    /// Can be changed at runtime via <see cref="SubscribeAsync"/>.
+    /// </param>
+    public Adapter(ICommunicationsChannel? channel, ILogger<Adapter> logger, BroadcastSubjects subscriptions)
     {
         Channel = channel ?? throw new ArgumentNullException(nameof(channel));
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         ReceivingObserver = new ActionObserver<CommunicationResult>(ReceiveData, ReceiveError, ReceiveCompleted);
+        CurrentSubscriptions = subscriptions;
     }
 
     public IDisposable Subscribe(IObserver<Tellurian.Trains.Communications.Interfaces.Notification> observer)
@@ -67,8 +91,42 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
     {
         Channel.Subscribe(ReceivingObserver);
         await Channel.StartReceiveAsync(cancellationToken).ConfigureAwait(false);
+        IsReceiving = true;
         Logger.LogInformation(new EventId(2103, nameof(StartReceiveAsync)), "Started receiving notifications.");
+        if (CurrentSubscriptions != BroadcastSubjects.None)
+        {
+            await SendAsync(new SubscribeNotificationsCommand(CurrentSubscriptions), cancellationToken).ConfigureAwait(false);
+            Logger.LogInformation(new EventId(2110, nameof(StartReceiveAsync)), "Subscribed to Z21 broadcast subjects: {Subjects}", CurrentSubscriptions);
+        }
     }
+
+    /// <summary>
+    /// Sets the Z21 broadcast subscription to the given set of subjects (absolute replace).
+    /// The Z21 protocol only supports a "set absolute" operation — any subjects not included
+    /// here will no longer be delivered. If the adapter is already receiving, the command is
+    /// sent immediately; otherwise the value is stored and applied on the next
+    /// <see cref="StartReceiveAsync"/> call.
+    /// </summary>
+    public Task<bool> SubscribeAsync(BroadcastSubjects subjects, CancellationToken cancellationToken = default)
+    {
+        CurrentSubscriptions = subjects;
+        if (!IsReceiving) return Task.FromResult(true);
+        return SendAsync(new SubscribeNotificationsCommand(subjects), cancellationToken);
+    }
+
+    /// <summary>
+    /// Adds the given subjects to the active subscription set. Convenience over
+    /// <see cref="SubscribeAsync"/> that preserves the currently-subscribed subjects.
+    /// </summary>
+    public Task<bool> AddSubscriptionsAsync(BroadcastSubjects subjects, CancellationToken cancellationToken = default)
+        => SubscribeAsync(CurrentSubscriptions | subjects, cancellationToken);
+
+    /// <summary>
+    /// Removes the given subjects from the active subscription set. Convenience over
+    /// <see cref="SubscribeAsync"/> that preserves other currently-subscribed subjects.
+    /// </summary>
+    public Task<bool> RemoveSubscriptionsAsync(BroadcastSubjects subjects, CancellationToken cancellationToken = default)
+        => SubscribeAsync(CurrentSubscriptions & ~subjects, cancellationToken);
 
     private void ReceiveData(CommunicationResult result)
     {

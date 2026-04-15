@@ -40,8 +40,14 @@ services.AddSingleton<ICommunicationsChannel>(sp =>
         remoteEndPoint: z21Endpoint,
         logger: sp.GetRequiredService<ILogger<UdpDataChannel>>()));
 
-// Register the Z21 adapter
-services.AddSingleton<Adapter>();
+// Register the Z21 adapter with an initial broadcast subscription.
+// Pick only the subjects your application actually needs — the Z21 spec
+// warns that broad subscriptions (e.g. all locos, all switches) can generate
+// considerable network traffic, especially over Wi-Fi.
+services.AddSingleton(sp => new Adapter(
+    sp.GetRequiredService<ICommunicationsChannel>(),
+    sp.GetRequiredService<ILogger<Adapter>>(),
+    BroadcastSubjects.RunningAndSwitching | BroadcastSubjects.SystemStateChanges));
 
 // Register ILoco interface (the Adapter implements it)
 services.AddSingleton<ILoco>(sp => sp.GetRequiredService<Adapter>());
@@ -61,11 +67,19 @@ var adapter = provider.GetRequiredService<Adapter>();
 // Subscribe to notifications
 adapter.Subscribe(new MyNotificationObserver());
 
-// Subscribe to Z21 broadcast subjects
-await adapter.SendAsync(new SubscribeNotificationsCommand(BroadcastSubjects.All));
-
-// Start receiving notifications
+// Start receiving notifications. The adapter automatically applies the
+// BroadcastSubjects passed to its constructor to the Z21 — and will re-apply
+// them on every (re)connect, because the Z21 forgets broadcast flags when
+// the client reconnects.
 await adapter.StartReceiveAsync();
+
+// Change the subscription set at runtime if needed.
+// The Z21 protocol only supports "set absolute" — the adapter tracks the
+// current set so you can add/remove individual subjects conveniently.
+await adapter.AddSubscriptionsAsync(BroadcastSubjects.LocoNetTurnouts);
+await adapter.RemoveSubscriptionsAsync(BroadcastSubjects.SystemStateChanges);
+// Or replace the whole set in one call:
+await adapter.SubscribeAsync(BroadcastSubjects.LocoNetTurnouts);
 
 // Control a locomotive
 var locoAddress = new LocoAddress(3); // DCC address 3

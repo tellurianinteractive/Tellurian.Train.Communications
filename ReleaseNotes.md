@@ -5,6 +5,17 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.4 - Z21 Dynamic Broadcast Subscription
+Release date 2026-04-15
+
+**New Features**
+- **Z21 adapter auto-subscribes on connect**: New constructor overload `Adapter(ICommunicationsChannel, ILogger<Adapter>, BroadcastSubjects)` accepts an initial broadcast subscription. When `StartReceiveAsync` is called, the adapter automatically sends `LAN_SET_BROADCASTFLAGS` with the configured subjects. The set is re-applied on every (re)connect — the Z21 protocol requires flags to be resent after reconnection.
+- **Dynamic subscription management**: New methods on the Z21 `Adapter` allow runtime subscription changes:
+  - `SubscribeAsync(BroadcastSubjects)` — replace the active set (absolute).
+  - `AddSubscriptionsAsync(BroadcastSubjects)` / `RemoveSubscriptionsAsync(BroadcastSubjects)` — convenience OR/AND-NOT over the tracked current set.
+  - `CurrentSubscriptions` property exposes the last-applied set.
+- **Backward compatibility**: The existing 2-argument constructor is preserved as a pass-through with `BroadcastSubjects.None`, so existing consumers are unaffected.
+
 ### Version 1.7.3 - LocoNet Slot Cache Fix
 Release date 2026-03-28
 
