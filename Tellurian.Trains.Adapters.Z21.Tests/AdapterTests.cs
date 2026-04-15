@@ -105,21 +105,24 @@ public class AdapterTests
     }
 
     [TestMethod]
-    public async Task XpressNetAccessorySendPairsActivateAndDeactivate()
+    public async Task XpressNetAccessorySendReturnsAfterActivate_DeactivateFiresInBackground()
     {
-        // DCC accessory protocol requires an activate → delay → deactivate pair. The adapter
-        // auto-pairs them on the native-XpressNet path so callers don't have to.
+        // DCC accessory protocol requires an activate → delay → deactivate pair, but callers
+        // shouldn't pay the hold time — the adapter schedules the deactivate in the background
+        // so setting many points in sequence doesn't serialize on the activation hold.
         var channel = new MockChannel();
-        var adapter = new Adapter(channel, NullLogger<Adapter>.Instance, BroadcastSubjects.None, useLocoNetForAccessories: false, accessoryActivationDurationMs: 10);
+        var adapter = new Adapter(channel, NullLogger<Adapter>.Instance, BroadcastSubjects.None, useLocoNetForAccessories: false, accessoryActivationDurationMs: 50);
 
         var sent = await adapter.SetAccessoryAsync(Address.From(802), AccessoryCommand.Throw(), TestContext.CancellationToken);
 
         Assert.IsTrue(sent);
+        Assert.HasCount(1, channel.SentData);
+        Assert.AreEqual(0x89, channel.SentData[0][7], "activate (DB2 bit 3 set) is sent synchronously");
+
+        // Wait past the scheduled deactivate delay and confirm it landed on the wire.
+        await Task.Delay(300, TestContext.CancellationToken);
         Assert.HasCount(2, channel.SentData);
-        // First: activate (A=1, bit 3 set).
-        Assert.AreEqual(0x89, channel.SentData[0][7], "first send must be activate (DB2 bit 3 set)");
-        // Second: deactivate on same P bit (A=0).
-        Assert.AreEqual(0x81, channel.SentData[1][7], "second send must be deactivate with same P bit");
+        Assert.AreEqual(0x81, channel.SentData[1][7], "deactivate (DB2 bit 3 clear) fires in background");
     }
 
     [TestMethod]

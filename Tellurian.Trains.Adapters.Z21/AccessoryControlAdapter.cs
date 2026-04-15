@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Tellurian.Trains.Communications.Interfaces.Accessories;
 using Tellurian.Trains.Protocols.XpressNet;
 using Tellurian.Trains.Protocols.XpressNet.Commands;
@@ -32,20 +33,36 @@ public sealed partial class Adapter : IAccessory, ITurnout
         // and the Z21 treats the command as still in-flight, suppressing LAN_X_TURNOUT_INFO
         // broadcasts for the same address until it's cleared — so UIs would miss subsequent
         // state changes. The adapter pairs the two sends itself so callers don't have to reason
-        // about it. Hold time is governed by AccessoryActivationDurationMs; set it to a value
-        // ≥ decoder travel time (≈200 ms twin-coil, 500–2000 ms stall-motor) or ≤ 0 to opt out
-        // of pairing when the decoder self-deactivates.
+        // about it. The deactivate is scheduled in the background so the call returns as soon
+        // as the activate is on the wire — callers setting many points in sequence don't pay
+        // the activation-hold cost. Hold time is governed by AccessoryActivationDurationMs;
+        // set it to a value ≥ decoder travel time (≈200 ms twin-coil, 500–2000 ms stall-motor)
+        // or ≤ 0 to opt out of pairing when the decoder self-deactivates.
         if (command.Output == MotorState.On)
         {
             var activated = await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.On, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
             if (!activated) return false;
             if (AccessoryActivationDurationMs <= 0) return true;
-            await Task.Delay(AccessoryActivationDurationMs, cancellationToken).ConfigureAwait(false);
-            return await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.Off, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
+            _ = ScheduleAccessoryDeactivateAsync(address, output, AccessoryActivationDurationMs);
+            return true;
         }
 
         // Caller explicitly requested deactivate only (TurnOffAsync or AccessoryCommand.*(activate: false)).
         return await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.Off, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task ScheduleAccessoryDeactivateAsync(Address address, AccessoryOutput output, int delayMs)
+    {
+        try
+        {
+            await Task.Delay(delayMs).ConfigureAwait(false);
+            await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.Off, AccessoryZ21Mode.Direct)).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            if (Logger.IsEnabled(LogLevel.Error))
+                Logger.LogError(ex, "Background accessory deactivate for address {Address} output {Output} failed", address, output);
+        }
     }
 
     public Task<bool> QueryAccessoryStateAsync(Address address, CancellationToken cancellationToken = default)

@@ -5,6 +5,12 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.11 - Z21 XpressNet Deactivate Runs in Background
+Release date 2026-04-15
+
+**Bug Fixes**
+- **`SetAccessoryAsync` no longer blocks the caller for the activation hold.** 1.7.10 added activate → wait → deactivate pairing but awaited the full hold before returning, which serialized point-setting sequences (e.g. setting a whole route of stall-motor turnouts at `AccessoryActivationDurationMs = 2000` meant 2 s per point). The deactivate is now scheduled on a background task and the call returns as soon as the activate is on the wire. The deactivate still fires after the configured hold; errors during background deactivate are logged but not propagated to the original caller.
+
 ### Version 1.7.10 - Z21 XpressNet Accessory Activate/Deactivate Pairing
 Release date 2026-04-15
 
