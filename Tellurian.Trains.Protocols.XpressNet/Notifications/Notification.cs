@@ -1,3 +1,4 @@
+using Tellurian.Trains.Communications.Interfaces.Accessories;
 using Tellurian.Trains.Communications.Interfaces.Decoder;
 using Tellurian.Trains.Communications.Interfaces.Extensions;
 using Tellurian.Trains.Communications.Interfaces.Locos;
@@ -20,17 +21,19 @@ public static class NotificationExtensions
     private static readonly IDictionary<Type, Func<Notification, Tellurian.Trains.Communications.Interfaces.Notification[]>> Mappings = new Dictionary<Type, Func<Notification, Tellurian.Trains.Communications.Interfaces.Notification[]>>()
     {
         { typeof(LocoInfoNotification), MapLocoInfoNotification },
-        { typeof(WriteCVResponse), MapDecoderResponse }
+        { typeof(WriteCVResponse), MapDecoderResponse },
+        { typeof(TurnoutInfoNotification), MapTurnoutInfoNotification }
     };
 
     public static Tellurian.Trains.Communications.Interfaces.Notification[] Map(this Notification notification)
     {
-        var key = notification?.GetType().Key() ?? throw new ArgumentNullException(nameof(notification));
+        ArgumentNullException.ThrowIfNull(notification);
+        var key = notification.GetType().Key();
         if (key is null) return MapDefaults.CreateUnmapped(notification.ToString());
         return Mappings[key].Invoke(notification);
     }
 
-    private static Type Key(this Type type) => Mappings.Keys.SingleOrDefault(k => k.Equals(type) || type.IsSubclassOf(k)) ?? throw new InvalidOperationException(type.Name);
+    private static Type? Key(this Type type) => Mappings.Keys.SingleOrDefault(k => k.Equals(type) || type.IsSubclassOf(k));
 
     private static Tellurian.Trains.Communications.Interfaces.Notification[] MapLocoInfoNotification(Notification notification)
     {
@@ -39,6 +42,19 @@ public static class NotificationExtensions
         result[0] = new LocoMovementNotification(n.Address, n.Direction.Map(), n.Speed.Map());
         result[1] = new LocoFunctionsNotification(n.Address, n.Functions().Map());
         return result;
+    }
+
+    private static Tellurian.Trains.Communications.Interfaces.Notification[] MapTurnoutInfoNotification(Notification notification)
+    {
+        var n = (TurnoutInfoNotification)notification;
+        // NotSwitched and Invalid carry no usable position — surface as unmapped so consumers
+        // don't mistake them for a confirmed state change.
+        return n.Position switch
+        {
+            TurnoutPosition.Output1 => [new AccessoryNotification(Communications.Interfaces.Accessories.Address.FromWireAddress((short)n.WireAddress), Position.ClosedOrGreen)],
+            TurnoutPosition.Output2 => [new AccessoryNotification(Communications.Interfaces.Accessories.Address.FromWireAddress((short)n.WireAddress), Position.ThrownOrRed)],
+            _ => MapDefaults.CreateUnmapped(n.ToString())
+        };
     }
 
     private static Tellurian.Trains.Communications.Interfaces.Notification[] MapDecoderResponse(Notification notification) =>

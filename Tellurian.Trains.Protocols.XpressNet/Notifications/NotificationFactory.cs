@@ -15,7 +15,7 @@ public static class NotificationFactory
         {
             0x41 => new FeedbackBroadcast(buffer),
             0x42 => CreateAccessoryNotification(buffer),
-            0x43 => new FeedbackBroadcast(buffer),
+            0x43 => CreateTurnoutOrFeedback(buffer),
             0x44 => new FeedbackBroadcast(buffer),
             0x45 => new FeedbackBroadcast(buffer),
             0x46 => new FeedbackBroadcast(buffer),
@@ -96,6 +96,19 @@ public static class NotificationFactory
     private static Notification CreateAccessoryNotification(byte[] buffer) =>
         buffer.Length == 3
             ? new AccessoryDecoderInfoNotification(buffer)
+            : new FeedbackBroadcast(buffer);
+
+    /// <summary>
+    /// Disambiguates between LAN_X_TURNOUT_INFO and FeedbackBroadcast for header 0x43.
+    /// </summary>
+    /// <remarks>
+    /// Header 0x43 can be either:
+    /// - LAN_X_TURNOUT_INFO (Z21 turnout status broadcast): 4 bytes total (header + FAdr_MSB + FAdr_LSB + ZZ)
+    /// - FeedbackBroadcast with 2 decoder-info pairs: 5 bytes total (header + 2 × (addr, info))
+    /// </remarks>
+    private static Notification CreateTurnoutOrFeedback(byte[] buffer) =>
+        buffer.Length == 4
+            ? new TurnoutInfoNotification(buffer)
             : new FeedbackBroadcast(buffer);
 
     /// <summary>

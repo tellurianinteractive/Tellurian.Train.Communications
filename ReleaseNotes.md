@@ -5,6 +5,13 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.7 - Z21 XpressNet Turnout Feedback
+Release date 2026-04-15
+
+**Bug Fixes**
+- **XpressNet `LAN_X_TURNOUT_INFO` now maps to `AccessoryNotification`.** When a turnout is switched by another client on the Z21 (Z21 App, WLANMaus, etc.), the Z21 broadcasts `LAN_X_TURNOUT_INFO` (X-Header 0x43) to subscribers of the `RunningAndSwitching` (0x00000001) flag but does not mirror those changes onto the LocoNet-over-UDP stream. Previously the XpressNet notification mapper had no entry for this message and would throw `InvalidOperationException`, killing the receive loop if an application tried to subscribe. A new `TurnoutInfoNotification` is emitted by the factory for 4-byte 0x43 frames and mapped to `AccessoryNotification` (Output1 → `ClosedOrGreen`, Output2 → `ThrownOrRed`; `NotSwitched`/`Invalid` surface as unmapped). Applications that want feedback for third-party-initiated turnout changes can now subscribe `BroadcastSubjects.LocoNetTurnouts | BroadcastSubjects.RunningAndSwitching`.
+- **XpressNet mapper no longer throws on unknown notification types.** `NotificationExtensions.Map` previously threw `InvalidOperationException` for any XpressNet notification not in its dispatch table; it now falls back to the `MessageNotification` unmapped path, matching the Z21 adapter's behaviour for the outer notification layer.
+
 ### Version 1.7.6 - Z21 Accessory Send Self-Echo
 Release date 2026-04-15
 
