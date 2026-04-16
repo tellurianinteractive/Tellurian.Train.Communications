@@ -28,21 +28,17 @@ public sealed partial class Adapter : IAccessory, ITurnout
         // NMRA S-9.2.1: C=0 (Output 1/Port1) = Diverging/Thrown, C=1 (Output 2/Port2) = Normal/Straight.
         var output = command.Function == Position.ClosedOrGreen ? AccessoryOutput.Port2 : AccessoryOutput.Port1;
 
-        // Z21 tracks an in-flight activate per address and suppresses new commands until it's
-        // cleared with a deactivate. Instead of scheduling a background deactivate after a delay
-        // (which races with subsequent commands and whose broadcast can revert model state),
-        // pre-clear the opposite output before activating the desired one. This ensures Z21's
-        // in-flight tracking is clean regardless of what other clients (Z21 App, WLANMaus) did
-        // previously. Self-deactivating decoders (e.g. Möllehem stall-motor drives) handle motor
-        // timing internally so no post-activate deactivate is needed.
         if (command.Output == MotorState.On)
         {
-            var oppositeOutput = output == AccessoryOutput.Port1 ? AccessoryOutput.Port2 : AccessoryOutput.Port1;
-            await SendAsync(new AccessoryFunctionCommand(address, oppositeOutput, AccessoryOutputState.Off, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
-            return await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.On, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
+            // DCC accessory protocol: activate then deactivate. Both sends are throttled by the
+            // adapter's MinSendIntervalMs so the Z21 processes each before receiving the next.
+            // Self-deactivating decoders (e.g. Möllehem stall-motor) handle motor timing internally;
+            // the deactivate just clears Z21's in-flight tracking so it continues broadcasting.
+            var activated = await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.On, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
+            if (!activated) return false;
+            return await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.Off, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
         }
 
-        // Caller explicitly requested deactivate only (TurnOffAsync or AccessoryCommand.*(activate: false)).
         return await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.Off, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
     }
 

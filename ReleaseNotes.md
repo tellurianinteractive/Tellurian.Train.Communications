@@ -5,6 +5,13 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.15 - Rate-limited Sends and Synchronous Activate/Deactivate Pair
+Release date 2026-04-16
+
+**Bug Fixes**
+- **All UDP sends to the Z21 are now throttled.** A `SemaphoreSlim`-based send throttle ensures a configurable minimum interval (`MinSendIntervalMs`, default 50 ms) between consecutive sends. This prevents overwhelming the Z21 during bulk operations (e.g. setting all points straight) and multi-address crossover commands. Replaces `AccessoryActivationDurationMs`.
+- **Accessory activate is now immediately followed by a synchronous deactivate.** For each `MotorState.On` command the adapter sends `A=1` (activate) then `A=0` (deactivate) for the same output, spaced by the send throttle. No background tasks, no timing races, no stale deactivate broadcasts. Self-deactivating decoders (e.g. Möllehem stall-motor) handle motor timing internally; the deactivate just clears Z21's in-flight tracking so it continues broadcasting `LAN_X_TURNOUT_INFO`. The previous pre-deactivate-opposite approach (1.7.14) is removed — it sent extra commands that interfered with multi-address crossover decoders.
+
 ### Version 1.7.14 - Pre-deactivate Opposite Output Instead of Background Deactivate
 Release date 2026-04-16
 

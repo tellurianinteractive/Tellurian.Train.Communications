@@ -105,22 +105,22 @@ public class AdapterTests
     }
 
     [TestMethod]
-    public async Task XpressNetAccessorySendPreDeactivatesOppositeThenActivatesDesired()
+    public async Task XpressNetAccessorySendActivatesThenDeactivates()
     {
-        // The adapter pre-deactivates the opposite output to clear Z21's in-flight tracking,
-        // then activates the desired output. No background deactivate needed — self-deactivating
-        // decoders (e.g. Möllehem stall-motor) handle motor timing internally.
+        // DCC accessory: activate (A=1) then deactivate (A=0) for the same output.
+        // The adapter's send throttle spaces them; self-deactivating decoders handle
+        // motor timing internally, the deactivate just clears Z21's in-flight tracking.
         var channel = new MockChannel();
-        var adapter = new Adapter(channel, NullLogger<Adapter>.Instance, BroadcastSubjects.None, useLocoNetForAccessories: false);
+        var adapter = new Adapter(channel, NullLogger<Adapter>.Instance, BroadcastSubjects.None, useLocoNetForAccessories: false, minSendIntervalMs: 0);
 
         var sent = await adapter.SetAccessoryAsync(Address.From(802), AccessoryCommand.Throw(), TestContext.CancellationToken);
 
         Assert.IsTrue(sent);
         Assert.HasCount(2, channel.SentData);
-        // First: pre-deactivate opposite output (Port2/P=1, A=0) → DB2 = 0x81
-        Assert.AreEqual(0x81, channel.SentData[0][7], "pre-deactivate opposite output P=1 A=0");
-        // Second: activate desired output (Port1/P=0, A=1) → DB2 = 0x88
-        Assert.AreEqual(0x88, channel.SentData[1][7], "activate desired output P=0 A=1");
+        // First: activate (Port1/P=0, A=1) → DB2 = 0x88
+        Assert.AreEqual(0x88, channel.SentData[0][7], "activate P=0 A=1");
+        // Second: deactivate same output (Port1/P=0, A=0) → DB2 = 0x80
+        Assert.AreEqual(0x80, channel.SentData[1][7], "deactivate P=0 A=0");
     }
 
     [TestMethod]

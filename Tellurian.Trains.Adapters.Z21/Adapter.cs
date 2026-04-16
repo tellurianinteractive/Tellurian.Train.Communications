@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Tellurian.Trains.Communications.Channels;
 using Tellurian.Trains.Communications.Interfaces.Decoder;
 using Tellurian.Trains.Protocols.XpressNet;
@@ -41,21 +42,18 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
     public bool UseLocoNetForAccessories { get; }
 
     /// <summary>
-    /// Time in milliseconds the native-XpressNet accessory path holds the activate between
-    /// sending <c>A=1</c> and the paired <c>A=0</c> deactivate. Applies only when
-    /// <see cref="UseLocoNetForAccessories"/> is <c>false</c>. Pick based on decoder type:
-    /// twin-coil turnouts move in ~100–300 ms; stall motors (e.g. Möllehem) need the full
-    /// travel time, typically 500–2000 ms. Defaults to 200 ms (twin-coil-friendly). A zero or
-    /// negative value skips the deactivate — use only if the decoder self-deactivates AND you
-    /// don't mind the Z21 suppressing further broadcasts for that address.
+    /// Minimum interval in milliseconds between consecutive UDP sends to the Z21. Prevents
+    /// overwhelming the Z21 when sending rapid command sequences (e.g. bulk point resets or
+    /// multi-address crossover points). Each <see cref="SendAsync(Command, CancellationToken)"/>
+    /// call respects this throttle. Defaults to 50 ms. Set to 0 to disable throttling.
     /// </summary>
-    public int AccessoryActivationDurationMs { get; }
+    public int MinSendIntervalMs { get; }
 
     public Adapter(ICommunicationsChannel? channel, ILogger<Adapter> logger)
-        : this(channel, logger, BroadcastSubjects.None, useLocoNetForAccessories: true, accessoryActivationDurationMs: 200) { }
+        : this(channel, logger, BroadcastSubjects.None, useLocoNetForAccessories: true, minSendIntervalMs: 50) { }
 
     public Adapter(ICommunicationsChannel? channel, ILogger<Adapter> logger, BroadcastSubjects subscriptions)
-        : this(channel, logger, subscriptions, useLocoNetForAccessories: true, accessoryActivationDurationMs: 200) { }
+        : this(channel, logger, subscriptions, useLocoNetForAccessories: true, minSendIntervalMs: 50) { }
 
     /// <summary>
     /// Creates a new Z21 adapter.
@@ -72,22 +70,22 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
     /// <param name="useLocoNetForAccessories">
     /// See <see cref="UseLocoNetForAccessories"/>. Defaults to <c>true</c>.
     /// </param>
-    /// <param name="accessoryActivationDurationMs">
-    /// See <see cref="AccessoryActivationDurationMs"/>. Defaults to 200.
+    /// <param name="minSendIntervalMs">
+    /// See <see cref="MinSendIntervalMs"/>. Defaults to 50.
     /// </param>
     public Adapter(
         ICommunicationsChannel? channel,
         ILogger<Adapter> logger,
         BroadcastSubjects subscriptions,
         bool useLocoNetForAccessories,
-        int accessoryActivationDurationMs = 200)
+        int minSendIntervalMs = 50)
     {
         Channel = channel ?? throw new ArgumentNullException(nameof(channel));
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         ReceivingObserver = new ActionObserver<CommunicationResult>(ReceiveData, ReceiveError, ReceiveCompleted);
         CurrentSubscriptions = subscriptions;
         UseLocoNetForAccessories = useLocoNetForAccessories;
-        AccessoryActivationDurationMs = accessoryActivationDurationMs;
+        MinSendIntervalMs = minSendIntervalMs;
     }
 
     public IDisposable Subscribe(IObserver<Tellurian.Trains.Communications.Interfaces.Notification> observer)
@@ -117,6 +115,9 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
 
     #region Send and receive
 
+    private readonly SemaphoreSlim _sendThrottle = new(1, 1);
+    private long _lastSendTicks;
+
     public Task<bool> SendAsync(XpressNet.Command command, CancellationToken cancellationToken = default)
     {
         return SendAsync(new XpressNetCommand(command), cancellationToken);
@@ -125,11 +126,26 @@ public sealed partial class Adapter : IDisposable, IObservable<Tellurian.Trains.
     public async Task<bool> SendAsync(Command command, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(command);
-        Logger.LogInformation(new EventId(2101, nameof(SendAsync)), "Command: {0}", command);
-        var data = command.ToFrame().GetBytes();
-        var result = await Channel.SendAsync(data, cancellationToken).ConfigureAwait(false);
-        Logger.LogInformation(new EventId(2102, nameof(SendAsync)), "Result: {0}", result);
-        return result.IsSuccess;
+        await _sendThrottle.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            if (MinSendIntervalMs > 0)
+            {
+                var elapsed = (Stopwatch.GetTimestamp() - _lastSendTicks) * 1000L / Stopwatch.Frequency;
+                if (elapsed < MinSendIntervalMs)
+                    await Task.Delay(MinSendIntervalMs - (int)elapsed, cancellationToken).ConfigureAwait(false);
+            }
+            Logger.LogInformation(new EventId(2101, nameof(SendAsync)), "Command: {0}", command);
+            var data = command.ToFrame().GetBytes();
+            var result = await Channel.SendAsync(data, cancellationToken).ConfigureAwait(false);
+            _lastSendTicks = Stopwatch.GetTimestamp();
+            Logger.LogInformation(new EventId(2102, nameof(SendAsync)), "Result: {0}", result);
+            return result.IsSuccess;
+        }
+        finally
+        {
+            _sendThrottle.Release();
+        }
     }
 
     public async Task StartReceiveAsync(CancellationToken cancellationToken = default)
