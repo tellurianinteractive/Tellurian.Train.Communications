@@ -38,9 +38,10 @@ public class TurnoutInfoNotificationTests
     }
 
     [TestMethod]
-    public void MapsOutput1ToClosed()
+    public void MapsOutput1ToThrown()
     {
-        // wire address 0 → user address 1, Output1 → ClosedOrGreen
+        // NMRA S-9.2.1: C=0 (Output 1) = Diverging/Thrown
+        // wire address 0 → user address 1, Output1 → ThrownOrRed
         var notification = new TurnoutInfoNotification([0x43, 0x00, 0x00, 0x01, 0x42]);
 
         var mapped = notification.Map();
@@ -48,13 +49,14 @@ public class TurnoutInfoNotificationTests
         Assert.HasCount(1, mapped);
         var accessory = (AccessoryNotification)mapped[0];
         Assert.AreEqual((short)1, accessory.Address.Number);
-        Assert.AreEqual(Position.ClosedOrGreen, accessory.Function);
+        Assert.AreEqual(Position.ThrownOrRed, accessory.Function);
     }
 
     [TestMethod]
-    public void MapsOutput2ToThrown()
+    public void MapsOutput2ToClosed()
     {
-        // wire address 41 → user address 42, Output2 → ThrownOrRed
+        // NMRA S-9.2.1: C=1 (Output 2) = Normal/Straight
+        // wire address 41 → user address 42, Output2 → ClosedOrGreen
         var notification = new TurnoutInfoNotification([0x43, 0x00, 0x29, 0x02, 0x68]);
 
         var mapped = notification.Map();
@@ -62,7 +64,7 @@ public class TurnoutInfoNotificationTests
         Assert.HasCount(1, mapped);
         var accessory = (AccessoryNotification)mapped[0];
         Assert.AreEqual((short)42, accessory.Address.Number);
-        Assert.AreEqual(Position.ThrownOrRed, accessory.Function);
+        Assert.AreEqual(Position.ClosedOrGreen, accessory.Function);
     }
 
     [TestMethod]
@@ -104,18 +106,20 @@ public class TurnoutInfoNotificationTests
         Assert.HasCount(1, mapped);
         var accessory = (AccessoryNotification)mapped[0];
         Assert.AreEqual((short)42, accessory.Address.Number);
-        Assert.AreEqual(Position.ThrownOrRed, accessory.Function);
+        Assert.AreEqual(Position.ClosedOrGreen, accessory.Function);
     }
 
     [TestMethod]
     public void TwelveBitAddressParsedFromBothBytes()
     {
         // FAdr_MSB=0x07, FAdr_LSB=0xFF → wire 0x07FF = 2047 → user 2048 (max)
+        // Output1 → ThrownOrRed per NMRA
         var notification = new TurnoutInfoNotification([0x43, 0x07, 0xFF, 0x01, 0xBA]);
 
         Assert.AreEqual(0x07FF, notification.WireAddress);
         var mapped = notification.Map();
         var accessory = (AccessoryNotification)mapped[0];
         Assert.AreEqual((short)2048, accessory.Address.Number);
+        Assert.AreEqual(Position.ThrownOrRed, accessory.Function);
     }
 }

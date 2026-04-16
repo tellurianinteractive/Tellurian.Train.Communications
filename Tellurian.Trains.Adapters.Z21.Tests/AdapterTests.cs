@@ -117,12 +117,13 @@ public class AdapterTests
 
         Assert.IsTrue(sent);
         Assert.HasCount(1, channel.SentData);
-        Assert.AreEqual(0x89, channel.SentData[0][7], "activate (DB2 bit 3 set) is sent synchronously");
+        // Throw = ThrownOrRed → Port1 (P=0) per NMRA S-9.2.1, activate A=1 → DB2 = 0x88
+        Assert.AreEqual(0x88, channel.SentData[0][7], "activate P=0 (thrown/port1) is sent synchronously");
 
         // Wait past the scheduled deactivate delay and confirm it landed on the wire.
         await Task.Delay(300, TestContext.CancellationToken);
         Assert.HasCount(2, channel.SentData);
-        Assert.AreEqual(0x81, channel.SentData[1][7], "deactivate (DB2 bit 3 clear) fires in background");
+        Assert.AreEqual(0x80, channel.SentData[1][7], "deactivate P=0 fires in background");
     }
 
     [TestMethod]
@@ -135,7 +136,8 @@ public class AdapterTests
 
         Assert.IsTrue(sent);
         Assert.HasCount(1, channel.SentData);
-        Assert.AreEqual(0x81, channel.SentData[0][7], "only deactivate should be sent (DB2 bit 3 clear)");
+        // Throw = ThrownOrRed → Port1 (P=0), deactivate A=0 → DB2 = 0x80
+        Assert.AreEqual(0x80, channel.SentData[0][7], "only deactivate should be sent (DB2 bit 3 clear)");
     }
 
     [TestMethod]
@@ -149,7 +151,8 @@ public class AdapterTests
 
         Assert.IsTrue(sent);
         Assert.HasCount(1, channel.SentData);
-        Assert.AreEqual(0x89, channel.SentData[0][7], "only activate should be sent when duration <= 0");
+        // Throw → Port1 (P=0), activate A=1 → DB2 = 0x88
+        Assert.AreEqual(0x88, channel.SentData[0][7], "only activate should be sent when duration <= 0");
     }
 
     [TestMethod]

@@ -26,7 +26,8 @@ public sealed partial class Adapter : IAccessory, ITurnout
             return result;
         }
 
-        var output = command.Function == Position.ClosedOrGreen ? AccessoryOutput.Port1 : AccessoryOutput.Port2;
+        // NMRA S-9.2.1: C=0 (Output 1/Port1) = Diverging/Thrown, C=1 (Output 2/Port2) = Normal/Straight.
+        var output = command.Function == Position.ClosedOrGreen ? AccessoryOutput.Port2 : AccessoryOutput.Port1;
 
         // DCC accessory protocol requires an activate → delay → deactivate pair: without the
         // deactivate the decoder coil stays energised (risking motor burnout on twin-coil drives)

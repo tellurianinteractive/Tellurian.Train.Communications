@@ -49,10 +49,11 @@ public static class NotificationExtensions
         var n = (TurnoutInfoNotification)notification;
         // NotSwitched and Invalid carry no usable position — surface as unmapped so consumers
         // don't mistake them for a confirmed state change.
+        // NMRA S-9.2.1: C=0 (Output 1) = Diverging/Thrown, C=1 (Output 2) = Normal/Straight.
         return n.Position switch
         {
-            TurnoutPosition.Output1 => [new AccessoryNotification(Communications.Interfaces.Accessories.Address.FromWireAddress((short)n.WireAddress), Position.ClosedOrGreen)],
-            TurnoutPosition.Output2 => [new AccessoryNotification(Communications.Interfaces.Accessories.Address.FromWireAddress((short)n.WireAddress), Position.ThrownOrRed)],
+            TurnoutPosition.Output1 => [new AccessoryNotification(Communications.Interfaces.Accessories.Address.FromWireAddress((short)n.WireAddress), Position.ThrownOrRed)],
+            TurnoutPosition.Output2 => [new AccessoryNotification(Communications.Interfaces.Accessories.Address.FromWireAddress((short)n.WireAddress), Position.ClosedOrGreen)],
             _ => MapDefaults.CreateUnmapped(n.ToString())
         };
     }

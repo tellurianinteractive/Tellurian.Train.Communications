@@ -5,6 +5,12 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.12 - Fix XpressNet Output-to-Position NMRA Convention
+Release date 2026-04-16
+
+**Bug Fixes**
+- **XpressNet accessory output mapping now follows NMRA S-9.2.1.** The library mapped `Output 1 (P=0/C=0)` to `ClosedOrGreen` (straight) and `Output 2 (P=1/C=1)` to `ThrownOrRed` (diverging) — the opposite of the DCC standard, which defines `C=0 = Diverging` and `C=1 = Normal/Straight`. Fixed in both directions: the `LAN_X_TURNOUT_INFO` receive mapping (`TurnoutInfoNotification` → `AccessoryNotification`) and the `LAN_X_SET_TURNOUT` send mapping (`AccessoryControlAdapter`). This aligns the yard app with the Z21 App, WLANMaus, and any other NMRA-compliant client so that "straight" and "diverging" labels agree between all apps. The wrapped-LocoNet path is unaffected (it uses LocoNet's own direction-bit convention).
+
 ### Version 1.7.11 - Z21 XpressNet Deactivate Runs in Background
 Release date 2026-04-15
 
