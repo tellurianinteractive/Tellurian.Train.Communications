@@ -5,6 +5,12 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.13 - Cancel Stale XpressNet Deactivates on New Command
+Release date 2026-04-16
+
+**Bug Fixes**
+- **Background accessory deactivates are now cancelled when a new command arrives for the same address.** When two commands for the same turnout arrived within the activation-hold window (e.g. "reset all straight" followed by a keyboard diverge within 2 s), the first command's scheduled deactivate would fire after the second activate, causing the Z21 to broadcast the stale position and flipping the UI model back. The adapter now tracks pending deactivates per address and cancels any outstanding one before scheduling a new activate. Also fixes the resulting GUI freeze — rapid conflicting state updates from stale deactivates would thrash Blazor re-renders until the circuit disconnected.
+
 ### Version 1.7.12 - Fix XpressNet Output-to-Position NMRA Convention
 Release date 2026-04-16
 
