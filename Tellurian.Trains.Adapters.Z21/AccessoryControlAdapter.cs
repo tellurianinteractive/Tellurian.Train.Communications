@@ -1,5 +1,3 @@
-using System.Collections.Concurrent;
-using Microsoft.Extensions.Logging;
 using Tellurian.Trains.Communications.Interfaces.Accessories;
 using Tellurian.Trains.Protocols.XpressNet;
 using Tellurian.Trains.Protocols.XpressNet.Commands;
@@ -9,8 +7,6 @@ namespace Tellurian.Trains.Adapters.Z21;
 
 public sealed partial class Adapter : IAccessory, ITurnout
 {
-    private readonly ConcurrentDictionary<short, CancellationTokenSource> _pendingDeactivates = new();
-
     public async Task<bool> SetAccessoryAsync(Address address, AccessoryCommand command, CancellationToken cancellationToken = default)
     {
         if (UseLocoNetForAccessories)
@@ -32,58 +28,22 @@ public sealed partial class Adapter : IAccessory, ITurnout
         // NMRA S-9.2.1: C=0 (Output 1/Port1) = Diverging/Thrown, C=1 (Output 2/Port2) = Normal/Straight.
         var output = command.Function == Position.ClosedOrGreen ? AccessoryOutput.Port2 : AccessoryOutput.Port1;
 
-        // DCC accessory protocol requires an activate → delay → deactivate pair: without the
-        // deactivate the decoder coil stays energised (risking motor burnout on twin-coil drives)
-        // and the Z21 treats the command as still in-flight, suppressing LAN_X_TURNOUT_INFO
-        // broadcasts for the same address until it's cleared — so UIs would miss subsequent
-        // state changes. The adapter pairs the two sends itself so callers don't have to reason
-        // about it. The deactivate is scheduled in the background so the call returns as soon
-        // as the activate is on the wire — callers setting many points in sequence don't pay
-        // the activation-hold cost. Any pending deactivate for the same address is cancelled
-        // first so a stale deactivate from an earlier command can't revert the new state.
+        // Z21 tracks an in-flight activate per address and suppresses new commands until it's
+        // cleared with a deactivate. Instead of scheduling a background deactivate after a delay
+        // (which races with subsequent commands and whose broadcast can revert model state),
+        // pre-clear the opposite output before activating the desired one. This ensures Z21's
+        // in-flight tracking is clean regardless of what other clients (Z21 App, WLANMaus) did
+        // previously. Self-deactivating decoders (e.g. Möllehem stall-motor drives) handle motor
+        // timing internally so no post-activate deactivate is needed.
         if (command.Output == MotorState.On)
         {
-            CancelPendingDeactivate(address);
-            var activated = await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.On, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
-            if (!activated) return false;
-            if (AccessoryActivationDurationMs <= 0) return true;
-            _ = ScheduleAccessoryDeactivateAsync(address, output, AccessoryActivationDurationMs);
-            return true;
+            var oppositeOutput = output == AccessoryOutput.Port1 ? AccessoryOutput.Port2 : AccessoryOutput.Port1;
+            await SendAsync(new AccessoryFunctionCommand(address, oppositeOutput, AccessoryOutputState.Off, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
+            return await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.On, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
         }
 
         // Caller explicitly requested deactivate only (TurnOffAsync or AccessoryCommand.*(activate: false)).
         return await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.Off, AccessoryZ21Mode.Direct), cancellationToken).ConfigureAwait(false);
-    }
-
-    private void CancelPendingDeactivate(Address address)
-    {
-        if (_pendingDeactivates.TryRemove(address.Number, out var cts))
-        {
-            cts.Cancel();
-            cts.Dispose();
-        }
-    }
-
-    private async Task ScheduleAccessoryDeactivateAsync(Address address, AccessoryOutput output, int delayMs)
-    {
-        var cts = new CancellationTokenSource();
-        _pendingDeactivates[address.Number] = cts;
-        try
-        {
-            await Task.Delay(delayMs, cts.Token).ConfigureAwait(false);
-            await SendAsync(new AccessoryFunctionCommand(address, output, AccessoryOutputState.Off, AccessoryZ21Mode.Direct)).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException) { }
-        catch (Exception ex)
-        {
-            if (Logger.IsEnabled(LogLevel.Error))
-                Logger.LogError(ex, "Background accessory deactivate for address {Address} output {Output} failed", address, output);
-        }
-        finally
-        {
-            _pendingDeactivates.TryRemove(new KeyValuePair<short, CancellationTokenSource>(address.Number, cts));
-            cts.Dispose();
-        }
     }
 
     public Task<bool> QueryAccessoryStateAsync(Address address, CancellationToken cancellationToken = default)

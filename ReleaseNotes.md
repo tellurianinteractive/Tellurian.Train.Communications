@@ -5,6 +5,12 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
+### Version 1.7.14 - Pre-deactivate Opposite Output Instead of Background Deactivate
+Release date 2026-04-16
+
+**Bug Fixes**
+- **Replaced background deactivate with synchronous pre-deactivate of the opposite output.** The 1.7.11–1.7.13 approach of scheduling a background deactivate after a configurable delay had multiple problems: stale deactivates could revert model state, the deactivate's broadcast would flip the position back, and long delays caused UDP flooding during bulk operations. The new approach sends two commands synchronously on each activate: first `A=0` for the opposite output (clearing Z21's in-flight tracking), then `A=1` for the desired output. No background tasks, no timing races, no duplicate notifications. Self-deactivating decoders (e.g. Möllehem stall-motor drives) handle motor timing internally so no post-activate deactivate is needed. `AccessoryActivationDurationMs` is retained for API compatibility but no longer used in the XpressNet path.
+
 ### Version 1.7.13 - Cancel Stale XpressNet Deactivates on New Command
 Release date 2026-04-16
 
