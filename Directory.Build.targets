@@ -1,0 +1,30 @@
+<Project>
+
+  <!-- Auto-copy packed packages to the local NuGet feed on developer machines.
+       Never runs in CI (guarded by CI env variables), never runs if the feed
+       folder doesn't exist. Safe to commit; has no effect outside local dev.
+       See the user-level local-nuget-development skill. -->
+  <PropertyGroup>
+    <LocalNuGetFeed Condition="'$(LocalNuGetFeed)' == ''">C:\NuGets</LocalNuGetFeed>
+    <IsCiBuild Condition="'$(CI)' == 'true' OR '$(GITHUB_ACTIONS)' == 'true' OR '$(TF_BUILD)' == 'true'">true</IsCiBuild>
+  </PropertyGroup>
+
+  <Target Name="PushToLocalNuGetFeed"
+          AfterTargets="Pack"
+          Condition="'$(IsCiBuild)' != 'true' AND '$(IsPackable)' == 'true' AND Exists('$(LocalNuGetFeed)')">
+    <ItemGroup>
+      <_LocalFeedPackage Include="$(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg"
+                         Condition="Exists('$(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg')" />
+      <_LocalFeedPackage Include="$(PackageOutputPath)$(PackageId).$(PackageVersion).snupkg"
+                         Condition="Exists('$(PackageOutputPath)$(PackageId).$(PackageVersion).snupkg')" />
+    </ItemGroup>
+    <Message Importance="high"
+             Text="Copying $(PackageId) $(PackageVersion) to local feed $(LocalNuGetFeed)"
+             Condition="'@(_LocalFeedPackage)' != ''" />
+    <Copy SourceFiles="@(_LocalFeedPackage)"
+          DestinationFolder="$(LocalNuGetFeed)"
+          SkipUnchangedFiles="true"
+          Condition="'@(_LocalFeedPackage)' != ''" />
+  </Target>
+
+</Project>
