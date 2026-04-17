@@ -35,7 +35,7 @@ protocol-specific communication.
 ## Key Features
 
 - **Locomotive control**: Speed (14/27/28/126 steps), direction, functions F0-F28, and state query from command station
-- **Accessory/turnout control**: Addresses 1-1024 with state queries
+- **Accessory/turnout control**: Addresses 1-2048 with state queries
 - **Decoder programming**: Service mode and operations mode (POM), CVs 1-1024
 - **LNCV programming**: Read/write LocoNet Configuration Variables for stationary decoders (Uhlenbrock, YaMoRC, etc.)
 - **Detector/occupancy support**: Occupancy, transponder, and RailCom notifications from LocoNet, Z21 LocoNet detector API, and Z21 CAN detectors (10808)

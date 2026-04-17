@@ -5,43 +5,18 @@ Each NuGet-package may have its own specific release notes, which can be found i
 
 ## Releases
 
-### Version 1.7.15 - Rate-limited Sends and Synchronous Activate/Deactivate Pair
-Release date 2026-04-16
+### Version 1.8.0 - Z21 Communication Improvements: Send Throttling, Accessory Pairing, and NMRA Mapping
+Release date 2026-04-17
+
+**New Features**
+- **UDP send throttle on the Z21 adapter.** A `SemaphoreSlim`-backed throttle ensures a configurable minimum interval (`MinSendIntervalMs`, default 50 ms) between consecutive sends to the Z21. Prevents overwhelming the command station during bulk operations (setting all points straight, multi-address crossover commands) and eliminates UDP flooding on rapid sequences. New `minSendIntervalMs` constructor parameter on `Adapter`; set to 0 to disable throttling.
+- **Native-XpressNet accessory commands now paired activate → deactivate.** When `useLocoNetForAccessories: false`, `SetAccessoryAsync` sends `A=1` immediately followed by `A=0` for the same output, throttled by `MinSendIntervalMs`. Clears the Z21's in-flight tracking so it continues broadcasting `LAN_X_TURNOUT_INFO`; self-deactivating decoders (e.g. Möllehem stall-motor drives) handle motor timing internally.
 
 **Bug Fixes**
-- **All UDP sends to the Z21 are now throttled.** A `SemaphoreSlim`-based send throttle ensures a configurable minimum interval (`MinSendIntervalMs`, default 50 ms) between consecutive sends. This prevents overwhelming the Z21 during bulk operations (e.g. setting all points straight) and multi-address crossover commands. Replaces `AccessoryActivationDurationMs`.
-- **Accessory activate is now immediately followed by a synchronous deactivate.** For each `MotorState.On` command the adapter sends `A=1` (activate) then `A=0` (deactivate) for the same output, spaced by the send throttle. No background tasks, no timing races, no stale deactivate broadcasts. Self-deactivating decoders (e.g. Möllehem stall-motor) handle motor timing internally; the deactivate just clears Z21's in-flight tracking so it continues broadcasting `LAN_X_TURNOUT_INFO`. The previous pre-deactivate-opposite approach (1.7.14) is removed — it sent extra commands that interfered with multi-address crossover decoders.
-
-### Version 1.7.14 - Pre-deactivate Opposite Output Instead of Background Deactivate
-Release date 2026-04-16
-
-**Bug Fixes**
-- **Replaced background deactivate with synchronous pre-deactivate of the opposite output.** The 1.7.11–1.7.13 approach of scheduling a background deactivate after a configurable delay had multiple problems: stale deactivates could revert model state, the deactivate's broadcast would flip the position back, and long delays caused UDP flooding during bulk operations. The new approach sends two commands synchronously on each activate: first `A=0` for the opposite output (clearing Z21's in-flight tracking), then `A=1` for the desired output. No background tasks, no timing races, no duplicate notifications. Self-deactivating decoders (e.g. Möllehem stall-motor drives) handle motor timing internally so no post-activate deactivate is needed. `AccessoryActivationDurationMs` is retained for API compatibility but no longer used in the XpressNet path.
-
-### Version 1.7.13 - Cancel Stale XpressNet Deactivates on New Command
-Release date 2026-04-16
-
-**Bug Fixes**
-- **Background accessory deactivates are now cancelled when a new command arrives for the same address.** When two commands for the same turnout arrived within the activation-hold window (e.g. "reset all straight" followed by a keyboard diverge within 2 s), the first command's scheduled deactivate would fire after the second activate, causing the Z21 to broadcast the stale position and flipping the UI model back. The adapter now tracks pending deactivates per address and cancels any outstanding one before scheduling a new activate. Also fixes the resulting GUI freeze — rapid conflicting state updates from stale deactivates would thrash Blazor re-renders until the circuit disconnected.
-
-### Version 1.7.12 - Fix XpressNet Output-to-Position NMRA Convention
-Release date 2026-04-16
-
-**Bug Fixes**
-- **XpressNet accessory output mapping now follows NMRA S-9.2.1.** The library mapped `Output 1 (P=0/C=0)` to `ClosedOrGreen` (straight) and `Output 2 (P=1/C=1)` to `ThrownOrRed` (diverging) — the opposite of the DCC standard, which defines `C=0 = Diverging` and `C=1 = Normal/Straight`. Fixed in both directions: the `LAN_X_TURNOUT_INFO` receive mapping (`TurnoutInfoNotification` → `AccessoryNotification`) and the `LAN_X_SET_TURNOUT` send mapping (`AccessoryControlAdapter`). This aligns the yard app with the Z21 App, WLANMaus, and any other NMRA-compliant client so that "straight" and "diverging" labels agree between all apps. The wrapped-LocoNet path is unaffected (it uses LocoNet's own direction-bit convention).
-
-### Version 1.7.11 - Z21 XpressNet Deactivate Runs in Background
-Release date 2026-04-15
-
-**Bug Fixes**
-- **`SetAccessoryAsync` no longer blocks the caller for the activation hold.** 1.7.10 added activate → wait → deactivate pairing but awaited the full hold before returning, which serialized point-setting sequences (e.g. setting a whole route of stall-motor turnouts at `AccessoryActivationDurationMs = 2000` meant 2 s per point). The deactivate is now scheduled on a background task and the call returns as soon as the activate is on the wire. The deactivate still fires after the configured hold; errors during background deactivate are logged but not propagated to the original caller.
-
-### Version 1.7.10 - Z21 XpressNet Accessory Activate/Deactivate Pairing
-Release date 2026-04-15
-
-**Bug Fixes**
-- **Z21 adapter now auto-pairs activate + deactivate for native-XpressNet accessory commands.** DCC accessory decoders require an `A=1` activate → wait → `A=0` deactivate sequence, but the XpressNet branch of `SetAccessoryAsync` was sending only the activate. Two consequences: decoder coils stayed energised (motor-burnout risk for twin-coil turnouts), and the Z21 tracked the outstanding activate as in-flight, suppressing further `LAN_X_TURNOUT_INFO` broadcasts for the same address — so after a single command the UI would stop getting state feedback on that turnout. The adapter now sends activate → delay → deactivate when the caller passes `MotorState.On`; an explicit `MotorState.Off` still sends a single deactivate. Applies only to the native-XpressNet path (`useLocoNetForAccessories: false`); the wrapped-LocoNet path is unchanged.
-- **New `AccessoryActivationDurationMs` constructor parameter / property** controls the hold time (default 200 ms). Tune to match decoder type: twin-coil turnouts 100–300 ms; stall-motor drives (e.g. Möllehem) 500–2000 ms. Set to 0 or negative to opt out of auto-pairing (useful for self-deactivating decoders, at the cost of suppressed Z21 broadcasts).
+- **XpressNet `LAN_X_TURNOUT_INFO` (0x43) now maps to `AccessoryNotification`.** Previously fell through to `FeedbackBroadcast` and was silently dropped, killing the receive loop if an application subscribed to `RunningAndSwitching`. Applications that want feedback for third-party-initiated turnout changes (Z21 App, WLANMaus, etc.) can now subscribe `BroadcastSubjects.LocoNetTurnouts | BroadcastSubjects.RunningAndSwitching`.
+- **NMRA S-9.2.1 accessory output mapping corrected.** The Z21 XpressNet path now maps `Output 1 (C=0)` → `ThrownOrRed` and `Output 2 (C=1)` → `ClosedOrGreen`, matching the DCC standard and agreeing with the Z21 App, WLANMaus, and other NMRA-compliant clients. Fixed in both send (`AccessoryControlAdapter`) and receive (`TurnoutInfoNotification` → `AccessoryNotification`) directions. The wrapped-LocoNet path is unaffected.
+- **XpressNet mapper no longer throws on unknown notification types.** Unmapped XpressNet notifications now fall back to the `MessageNotification` unmapped path instead of throwing `InvalidOperationException` and killing the receive loop.
+- **Factory disambiguation for `LAN_X_TURNOUT_INFO` tightened** to the 5-byte production wire shape (header + address + status + XOR).
 
 ### Version 1.7.9 - Tighten XpressNet 0x43 Disambiguation
 Release date 2026-04-15

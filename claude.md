@@ -88,3 +88,13 @@ Use `Microsoft.Extensions.Logging`. Precede logging statements with checks like 
 - Each project has its own `CLAUDE.md` with project-specific implementation details
 - Agent guidelines in `.agent_guidelines/` folder provide detailed conventions
 - **Exclude** documents in `Specifications/Non-essential specifications/` and `Specifications/Processed documents/` - focus on code
+
+## Local NuGet Development
+
+This repo produces NuGet packages consumed by other Tellurian.Trains projects. During active development, iterate through the local feed `C:\NuGets` instead of publishing every experimental version to nuget.org.
+
+- Per iteration: bump `<Version>` in `Directory.Build.props` (patch), `dotnet pack`, push to `C:\NuGets`. Do NOT edit `ReleaseNotes.md`.
+- At publication: consolidate iterations into one `ReleaseNotes.md` entry, decide patch/minor/major, push to nuget.org.
+- CI runners don't have `C:\NuGets` — a consumer pinned to a local-only version cannot ship (NU1101). Intended safety net.
+
+Full workflow: user-level `local-nuget-development` skill.
